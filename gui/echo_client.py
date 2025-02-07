@@ -8,17 +8,20 @@ and prints the echoed reply from an Arduino running the echo server.
 import sys
 import time
 import serial
-from rdscom import (
+from rdscom.rdscom import (
     CommunicationInterface,
     CommunicationInterfaceOptions,
     DataPrototype,
     DataFieldType,
     Message,
     MessageType,
-    check,
+    Result,
     default_error_callback,
     CommunicationChannel
 )
+
+# default to COM4 on Windows, or /dev/ttyACM0 on Linux/Mac
+DEFAULT_PORT = "COM4" if sys.platform == "win32" else "/dev/ttyACM0"
 
 # ---------------------------------------------------------
 # PySerialChannel: A CommunicationChannel implementation using PySerial.
@@ -30,6 +33,10 @@ class PySerialChannel(CommunicationChannel):
     def receive(self) -> bytearray:
         # Read all available bytes.
         data = self.ser.read(self.ser.in_waiting or 1)
+        if len(data) > 0:
+            print(f"Received {len(data)} bytes")
+            # print the data ascii
+            print(data.decode("ascii"))
         return bytearray(data)
     
     def send(self, message: Message) -> None:
@@ -45,7 +52,7 @@ def on_echo_message(message: Message) -> None:
 
 def main():
     # Replace this port with your actual serial port (e.g., "COM3" on Windows or "/dev/ttyACM0" on Linux/Mac)
-    port = "/dev/ttyACM0" if len(sys.args) < 2 else sys.args[1]
+    port = DEFAULT_PORT if len(sys.argv) < 2 else sys.argv[1]
 
     try:
         channel = PySerialChannel(port)
@@ -70,7 +77,7 @@ def main():
     # Build a message using the echo prototype.
     msg = Message.from_type_and_proto(MessageType.REQUEST, echoProto)
     res = msg.set_field("dummy", 42)
-    if check(default_error_callback(sys.stderr), res):
+    if Result.check(default_error_callback(sys.stderr), res):
         sys.exit(1)
     
     # Send the message over serial.
