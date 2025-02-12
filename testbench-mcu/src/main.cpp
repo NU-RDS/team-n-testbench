@@ -6,6 +6,10 @@
 #include "rdscom.hpp"
 #include "serial_com_channel.hpp"
 
+#define INTERNAL_LED_PIN LED_BUILTIN
+
+uint8_t g_internalLEDState = HIGH;
+
 // Create a CommunicationInterfaceOptions instance with 3 retries, 2000 ms timeout, and the Arduino millis() function.
 rdscom::CommunicationInterfaceOptions options{3, 2000, millis};
 
@@ -20,8 +24,13 @@ rdscom::DataPrototype echoProto{1};
 
 // Callback that echoes the received message.
 void onEchoMessage(const rdscom::Message &msg) {
-    // Simply echo back the same message.
-    com.sendMessage(msg);
+    // send back a response with the same data
+    // toggle back and forth
+    g_internalLEDState = (g_internalLEDState == HIGH) ? LOW : HIGH;
+    digitalWrite(INTERNAL_LED_PIN, g_internalLEDState);
+    rdscom::DataBuffer& buf = msg.data();
+    rdscom::Message response = rdscom::Message::createResponse(msg, buf);
+    com.sendMessage(response);
 }
 
 void setup() {
@@ -38,11 +47,13 @@ void setup() {
 
     // Register callbacks for the prototype 1 for all message types.
     com.addCallback(1, rdscom::MessageType::REQUEST, onEchoMessage);
-    com.addCallback(1, rdscom::MessageType::RESPONSE, onEchoMessage);
     com.addCallback(1, rdscom::MessageType::ERROR, onEchoMessage);
 
     // Optional: Print a startup message.
     Serial.println("Echo server started.");
+
+    pinMode(INTERNAL_LED_PIN, OUTPUT);
+    digitalWrite(INTERNAL_LED_PIN, g_internalLEDState);
 }
 
 void loop() {
