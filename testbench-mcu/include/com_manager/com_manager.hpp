@@ -3,11 +3,7 @@
 
 #include "teensy_can.h"
 #include <vector>
-#include <unordered_map>
-#include "odrive_controller.hpp"
-
-#define HEARTBEAT_CHECK_INTERVAL 100  // in ms
-#define HEARTBEAT_TIMEOUT 1000  // in ms
+#include "com_manager/odrive_manager.hpp"
 
 /// @brief Basic Communication Manager class for handling multiple CAN buses
 template <CAN_DEV_TABLE CAN>
@@ -46,22 +42,17 @@ public:
     /// \return true if successful
     /// \return false if unsuccessful
     bool initialize() {
-        find_odrive(odrv0_);
-        find_odrive(odrv1_);
+        find_odrives();
 
-        odrv0_.startup_odrive_checks();
-        odrv1_.startup_odrive_checks();
+        for (auto* odrive : odrives_) {
+            odrive.startup_odrive_checks();
+        }
 
-        startup_odrive(odrv0_);
-        startup_odrive(odrv1_);
+        startup_odrives();
 
         teensy_can.RegisterRXMessage(rx_end_eff_pos_message);
         teensy_can.RegisterRXMessage(rx_end_eff_vel_message);
         teensy_can.RegisterRXMessage(rx_heartbeat_message);
-
-        // Uncomment these for unmapped ODrives
-        // odrv1_.enable_anticogging();
-        // odrv0_.enable_anticogging();
 
         return true;
     }
@@ -72,6 +63,12 @@ public:
         for (auto* canBus : canBuses_) {
             pumpEvents(canBus)
         }
+
+        for (auto* odrive : odrives_) {
+            odrive.odrive_user_data_.heartbeat_timeout = (millis() - odrive.odrive_user_data_.last_heartbeat_time) > ODRIVE_HEARTBEAT_TIMEOUT;
+        }
+
+        teensy_heartbeat_timeout = (millis() - last_received_time) > TEENSY_HEARTBEAT_TIMEOUT;
         
     }
 
@@ -81,14 +78,10 @@ public:
     void commsTimeout() {
 
         for (auto* odrive : odrives_) {
-            odrive.odrv_user_data_.heartbeat_timeout = (millis() - odrive.odrv_user_data_.last_heartbeat_time) > ODRIVE_HEARTBEAT_TIMEOUT;
-            if (not odrive.odrv_user_data_.heartbeat_timeout) {
+            if (not odrive.odrive_user_data_.heartbeat_timeout) {
                 return False;
             }
-        }
-
-        teensy_heartbeat_timeout = (millis() - last_received_time) > TEENSY_HEARTBEAT_TIMEOUT;
-        
+        }        
         if(not teensy_heartbeat_timeout) return false;
         return true;
 
@@ -98,6 +91,41 @@ public:
     void handleHeartbeat() {
         last_received_time = millis();
     }
+
+    /// \brief Receive hearbeats on odrives
+    template <typename T>
+    void find_odrives()
+    {
+        for (auto* odrive : odrives_) {
+            Serial.println("Waiting for ODrive" + String(odrive.odrive_user_data_.node_id) + "...");
+            while (not odrive.odrive_user_data_.received_heartbeat)
+            {
+                tick();
+                delay(100);
+                Serial.println("Waiting for ODrive" + String(odrive.odrive_user_data_.node_id) + "...");
+            }
+            Serial.println("Found ODrive");
+            }
+    }
+
+    /// \brief Enable closed loop control on odrive
+    void startup_odrives()
+    {
+        Serial.println("Enabling closed loop control...");
+        while (odrive.odrive_user_data_.last_heartbeat.Axis_State != ODriveAxisState::AXIS_STATE_CLOSED_LOOP_CONTROL)
+        {
+            // odrive.odrv_.clearErrors();
+            delay(1);
+            odrive.odrive_.setState(ODriveAxisState::AXIS_STATE_CLOSED_LOOP_CONTROL);
+            for (int i = 0; i < 15; ++i)
+            {
+                delay(10);
+                ComManager::tick();
+            }
+        }
+        Serial.println("ODrive running!");
+    }
+
 
 private:
     std::vector<FlexCAN_T4<CAN, RX_SIZE_256, TX_SIZE_256>*> canBuses_;

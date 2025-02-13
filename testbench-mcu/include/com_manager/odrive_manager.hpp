@@ -1,5 +1,5 @@
-#ifndef __ODRIVE_CONTROLLER_H__
-#define __ODRIVE_CONTROLLER_H__
+#ifndef __ODRIVE_MANAGER_H__
+#define __ODRIVE_MANAGER_H__
 
 #include "teensy_can.h"
 #include "ODriveCAN.h"
@@ -20,15 +20,15 @@ public:
     /// @brief Constructor for the ODriveController
     /// @param odrive_can - CAN bus that the ODrive is connected to
     /// @param CAN_ID - CAN ID of the ODrive
-    /// @param odrv_user_data Reference to the ODriveUserData object
-    ODriveController(FlexCAN_T4<CAN, RX_SIZE_256, TX_SIZE_256>& odrive_can, int CAN_ID, ODriveUserData & odrv_user_data)
-        : odrive_can_(odrive_can), odrv_(ODriveCAN(wrap_can_intf(odrive_can), CAN_ID))
+    /// @param odrive_user_data Reference to the ODriveUserData object
+    ODriveController(FlexCAN_T4<CAN, RX_SIZE_256, TX_SIZE_256>& odrive_can, int CAN_ID, ODriveUserData & odrive_user_data)
+        : odrive_can_(odrive_can), odrive_(ODriveCAN(wrap_can_intf(odrive_can), CAN_ID))
         {
-            odrv_user_data_.node_id = CAN_ID;
+            odrive_user_data_.node_id = CAN_ID;
             // Register callbacks for the heartbeat and encoder feedback messages
-            odrv_.onFeedback(onFeedback, &odrv_user_data_);
-            odrv_.onStatus(onHeartbeat, &odrv_user_data_);
-            odrv_.onTemperature(onTemperature, &odrv_user_data_);
+            odrive_.onFeedback(onFeedback, &odrive_user_data_);
+            odrive_.onStatus(onHeartbeat, &odrive_user_data_);
+            odrive_.onTemperature(onTemperature, &odrive_user_data_);
         }
 
     /// @brief Set parameters on the ODrive
@@ -42,7 +42,7 @@ public:
 
         Serial.print("Setting param: ");
         Serial.println(param.Endpoint_ID);
-        odrv_.send(param);
+        odrive_.send(param);
         pumpEvents(odrive_can_);
         delay(100);
         }
@@ -53,7 +53,7 @@ public:
         bparam.Value = bconfig_params[i].value;
         Serial.print("Setting param: ");
         Serial.println(bparam.Endpoint_ID);
-        odrv_.send(bparam);
+        odrive_.send(bparam);
         pumpEvents(odrive_can_);
         delay(100);
         }
@@ -65,7 +65,7 @@ public:
   bool full_calibration()
   {
     Serial.println("Starting Calibration");
-    odrv_.setState(ODriveAxisState::AXIS_STATE_FULL_CALIBRATION_SEQUENCE);
+    odrive_.setState(ODriveAxisState::AXIS_STATE_FULL_CALIBRATION_SEQUENCE);
     delay(1000);
     Serial.println("Calibration Done!");
     return true;
@@ -81,7 +81,7 @@ public:
 
     Serial.println("Checking Temperature...");
 
-    odrv_.setControllerMode(
+    odrive_.setControllerMode(
       ODriveControlMode::CONTROL_MODE_TORQUE_CONTROL,
       ODriveInputMode::INPUT_MODE_PASSTHROUGH);
     Serial.println("Setting to Torque mode");
@@ -96,12 +96,12 @@ private:
   FlexCAN_T4<CAN, RX_SIZE_256, TX_SIZE_256> & odrive_can_;
 
   /// \brief Odrive object to control
-  ODriveCAN odrv_;
+  ODriveCAN odrive_;
 
   /// \brief struct to store user data in
-  ODriveUserData & odrv_user_data_;
+  ODriveUserData & odrive_user_data_;
 
 
 };
 
-#endif // __ODRIVE_CONTROLLER_H__
+#endif // __ODRIVE_MANAGER_H__
