@@ -15,18 +15,18 @@ ODriveManager<CAN2> odrive0 = ODriveManager<CAN2>(canbus0, ODRIVE0_ID, odrive0_u
 /// \brief: Odrive manager object for the second motor
 ODriveManager<CAN3> odrive1 = ODriveManager<CAN3>(canbus1, ODRIVE0_ID, odrive1_user_data);
 
-ComManager comms_manager{canbus0,
-                         canbus1,
-                         odrive0,
-                         odrive1,
-                         onOdriveCanMessage};
-
 // Called for every message that arrives on the CAN bus
 void onOdriveCanMessage(const CanMsg &msg)
 {
     onReceive(msg, odrive0.odrive_);
     // onReceive(msg, odrive1.odrive_);
 }
+
+ComManager comms_manager{canbus0,
+                         canbus1,
+                         odrive0,
+                         odrive1,
+                         onOdriveCanMessage};
 
 void setup() {
     

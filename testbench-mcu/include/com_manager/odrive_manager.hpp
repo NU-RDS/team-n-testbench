@@ -93,6 +93,9 @@ public:
   /// @note torque is reduced when entering the buffer region.
   void set_torque(float torque)
   {
+    // This is the percentage of the joint limit before we begin limiting the outputted torque
+    float alpha_ = 0.95;
+
     const auto pos = odrive_user_data_.last_feedback.Pos_Estimate;
 
     // The position is outside of the joint limits
@@ -131,9 +134,6 @@ public:
 
   /// \brief struct to store user data in
   ODriveUserData & odrive_user_data_;
-
-  // This is the percentage of the joint limit before we begin limiting the outputted torque
-  float alpha_ = 0.95; 
 
 };
 

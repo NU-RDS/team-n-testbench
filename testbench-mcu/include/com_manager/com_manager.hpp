@@ -16,11 +16,11 @@ public:
         FlexCAN_T4<CAN3, RX_SIZE_256, TX_SIZE_256> &canbus1,
         ODriveManager<CAN2> &odrive0,
         ODriveManager<CAN3> &odrive1,
-        _MB_ptr F,
+        _MB_ptr F)
         : canbus0_(canbus0),
           canbus1_(canbus1),
           odrive0_(odrive0),
-          odrive1_(odrive1),
+          odrive1_(odrive1)
     {
         // Initialize the CAN buses
         canbus0_.begin();
