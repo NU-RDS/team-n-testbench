@@ -6,10 +6,10 @@
 #include <Arduino.h>
 
 /// \brief: Clear errors deemed as "Safe to Clean Automatically"
-bool clear_safe_errors(ODriveCAN odrv, uint32_t error)
+bool clear_safe_errors(ODriveCAN odrive, uint32_t error)
 {
   if (error == ODRIVE_ERROR_NONE || error == ODRIVE_ERROR_ESTOP_REQUESTED) {
-    odrv.clearErrors();
+    odrive.clearErrors();
     return true;
   }
 
