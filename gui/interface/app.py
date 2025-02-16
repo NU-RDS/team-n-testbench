@@ -4,6 +4,8 @@ from PyQt5.QtWidgets import QMainWindow, QDockWidget, QWidget, QVBoxLayout, QLab
 from PyQt5.QtCore import Qt
 from OpenGL import GL
 
+from util.path import PathUtil
+
 # Your OpenGL widget (using QGLWidget for consistency)
 class OpenGLWidget(QtOpenGL.QGLWidget):
     def __init__(self, parent=None):
@@ -103,45 +105,7 @@ class AppInterface:
         self.app = QtWidgets.QApplication(sys.argv)
 
         # Apply a modern dark-themed stylesheet.
-        self.app.setStyleSheet("""
-            QMainWindow {
-                background-color: #2B2B2B;
-                color: #CCCCCC;
-            }
-            QMenuBar {
-                background-color: #3C3F41;
-                color: #CCCCCC;
-            }
-            QMenuBar::item {
-                background-color: transparent;
-                padding: 4px 10px;
-            }
-            QMenuBar::item:selected {
-                background-color: #4E5052;
-            }
-            QMenu {
-                background-color: #3C3F41;
-                color: #CCCCCC;
-            }
-            QMenu::item:selected {
-                background-color: #4E5052;
-            }
-            QDockWidget {
-                border: 1px solid #4E5052;
-                background-color: #3C3F41;
-            }
-            /* Note: Styling the title bar of QDockWidget can be platform dependent.
-               This attempt may not work everywhere. */
-            QDockWidget::title {
-                background-color: #2B2B2B;
-                padding: 4px;
-                text-align: center;
-            }
-            QLabel {
-                color: #CCCCCC;
-                font-size: 14px;
-            }
-        """)
+        self.app.setStyleSheet(PathUtil.asset_file_contents("styles/gui.qss"))
 
         # Instantiate our MainWindow with integrated dockable frames.
         self.mainWin = MainWindow()
