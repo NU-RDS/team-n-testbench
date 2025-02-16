@@ -8,6 +8,7 @@ Deals with the GUI and the communication with the teensy, leveraging the rdscom 
 import argparse
 import sys
 from com.mcu_com import MCUCom
+from interface.app import AppInterface
 
 # options
 # default to COM4 on Windows, or /dev/ttyACM0 on Linux/Mac
@@ -24,9 +25,11 @@ class ApplicationContext:
     def __init__(self, args):
         self.mcu_com = MCUCom(args.port, args.baudrate)
         self.instance = self
+        self.app_interface = AppInterface()
 
     def tick(self):
         self.mcu_com.tick()
+        self.app_interface.tick()
         
 
 def main():
