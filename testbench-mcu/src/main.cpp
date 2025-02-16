@@ -6,7 +6,11 @@
 #include "rdscom.hpp"
 #include "serial_com_channel.hpp"
 
+#if defined(ARDUINO_TEENSY40) || defined(ARDUINO_TEENSY41)
 #define INTERNAL_LED_PIN LED_BUILTIN
+#else
+#define INTERNAL_LED_PIN GPIO_NUM_2
+#endif
 
 uint8_t g_internalLEDState = HIGH;
 
@@ -28,7 +32,7 @@ void onEchoMessage(const rdscom::Message &msg) {
     // toggle back and forth
     g_internalLEDState = (g_internalLEDState == HIGH) ? LOW : HIGH;
     digitalWrite(INTERNAL_LED_PIN, g_internalLEDState);
-    rdscom::DataBuffer& buf = msg.data();
+    rdscom::DataBuffer buf = msg.data();
     rdscom::Message response = rdscom::Message::createResponse(msg, buf);
     com.sendMessage(response);
 }
