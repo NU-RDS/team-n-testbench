@@ -5,6 +5,7 @@
 #include "ODriveCAN.h"
 #include "odrive_utils/odrive_msgs.hpp"
 #include "odrive_utils/odrive_callbacks.hpp"
+#include "utils/helpers.hpp"
 
 /// @brief ODrive Controller class for managing communication with an ODrive motor controller
 
@@ -22,7 +23,7 @@ public:
     /// @param CAN_ID - CAN ID of the ODrive
     /// @param odrive_user_data Reference to the ODriveUserData object
     ODriveManager(FlexCAN_T4<CAN, RX_SIZE_256, TX_SIZE_256>& odrive_can, int CAN_ID, ODriveUserData & odrive_user_data)
-        : canbus_(odrive_can), odrive_(ODriveCAN(wrap_can_intf(odrive_can), CAN_ID))
+        : canbus_(odrive_can), odrive_(ODriveCAN(wrap_can_intf(odrive_can), CAN_ID)), odrive_user_data_(odrive_user_data)
         {
             odrive_user_data_.node_id = CAN_ID;
             // Register callbacks for the heartbeat and encoder feedback messages
@@ -134,6 +135,9 @@ public:
 
   /// \brief struct to store user data in
   ODriveUserData & odrive_user_data_;
+
+  /// \brief: Limits on motor torques
+  Limits<float> motor_limits_;
 
 };
 

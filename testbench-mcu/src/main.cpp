@@ -1,7 +1,7 @@
+#include "teensy_can.h"
 #include "com_manager/com_manager.hpp"
 #include "com_manager/odrive_manager.hpp"
 #include <vector>
-
 
 FlexCAN_T4<CAN2, RX_SIZE_256, TX_SIZE_256> canbus0;
 FlexCAN_T4<CAN3, RX_SIZE_256, TX_SIZE_256> canbus1;
@@ -54,7 +54,7 @@ void setup() {
 void loop() {
 
     comms_manager.tick();
-    odrive0.set_torque(0.0001);
+    odrive0.odrive_.setTorque(0.011);
 
     if (odrive0_user_data.received_feedback) {
         Get_Encoder_Estimates_msg_t feedback = odrive0_user_data.last_feedback;
