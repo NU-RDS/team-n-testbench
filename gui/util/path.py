@@ -30,3 +30,15 @@ class PathUtil:
     def asset_file_contents(filename : str):
         with open(PathUtil.asset_file_path(filename), "r") as f:
             return f.read()
+        
+    @staticmethod
+    def file(path : str, make_dirs : bool = False):
+        path = os.path.join(PathUtil.get_gui_root(), path)
+        # make sure the directory exists
+        if make_dirs:
+            os.makedirs(os.path.dirname(path), exist_ok=True)
+        return path
+    
+    @staticmethod
+    def file_exists(path : str):
+        return os.path.exists(PathUtil.file(path, False))

@@ -1,10 +1,11 @@
 import sys
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QMainWindow, QDockWidget, QWidget, QVBoxLayout, QLabel
-from PyQt5.QtCore import QSettings
+from PyQt5.QtCore import QSettings, Qt, QByteArray
 
 from util.path import PathUtil
 from interface.dock import DockRegistry
+import json
 
 
 
@@ -51,40 +52,45 @@ class MainWindow(QMainWindow):
         super().closeEvent(event)
         exit()
 
-    
 
     def save_workspace(self):
         """
         Save the main window geometry, state, and list of open dock names.
         """
         print("Saving workspace...")
-        settings = QSettings("MyCompany", "MyApp")
-        settings.setValue("geometry", self.saveGeometry())
-        settings.setValue("windowState", self.saveState())
-        # Save list of open docks (by their object names)
-        open_dock_names = list(self.open_docks.keys())
-        settings.setValue("openDocks", open_dock_names)
-        print("Workspace saved:", open_dock_names)
+        docks = []
+        for dock_name, dock_widget in self.open_docks.items():
+            dock_geometry = dock_widget.saveGeometry()
+            geometry_bytes = bytes(dock_geometry.toHex()).decode("ascii")
+            docks.append({"dock": dock_name, "geometry": geometry_bytes})
+
+        with open(PathUtil.file("workspace.json"), "w") as file:
+            json.dump(docks, file, indent=4)
+
+        
 
     def load_workspace(self):
         """
         Load the main window geometry, state, and re-create any open dock widgets.
         """
-        settings = QSettings("MyCompany", "MyApp")
-        geometry = settings.value("geometry")
-        state = settings.value("windowState")
-        open_dock_names = settings.value("openDocks", [])
-        if open_dock_names:
-            print("Restoring docks:", open_dock_names)
-            # Re-create the dock widgets based on the saved names.
-            for dock_name in open_dock_names:
-                docking_class = DockRegistry.get_dock(dock_name)
-                if docking_class is not None:
-                    self.add_new_frame(dock_name, docking_class)
-        if geometry is not None:
-            self.restoreGeometry(geometry)
-        if state is not None:
-            self.restoreState(state)
+        if not PathUtil.file_exists("workspace.json"):
+            return
+        try:
+            with open(PathUtil.file("workspace.json"), "r") as file:
+                docks = json.load(file)
+                for dock in docks:
+                    dock_name = dock["dock"]
+                    dock_geometry = QByteArray.fromHex(bytes(dock["geometry"], "ascii"))
+                    docking_class = DockRegistry.get_dock(dock_name)
+                    instance = docking_class()
+                    instance.restoreGeometry(dock_geometry)
+                    instance.show_dock(self)
+                    self.open_docks[dock_name] = instance
+        except Exception as e:
+            print(f"Error loading workspace: {e}")
+            return
+            
+        
 
 
 # The AppInterface ties everything together.
