@@ -12,7 +12,7 @@ class DummyDock(ImmediateInspectorDock):
         self.set_dirty()
 
     def drawInspector(self):
-        super().drawInspector()
+        super().draw_inspector()
         self.layout.addWidget(QLabel("This is a dummy dock widget"))
         self.layout.addWidget(QLabel("It's a placeholder for the real thing"))
         self.layout.addWidget(QLabel("You can add your own widgets here"))

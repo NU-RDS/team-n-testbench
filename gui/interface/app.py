@@ -77,10 +77,13 @@ class MainWindow(QMainWindow):
         # so we need to import all of the dock classes
         DockRegistry.load_all_docks()
 
-        for dock in DockRegistry.docks:
-            action = QtWidgets.QAction(dock.title, self)
-            action.triggered.connect(lambda: self.add_new_frame(dock))
-            viewMenu.addAction(action)
+        for dock in DockRegistry.get_dock_names():
+            docking_class = DockRegistry.get_dock(dock)
+            # add a view menu item for each dock
+            action = viewMenu.addAction(dock)
+            # connect the action to a lambda that creates a new frame
+            action.triggered.connect(lambda _, dc=docking_class: self.add_new_frame(dc))
+
 
     def add_new_frame(self, docking_class):
         # create a new dock widget
