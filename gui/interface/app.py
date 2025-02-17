@@ -1,41 +1,10 @@
 import sys
-from PyQt5 import QtWidgets, QtOpenGL
+from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QMainWindow, QDockWidget, QWidget, QVBoxLayout, QLabel
-from PyQt5.QtCore import Qt, QSettings
-from OpenGL import GL
+from PyQt5.QtCore import QSettings
 
 from util.path import PathUtil
 from interface.dock import DockRegistry
-import interface.docks as dock_modules
-import inspect
-
-
-# Your OpenGL widget (using QGLWidget for consistency)
-class OpenGLWidget(QtOpenGL.QGLWidget):
-    def __init__(self, parent=None):
-        super().__init__(parent)
-
-    def initializeGL(self):
-        GL.glClearColor(0.0, 0.0, 0.0, 1.0)
-
-    def resizeGL(self, width, height):
-        GL.glViewport(0, 0, width, height)
-        GL.glMatrixMode(GL.GL_PROJECTION)
-        GL.glLoadIdentity()
-        GL.glOrtho(-1, 1, -1, 1, -1, 1)
-        GL.glMatrixMode(GL.GL_MODELVIEW)
-
-    def paintGL(self):
-        GL.glClear(GL.GL_COLOR_BUFFER_BIT)
-        GL.glBegin(GL.GL_TRIANGLES)
-        GL.glColor3f(1.0, 0.0, 0.0)
-        GL.glVertex3f(0.0, 0.5, 0.0)
-        GL.glColor3f(0.0, 1.0, 0.0)
-        GL.glVertex3f(-0.5, -0.5, 0.0)
-        GL.glColor3f(0.0, 0.0, 1.0)
-        GL.glVertex3f(0.5, -0.5, 0.0)
-        GL.glEnd()
-
 
 
 
@@ -69,7 +38,6 @@ class MainWindow(QMainWindow):
         # create a new dock widget
         instance = docking_class()
         instance.show_dock(self)
-
         # store the dock widget so we can save it later
         self.open_docks[docking_name] = instance
     
@@ -82,6 +50,8 @@ class MainWindow(QMainWindow):
         self.save_workspace()
         super().closeEvent(event)
         exit()
+
+    
 
     def save_workspace(self):
         """

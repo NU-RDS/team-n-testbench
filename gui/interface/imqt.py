@@ -42,6 +42,9 @@ class LayoutUtility:
         Resets the key counters. Call this at the beginning of each inspector update.
         """
         self._key_counter = {}
+        # Reset the layout stack to start with the main layout.
+        self._layout_stack = [self.dock.layout]
+        self._current_layout = self.dock.layout
 
     def _get_key(self, base_key):
         """
@@ -147,9 +150,3 @@ class LayoutUtility:
             self._layout_stack.pop()
             self._current_layout = self._layout_stack[-1]
 
-    def reset(self):
-        """
-        Resets one-shot states (e.g., button click flags).
-        """
-        for key in self._button_state:
-            self._button_state[key] = False

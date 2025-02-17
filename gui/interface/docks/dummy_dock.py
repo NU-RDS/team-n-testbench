@@ -8,10 +8,7 @@ class DummyDock(ImmediateInspectorDock):
 
     def draw_inspector(self):
         super().draw_inspector()
-        print("Drawing inspector")
-
         self.builder.start()
-
         # Use the builder API exclusively.
         self.builder.label(
             "This is a dummy dock widget",
@@ -27,11 +24,10 @@ class DummyDock(ImmediateInspectorDock):
             print("Test Button was pressed!")
 
         toggle_val = self.builder.toggle("Enable Option", initial_value=True, text_color="black")
-        self.builder.label(
-            f"Option is {'ON' if toggle_val else 'OFF'}",
-            text_color="green" if toggle_val else "red",
-            font_size=12
-        )
+        if toggle_val:
+            self.builder.label("option is on")
+        else:
+            self.builder.label("option is off")
 
         self.builder.end_horizontal()
 

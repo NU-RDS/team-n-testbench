@@ -9,7 +9,6 @@ from interface.imqt import LayoutUtility
 class BaseDockWidget(QDockWidget):
     def __init__(self, title, parent=None):
         super().__init__(title, parent)
-        print("BaseDockWidget:__init__")
         # Allow the dock widget to be moved, floated, and closed.
         self.setAllowedAreas(Qt.AllDockWidgetAreas)
         self.setFeatures(
@@ -44,12 +43,13 @@ class ImmediateInspectorDock(BaseDockWidget):
         Rebuild the inspector UI if it is marked as dirty.
         This simulates an immediate-mode GUI where the UI is regenerated when needed.
         """
-        print("Showing Immediate Inspector dock")
+        print("ImmediateInspectorDock::show()")
         if not self.is_dirty:
             # No update needed if not dirty.
             super().show()  # Still show the dock
             return
-
+        
+        print("Redrawing inspector")
         # Clear the current layout.
         while self.layout.count():
             child = self.layout.takeAt(0)
@@ -65,6 +65,7 @@ class ImmediateInspectorDock(BaseDockWidget):
         """
         Mark the inspector as dirty so that its UI will be rebuilt.
         """
+        print("Setting dirty!")
         self.is_dirty = True
 
     def draw_inspector(self):
