@@ -1,6 +1,10 @@
 from PyQt5 import QtWidgets, QtOpenGL
 from PyQt5.QtWidgets import QMainWindow, QDockWidget, QWidget, QVBoxLayout, QLabel
 from PyQt5.QtCore import Qt
+import pkgutil
+import importlib
+import interface.docks
+
 
 class BaseDockWidget(QDockWidget):
     @classmethod
@@ -14,6 +18,7 @@ class BaseDockWidget(QDockWidget):
         instance.show()
         return instance
 
+
 class ImmediateInspectorDock(BaseDockWidget):
     def __init__(self, parent=None):
         super().__init__("Immediate Inspector", parent)
@@ -22,7 +27,6 @@ class ImmediateInspectorDock(BaseDockWidget):
         self.main_widget.setLayout(self.layout)
         self.setWidget(self.main_widget)
         self.is_dirty = False
-
 
     def drawInspector(self):
         """
@@ -54,26 +58,42 @@ class ImmediateInspectorDock(BaseDockWidget):
         Rebuilds the inspector UI.
         """
 
+
 def dock(name):
     """
     A decorator that adds a dock widget to the DockRegistery.
     """
+
     def decorator(cls):
         DockRegistry.addDock(name, cls)
         return cls
+
     return decorator
 
+
 class DockRegistry:
-    docks = {} # global to hold all dock widgets by name
+    docks = {}  # global to hold all dock widgets by name
 
     @staticmethod
     def addDock(name, cls):
+        print(f"Adding dock: {name}")
         DockRegistry.docks[name] = cls
 
     @staticmethod
     def getDock(name):
         return DockRegistry.docks.get(name)
-    
+
     @staticmethod
     def getDockNames():
         return DockRegistry.docks.keys()
+
+    @staticmethod
+    def load_all_docks():
+        """
+        Dynamically imports all modules in the interface.docks package.
+        This will cause each dock class (decorated with @dock) to register itself.
+        """
+        package = interface.docks
+        for finder, module_name, is_pkg in pkgutil.iter_modules(package.__path__):
+            full_module_name = f"{package.__name__}.{module_name}"
+            importlib.import_module(full_module_name)

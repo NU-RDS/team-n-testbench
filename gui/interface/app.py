@@ -6,6 +6,9 @@ from OpenGL import GL
 
 from util.path import PathUtil
 from interface.dock import DockRegistry
+import interface.docks as dock_modules
+import inspect
+
 
 # Your OpenGL widget (using QGLWidget for consistency)
 class OpenGLWidget(QtOpenGL.QGLWidget):
@@ -40,9 +43,11 @@ class CustomDockWidget(QDockWidget):
         super().__init__(title, parent)
         # Allow the dock widget to be moved, floated, and closed.
         self.setAllowedAreas(Qt.AllDockWidgetAreas)
-        self.setFeatures(QDockWidget.DockWidgetMovable |
-                         QDockWidget.DockWidgetFloatable |
-                         QDockWidget.DockWidgetClosable)
+        self.setFeatures(
+            QDockWidget.DockWidgetMovable
+            | QDockWidget.DockWidgetFloatable
+            | QDockWidget.DockWidgetClosable
+        )
 
         # If no content widget is provided, create a simple widget with a label.
         if contentWidget is None:
@@ -64,10 +69,13 @@ class MainWindow(QMainWindow):
         # Create a menu to add new frames dynamically.
         self.setup_menus()
 
-
     def setup_menus(self):
         menubar = self.menuBar()
         viewMenu = menubar.addMenu("View")
+
+        # find all of the dock classes and add them to the menu
+        # so we need to import all of the dock classes
+        DockRegistry.load_all_docks()
 
         for dock in DockRegistry.docks:
             action = QtWidgets.QAction(dock.title, self)
@@ -98,6 +106,6 @@ class AppInterface:
 
 
 # For standalone testing, run the application loop.
-if __name__ == '__main__':
+if __name__ == "__main__":
     interface = AppInterface()
     sys.exit(interface.app.exec_())
