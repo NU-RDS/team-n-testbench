@@ -103,9 +103,16 @@ class AppInterface:
         self.mainWin = MainWindow()
         self.mainWin.show()
 
+        # attach the on_exit method to the app's aboutToQuit signal
+        self.app.aboutToQuit.connect(self.on_exit)
+
     def tick(self):
         # Process events; useful if you have a larger system loop.
         self.app.processEvents()
+
+    def on_exit(self):
+        # Clean up any resources here.
+        print("Exiting...")
 
 
 # For standalone testing, run the application loop.

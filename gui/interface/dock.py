@@ -5,18 +5,14 @@ import pkgutil
 import importlib
 import interface.docks
 
-
 class BaseDockWidget(QDockWidget):
-    @classmethod
-    def showDock(cls, main_window, area=Qt.DockWidgetArea.RightDockWidgetArea):
+    def showDock(self, main_window, area=Qt.RightDockWidgetArea):
         """
         Instantiate the dock widget, add it to the provided main_window,
         and show it.
         """
-        dock = cls()
-        main_window.addDockWidget(area, dock)
-        dock.show()
-        
+        main_window.addDockWidget(area, self)
+        self.show()
 
 
 class ImmediateInspectorDock(BaseDockWidget):
@@ -26,37 +22,45 @@ class ImmediateInspectorDock(BaseDockWidget):
         self.layout = QVBoxLayout(self.main_widget)
         self.main_widget.setLayout(self.layout)
         self.setWidget(self.main_widget)
-        self.is_dirty = False
+        # Initially mark the inspector as dirty so it builds its UI.
+        self.is_dirty = True
 
     def show(self):
         """
-        Rebuilds the inspector UI. In a true immediate mode system, you'd
-        re-run your UI code each frame. Here we clear and rebuild the layout.
+        Rebuild the inspector UI if it is marked as dirty.
+        This simulates an immediate-mode GUI where the UI is regenerated when needed.
         """
-        if self.is_dirty:
+        print("Showing Immediate Inspector dock")
+        if not self.is_dirty:
+            # No update needed if not dirty.
+            super().show()  # Still show the dock
             return
 
-        # Clear the current layout
+        # Clear the current layout.
         while self.layout.count():
             child = self.layout.takeAt(0)
             if child.widget():
                 child.widget().deleteLater()
 
+        print("Rebuilding inspector UI...")
         self.draw_inspector()
         self.is_dirty = False
+        super().show()
 
     def set_dirty(self):
         """
-        This is a dummy method to simulate a change in state that would
-        require a UI update.
+        Mark the inspector as dirty so that its UI will be rebuilt.
         """
         self.is_dirty = True
 
-    @classmethod
     def draw_inspector(self):
         """
-        Rebuilds the inspector UI.
+        Rebuild the inspector UI.
+        Override this method in your dock subclasses to provide custom content.
+        For demonstration, we simply add a label.
         """
+        label = QLabel("Immediate Inspector Content")
+        self.layout.addWidget(label)
 
 
 def dock(name):
