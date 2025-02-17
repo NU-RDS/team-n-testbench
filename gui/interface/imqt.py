@@ -1,14 +1,11 @@
-import PyQt5.sip as sip
-from PyQt5.QtWidgets import (
-    QVBoxLayout,
-    QHBoxLayout,
-    QPushButton,
-    QCheckBox,
-    QLabel
-)
+from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QPushButton, QCheckBox, QLabel
 from PyQt5.QtCore import Qt
 
-def apply_style(widget, text_color=None, bg_color=None, font_size=None, extra_styles=""):
+
+# Helper function for applying styles using Qt Style Sheets.
+def apply_style(
+    widget, text_color=None, bg_color=None, font_size=None, extra_styles=""
+):
     styles = []
     if text_color:
         styles.append(f"color: {text_color};")
@@ -20,118 +17,129 @@ def apply_style(widget, text_color=None, bg_color=None, font_size=None, extra_st
         styles.append(extra_styles)
     widget.setStyleSheet(" ".join(styles))
 
+
 class LayoutUtility:
     def __init__(self, imdock):
         """
         Initialize with an ImmediateInspectorDock (or similar) instance.
-        The dock is expected to have a .layout attribute.
+        This builder does not cache widget pointers—every call creates new widgets.
+        Persistent state for controls (like button clicks and toggles) is maintained.
         """
         self.dock = imdock
+        # Use the dock's main layout as the starting point.
         self._layout_stack = [self.dock.layout]
         self._current_layout = self.dock.layout
 
-        # Persistent widget storage.
-        self._instance_buttons = {}   # label -> QPushButton
-        self._state_button = {}       # label -> bool
+        # Persistent state dictionaries.
+        self._button_state = {}  # Map: control label -> bool (one-shot click flag)
+        self._toggle_state = {}  # Map: control label -> bool
 
-        self._instance_toggles = {}   # label -> QCheckBox
-        self._state_toggle = {}       # label -> bool
+    def button(
+        self, label, text_color=None, bg_color=None, font_size=None, extra_styles=""
+    ):
+        """
+        Creates a new button each time it is called.
+        Returns True if the button was clicked (since the last rebuild), then resets the flag.
+        """
+        # Ensure persistent state exists.
+        if label not in self._button_state:
+            self._button_state[label] = False
 
-        self._instance_labels = {}    # key -> QLabel
-
-    def _get_button(self, label):
-        if label not in self._instance_buttons or sip.isdeleted(self._instance_buttons[label]):
-            btn = QPushButton(label)
-            btn.clicked.connect(lambda _, l=label: self._on_button_clicked(l))
-            self._instance_buttons[label] = btn
-            self._state_button[label] = False
-            self._current_layout.addWidget(btn)
-        else:
-            btn = self._instance_buttons[label]
-            # If for some reason the widget is not in the current layout, add it.
-            if btn.parent() is None:
-                self._current_layout.addWidget(btn)
-        return btn
-
-    def button(self, label, text_color=None, bg_color=None, font_size=None, extra_styles=""):
-        btn = self._get_button(label)
+        btn = QPushButton(label)
         apply_style(btn, text_color, bg_color, font_size, extra_styles)
-        self.dock.set_dirty()
-        was_clicked = self._state_button[label]
-        self._state_button[label] = False  # Reset one-shot click flag.
+        # When clicked, update the persistent state.
+        btn.clicked.connect(lambda _, l=label: self._set_button_state(l, True))
+        self._current_layout.addWidget(btn)
+
+        # Read and then reset the one-shot flag.
+        was_clicked = self._button_state[label]
+        self._button_state[label] = False
         return was_clicked
 
-    def _on_button_clicked(self, label):
-        print(f"Button '{label}' clicked!")
-        self._state_button[label] = True
+    def _set_button_state(self, label, value):
+        self._button_state[label] = value
         self.dock.set_dirty()
-        self.dock.show()
 
-    def _get_toggle(self, label, initial_value):
-        if label not in self._instance_toggles or sip.isdeleted(self._instance_toggles[label]):
-            chk = QCheckBox(label)
-            chk.setChecked(initial_value)
-            chk.stateChanged.connect(lambda state, l=label: self._on_toggle_changed(l, state))
-            self._instance_toggles[label] = chk
-            self._state_toggle[label] = chk.isChecked()
-            self._current_layout.addWidget(chk)
-        else:
-            chk = self._instance_toggles[label]
-            if chk.parent() is None:
-                self._current_layout.addWidget(chk)
-        return chk
+    def toggle(
+        self,
+        label,
+        initial_value=False,
+        text_color=None,
+        bg_color=None,
+        font_size=None,
+        extra_styles="",
+    ):
+        """
+        Creates a new toggle (checkbox) each time it is called.
+        Returns the current boolean state.
+        """
+        # Use existing state if available.
+        if label not in self._toggle_state:
+            self._toggle_state[label] = initial_value
 
-    def toggle(self, label, initial_value=False, text_color=None, bg_color=None, font_size=None, extra_styles=""):
-        chk = self._get_toggle(label, initial_value)
+        chk = QCheckBox(label)
+        chk.setChecked(self._toggle_state[label])
         apply_style(chk, text_color, bg_color, font_size, extra_styles)
+        # When changed, update the persistent state.
+        chk.stateChanged.connect(
+            lambda state, l=label: self._set_toggle_state(l, state)
+        )
+        self._current_layout.addWidget(chk)
+        return self._toggle_state[label]
+
+    def _set_toggle_state(self, label, state):
+        self._toggle_state[label] = state == Qt.Checked
         self.dock.set_dirty()
-        return self._state_toggle[label]
 
-    def _on_toggle_changed(self, label, state):
-        self._state_toggle[label] = (state == Qt.Checked)
-        print(f"Toggle '{label}' changed to {self._state_toggle[label]}")
-        self.dock.set_dirty()
-        self.dock.show()
-
-    def _get_label(self, key, text):
-        if key not in self._instance_labels or sip.isdeleted(self._instance_labels[key]):
-            lbl = QLabel(text)
-            self._instance_labels[key] = lbl
-            self._current_layout.addWidget(lbl)
-        else:
-            lbl = self._instance_labels[key]
-        return lbl
-
-    def label(self, text, text_color=None, bg_color=None, font_size=None, extra_styles=""):
-        key = text  # Here we use text as the key; you could allow a custom key if desired.
-        lbl = self._get_label(key, text)
-        lbl.setText(text)
+    def label(
+        self, text, text_color=None, bg_color=None, font_size=None, extra_styles=""
+    ):
+        """
+        Creates a new label each time it is called.
+        """
+        lbl = QLabel(text)
         apply_style(lbl, text_color, bg_color, font_size, extra_styles)
-        self.dock.set_dirty()
+        self._current_layout.addWidget(lbl)
         return lbl
 
     def begin_horizontal(self):
+        """
+        Starts a horizontal grouping. Widgets added after this call will be arranged
+        in a horizontal row until end_horizontal() is called.
+        """
         h_layout = QHBoxLayout()
         self._current_layout.addLayout(h_layout)
         self._layout_stack.append(h_layout)
         self._current_layout = h_layout
 
     def end_horizontal(self):
+        """
+        Ends the current horizontal grouping.
+        """
         if len(self._layout_stack) > 1:
             self._layout_stack.pop()
             self._current_layout = self._layout_stack[-1]
 
     def begin_vertical(self):
+        """
+        Starts a vertical grouping.
+        """
         v_layout = QVBoxLayout()
         self._current_layout.addLayout(v_layout)
         self._layout_stack.append(v_layout)
         self._current_layout = v_layout
 
     def end_vertical(self):
+        """
+        Ends the current vertical grouping.
+        """
         if len(self._layout_stack) > 1:
             self._layout_stack.pop()
             self._current_layout = self._layout_stack[-1]
 
     def reset(self):
-        for key in self._state_button:
-            self._state_button[key] = False
+        """
+        Resets one-shot states (e.g. button clicks).
+        """
+        for key in self._button_state:
+            self._button_state[key] = False
