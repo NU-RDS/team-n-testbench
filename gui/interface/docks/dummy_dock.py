@@ -1,4 +1,7 @@
-from PyQt5.QtWidgets import QLabel
+from PyQt5.QtWidgets import (
+    QLabel,
+    QPushButton
+)
 
 from interface.dock import (
     dock,
@@ -19,4 +22,17 @@ class DummyDock(ImmediateInspectorDock):
         self.layout.addWidget(QLabel("You can add your own widgets here"))
         self.layout.addWidget(QLabel("Or remove this and add your own custom dock"))
         self.layout.addWidget(QLabel("It's up to you!"))
+
+        # add a button
+        button = QPushButton("Click me")
+        button.clicked.connect(self.on_button_click)
+        self.layout.addWidget(button)
+
+        self.setWindowTitle("Dummy Dock")
+
+
+    def on_button_click(self):
+        print("Button clicked!")
+        self.layout.addWidget(QLabel("Button clicked!"))
+
         self.set_dirty()

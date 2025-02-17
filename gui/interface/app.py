@@ -37,27 +37,6 @@ class OpenGLWidget(QtOpenGL.QGLWidget):
         GL.glEnd()
 
 
-# A custom dock widget that serves as a "frame" for any widget content.
-class CustomDockWidget(QDockWidget):
-    def __init__(self, title, contentWidget=None, parent=None):
-        super().__init__(title, parent)
-        # Allow the dock widget to be moved, floated, and closed.
-        self.setAllowedAreas(Qt.AllDockWidgetAreas)
-        self.setFeatures(
-            QDockWidget.DockWidgetMovable
-            | QDockWidget.DockWidgetFloatable
-            | QDockWidget.DockWidgetClosable
-        )
-
-        # If no content widget is provided, create a simple widget with a label.
-        if contentWidget is None:
-            contentWidget = QWidget()
-            layout = QVBoxLayout()
-            label = QLabel(f"Content for {title}")
-            layout.addWidget(label)
-            contentWidget.setLayout(layout)
-
-        self.setWidget(contentWidget)
 
 
 # Our main window contains the central OpenGL widget and several dockable frames.
@@ -84,12 +63,17 @@ class MainWindow(QMainWindow):
             # add a view menu item for each dock
             action = viewMenu.addAction(dock)
             # connect the action to a lambda that creates a new frame
-            action.triggered.connect(lambda _, dc=docking_class: self.add_new_frame(dc))
+            action.triggered.connect(lambda _, name=dock, cls=docking_class: self.add_new_frame(name, cls))
 
-    def add_new_frame(self, docking_class):
+    def add_new_frame(self, docking_name, docking_class):
         # create a new dock widget
         instance = docking_class()
-        instance.showDock(self)
+        instance.show_dock(self)
+
+        # store the dock widget so we can save it later
+        self.open_docks[docking_name] = instance
+    
+
 
     def closeEvent(self, event):
         """
@@ -126,7 +110,7 @@ class MainWindow(QMainWindow):
             for dock_name in open_dock_names:
                 docking_class = DockRegistry.get_dock(dock_name)
                 if docking_class is not None:
-                    self.add_new_frame(docking_class, dock_name)
+                    self.add_new_frame(dock_name, docking_class)
         if geometry is not None:
             self.restoreGeometry(geometry)
         if state is not None:

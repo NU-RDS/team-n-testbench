@@ -6,7 +6,18 @@ import importlib
 import interface.docks
 
 class BaseDockWidget(QDockWidget):
-    def showDock(self, main_window, area=Qt.RightDockWidgetArea):
+    def __init__(self, title, parent=None):
+        super().__init__(title, parent)
+        print("BaseDockWidget:__init__")
+        # Allow the dock widget to be moved, floated, and closed.
+        self.setAllowedAreas(Qt.AllDockWidgetAreas)
+        self.setFeatures(
+            QDockWidget.DockWidgetMovable
+            | QDockWidget.DockWidgetFloatable
+            | QDockWidget.DockWidgetClosable
+        )
+
+    def show_dock(self, main_window, area=Qt.RightDockWidgetArea):
         """
         Instantiate the dock widget, add it to the provided main_window,
         and show it.
@@ -59,8 +70,7 @@ class ImmediateInspectorDock(BaseDockWidget):
         Override this method in your dock subclasses to provide custom content.
         For demonstration, we simply add a label.
         """
-        label = QLabel("Immediate Inspector Content")
-        self.layout.addWidget(label)
+        pass
 
 
 def dock(name):
