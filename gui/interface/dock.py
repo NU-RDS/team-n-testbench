@@ -59,24 +59,21 @@ def dock(name):
     A decorator that adds a dock widget to the DockRegistery.
     """
     def decorator(cls):
-        DockRegistry().addDock(name, cls)
+        DockRegistry.addDock(name, cls)
         return cls
     return decorator
 
 class DockRegistry:
     docks = {} # global to hold all dock widgets by name
 
-    def addDock(self, name, cls):
-        # we need to check if the name is already in use and that the clas derives from BaseDockWidget
-        if name in self.docks:
-            raise ValueError(f"Dock with name {name} already exists")
-        if not issubclass(cls, BaseDockWidget):
-            raise ValueError(f"Dock class must derive from BaseDockWidget")
-        
+    @staticmethod
+    def addDock(name, cls):
+        DockRegistry.docks[name] = cls
 
-        self.docks[name] = cls
-
-    def getDock(self, name):
-        if name not in self.docks:
-            raise ValueError(f"Dock with name {name} not found")
-        return self.docks[name]
+    @staticmethod
+    def getDock(name):
+        return DockRegistry.docks.get(name)
+    
+    @staticmethod
+    def getDockNames():
+        return DockRegistry.docks.keys()

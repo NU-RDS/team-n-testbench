@@ -5,6 +5,7 @@ from PyQt5.QtCore import Qt
 from OpenGL import GL
 
 from util.path import PathUtil
+from interface.dock import DockRegistry
 
 # Your OpenGL widget (using QGLWidget for consistency)
 class OpenGLWidget(QtOpenGL.QGLWidget):
@@ -58,45 +59,25 @@ class CustomDockWidget(QDockWidget):
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Modern Dockable Frames System")
+        self.setWindowTitle("N-Tendon Robotic Finger Control GUI")
         self.setGeometry(100, 100, 800, 600)
-
-        # Set the central widget to your OpenGL widget.
-        self.gl_widget = OpenGLWidget(self)
-        self.setCentralWidget(self.gl_widget)
-
-        # Create some initial dockable frames.
-        self.createDockableFrames()
         # Create a menu to add new frames dynamically.
-        self.initMenu()
+        self.setup_menus()
 
-    def createDockableFrames(self):
-        # Dock widget with a label (Frame 1) on the right.
-        dock1 = CustomDockWidget("Frame 1", parent=self)
-        self.addDockWidget(Qt.RightDockWidgetArea, dock1)
 
-        # Dock widget with a label (Frame 2) on the bottom.
-        dock2 = CustomDockWidget("Frame 2", parent=self)
-        self.addDockWidget(Qt.BottomDockWidgetArea, dock2)
-
-        # Dock widget with another OpenGL widget (OpenGL Frame) on the left.
-        gl_dock_widget = OpenGLWidget(self)
-        dock3 = CustomDockWidget("OpenGL Frame", contentWidget=gl_dock_widget, parent=self)
-        self.addDockWidget(Qt.LeftDockWidgetArea, dock3)
-
-    def initMenu(self):
+    def setup_menus(self):
         menubar = self.menuBar()
         viewMenu = menubar.addMenu("View")
 
-        addFrameAction = QtWidgets.QAction("Add New Frame", self)
-        addFrameAction.triggered.connect(self.addNewFrame)
-        viewMenu.addAction(addFrameAction)
+        for dock in DockRegistry.docks:
+            action = QtWidgets.QAction(dock.title, self)
+            action.triggered.connect(lambda: self.add_new_frame(dock))
+            viewMenu.addAction(action)
 
-    def addNewFrame(self):
-        # Count how many dock widgets exist so far and create a new title.
-        count = len(self.findChildren(QDockWidget))
-        new_dock = CustomDockWidget(f"Frame {count+1}", parent=self)
-        self.addDockWidget(Qt.LeftDockWidgetArea, new_dock)
+    def add_new_frame(self, docking_class):
+        # create a new dock widget
+        instance = docking_class()
+        instance.showDock(self)
 
 
 # The AppInterface ties everything together.
