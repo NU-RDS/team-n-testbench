@@ -1,7 +1,7 @@
 import sys
 from PyQt5 import QtWidgets, QtOpenGL
 from PyQt5.QtWidgets import QMainWindow, QDockWidget, QWidget, QVBoxLayout, QLabel
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QSettings
 from OpenGL import GL
 
 from util.path import PathUtil
@@ -66,8 +66,10 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.setWindowTitle("N-Tendon Robotic Finger Control GUI")
         self.setGeometry(100, 100, 800, 600)
+        self.open_docks = {}  # Keep track of open dock widgets
         # Create a menu to add new frames dynamically.
         self.setup_menus()
+        self.load_workspace()
 
     def setup_menus(self):
         menubar = self.menuBar()
@@ -84,11 +86,51 @@ class MainWindow(QMainWindow):
             # connect the action to a lambda that creates a new frame
             action.triggered.connect(lambda _, dc=docking_class: self.add_new_frame(dc))
 
-
     def add_new_frame(self, docking_class):
         # create a new dock widget
         instance = docking_class()
         instance.showDock(self)
+
+    def closeEvent(self, event):
+        """
+        Overriding closeEvent to save the workspace before exiting.
+        """
+        self.save_workspace()
+        super().closeEvent(event)
+        exit()
+
+    def save_workspace(self):
+        """
+        Save the main window geometry, state, and list of open dock names.
+        """
+        print("Saving workspace...")
+        settings = QSettings("MyCompany", "MyApp")
+        settings.setValue("geometry", self.saveGeometry())
+        settings.setValue("windowState", self.saveState())
+        # Save list of open docks (by their object names)
+        open_dock_names = list(self.open_docks.keys())
+        settings.setValue("openDocks", open_dock_names)
+        print("Workspace saved:", open_dock_names)
+
+    def load_workspace(self):
+        """
+        Load the main window geometry, state, and re-create any open dock widgets.
+        """
+        settings = QSettings("MyCompany", "MyApp")
+        geometry = settings.value("geometry")
+        state = settings.value("windowState")
+        open_dock_names = settings.value("openDocks", [])
+        if open_dock_names:
+            print("Restoring docks:", open_dock_names)
+            # Re-create the dock widgets based on the saved names.
+            for dock_name in open_dock_names:
+                docking_class = DockRegistry.get_dock(dock_name)
+                if docking_class is not None:
+                    self.add_new_frame(docking_class, dock_name)
+        if geometry is not None:
+            self.restoreGeometry(geometry)
+        if state is not None:
+            self.restoreState(state)
 
 
 # The AppInterface ties everything together.
@@ -103,16 +145,9 @@ class AppInterface:
         self.mainWin = MainWindow()
         self.mainWin.show()
 
-        # attach the on_exit method to the app's aboutToQuit signal
-        self.app.aboutToQuit.connect(self.on_exit)
-
     def tick(self):
         # Process events; useful if you have a larger system loop.
         self.app.processEvents()
-
-    def on_exit(self):
-        # Clean up any resources here.
-        print("Exiting...")
 
 
 # For standalone testing, run the application loop.
