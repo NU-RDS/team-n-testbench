@@ -4,6 +4,7 @@ from PyQt5.QtCore import Qt
 import pkgutil
 import importlib
 import interface.docks
+from interface.imqt import LayoutUtility
 
 class BaseDockWidget(QDockWidget):
     def __init__(self, title, parent=None):
@@ -35,6 +36,8 @@ class ImmediateInspectorDock(BaseDockWidget):
         self.setWidget(self.main_widget)
         # Initially mark the inspector as dirty so it builds its UI.
         self.is_dirty = True
+                # Create a persistent LayoutUtility instance for this dock.
+        self.builder = LayoutUtility(self)
 
     def show(self):
         """
