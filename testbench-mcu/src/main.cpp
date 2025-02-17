@@ -13,7 +13,7 @@ ODriveUserData odrive1_user_data{};
 ODriveManager<CAN2> odrive0 = ODriveManager<CAN2>(canbus0, ODRIVE0_ID, odrive0_user_data);
 
 /// \brief: Odrive manager object for the second motor
-ODriveManager<CAN3> odrive1 = ODriveManager<CAN3>(canbus1, ODRIVE0_ID, odrive1_user_data);
+ODriveManager<CAN3> odrive1 = ODriveManager<CAN3>(canbus1, ODRIVE1_ID, odrive1_user_data);
 
 // Called for every message that arrives on the CAN bus
 void onOdriveCanMessage(const CanMsg &msg)
