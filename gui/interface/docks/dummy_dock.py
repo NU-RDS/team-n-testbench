@@ -10,6 +10,8 @@ class DummyDock(ImmediateInspectorDock):
         super().draw_inspector()
         print("Drawing inspector")
 
+        self.builder.start()
+
         # Use the builder API exclusively.
         self.builder.label(
             "This is a dummy dock widget",
@@ -30,7 +32,7 @@ class DummyDock(ImmediateInspectorDock):
             text_color="green" if toggle_val else "red",
             font_size=12
         )
-        
+
         self.builder.end_horizontal()
 
         # Create a vertical grouping with another label.
@@ -40,4 +42,8 @@ class DummyDock(ImmediateInspectorDock):
             text_color="darkblue",
             font_size=16
         )
+
+        for i in range(10):
+            self.builder.toggle("Test")
+
         self.builder.end_vertical()

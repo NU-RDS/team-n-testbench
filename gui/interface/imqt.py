@@ -1,11 +1,13 @@
-from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QPushButton, QCheckBox, QLabel
+from PyQt5.QtWidgets import (
+    QVBoxLayout,
+    QHBoxLayout,
+    QPushButton,
+    QCheckBox,
+    QLabel
+)
 from PyQt5.QtCore import Qt
 
-
-# Helper function for applying styles using Qt Style Sheets.
-def apply_style(
-    widget, text_color=None, bg_color=None, font_size=None, extra_styles=""
-):
+def apply_style(widget, text_color=None, bg_color=None, font_size=None, extra_styles=""):
     styles = []
     if text_color:
         styles.append(f"color: {text_color};")
@@ -17,89 +19,97 @@ def apply_style(
         styles.append(extra_styles)
     widget.setStyleSheet(" ".join(styles))
 
-
 class LayoutUtility:
     def __init__(self, imdock):
         """
         Initialize with an ImmediateInspectorDock (or similar) instance.
-        This builder does not cache widget pointers—every call creates new widgets.
-        Persistent state for controls (like button clicks and toggles) is maintained.
+        This builder does not cache widget pointers—each call creates new widgets.
+        Persistent state (for buttons, toggles, etc.) is maintained using unique keys.
         """
         self.dock = imdock
-        # Use the dock's main layout as the starting point.
         self._layout_stack = [self.dock.layout]
         self._current_layout = self.dock.layout
 
         # Persistent state dictionaries.
-        self._button_state = {}  # Map: control label -> bool (one-shot click flag)
-        self._toggle_state = {}  # Map: control label -> bool
+        self._button_state = {}   # Map: unique widget ID -> bool (one-shot click flag)
+        self._toggle_state = {}   # Map: unique widget ID -> bool
 
-    def button(
-        self, label, text_color=None, bg_color=None, font_size=None, extra_styles=""
-    ):
+        # Counter dictionary for generating unique keys.
+        self._key_counter = {}
+
+    def start(self):
         """
-        Creates a new button each time it is called.
-        Returns True if the button was clicked (since the last rebuild), then resets the flag.
+        Resets the key counters. Call this at the beginning of each inspector update.
         """
-        # Ensure persistent state exists.
-        if label not in self._button_state:
-            self._button_state[label] = False
+        self._key_counter = {}
+
+    def _get_key(self, base_key):
+        """
+        Utility function that generates a unique widget ID based on the base_key.
+        For the first occurrence it returns base_key, then appends a number for subsequent ones.
+        """
+        if base_key not in self._key_counter:
+            self._key_counter[base_key] = 0
+            return base_key
+        else:
+            self._key_counter[base_key] += 1
+            return f"{base_key} {self._key_counter[base_key]}"
+
+    def button(self, label, text_color=None, bg_color=None, font_size=None, extra_styles=""):
+        """
+        Creates a new button each time.
+        Returns True if the button was clicked (since the last call) then resets the flag.
+        """
+        widget_id = self._get_key(label)
+        if widget_id not in self._button_state:
+            self._button_state[widget_id] = False
 
         btn = QPushButton(label)
         apply_style(btn, text_color, bg_color, font_size, extra_styles)
-        # When clicked, update the persistent state.
-        btn.clicked.connect(lambda _, l=label: self._set_button_state(l, True))
+        btn.clicked.connect(lambda _, wid=widget_id: self._set_button_state(wid, True))
         self._current_layout.addWidget(btn)
-
-        # Read and then reset the one-shot flag.
-        was_clicked = self._button_state[label]
-        self._button_state[label] = False
+        self.dock.set_dirty()
+        was_clicked = self._button_state[widget_id]
+        self._button_state[widget_id] = False  # Reset one-shot flag
         return was_clicked
 
-    def _set_button_state(self, label, value):
-        self._button_state[label] = value
+    def _set_button_state(self, widget_id, value):
+        self._button_state[widget_id] = value
         self.dock.set_dirty()
+        self.dock.show()
 
-    def toggle(
-        self,
-        label,
-        initial_value=False,
-        text_color=None,
-        bg_color=None,
-        font_size=None,
-        extra_styles="",
-    ):
+    def toggle(self, label, initial_value=False, text_color=None, bg_color=None, font_size=None, extra_styles=""):
         """
-        Creates a new toggle (checkbox) each time it is called.
+        Creates a new toggle (checkbox) each time.
         Returns the current boolean state.
         """
-        # Use existing state if available.
-        if label not in self._toggle_state:
-            self._toggle_state[label] = initial_value
+        widget_id = self._get_key(label)
+        if widget_id not in self._toggle_state:
+            self._toggle_state[widget_id] = initial_value
 
         chk = QCheckBox(label)
-        chk.setChecked(self._toggle_state[label])
+        chk.setChecked(self._toggle_state[widget_id])
         apply_style(chk, text_color, bg_color, font_size, extra_styles)
-        # When changed, update the persistent state.
-        chk.stateChanged.connect(
-            lambda state, l=label: self._set_toggle_state(l, state)
-        )
+        chk.stateChanged.connect(lambda state, wid=widget_id: self._set_toggle_state(wid, state))
         self._current_layout.addWidget(chk)
-        return self._toggle_state[label]
-
-    def _set_toggle_state(self, label, state):
-        self._toggle_state[label] = state == Qt.Checked
         self.dock.set_dirty()
+        return self._toggle_state[widget_id]
 
-    def label(
-        self, text, text_color=None, bg_color=None, font_size=None, extra_styles=""
-    ):
+    def _set_toggle_state(self, widget_id, state):
+        print(f"Setting toggle state: {widget_id} -> {state}")
+        self._toggle_state[widget_id] = (state == Qt.Checked)
+        self.dock.set_dirty()
+        self.dock.show()
+
+    def label(self, text, text_color=None, bg_color=None, font_size=None, extra_styles=""):
         """
-        Creates a new label each time it is called.
+        Creates a new label each time.
         """
+        widget_id = self._get_key(text)
         lbl = QLabel(text)
         apply_style(lbl, text_color, bg_color, font_size, extra_styles)
         self._current_layout.addWidget(lbl)
+        self.dock.set_dirty()
         return lbl
 
     def begin_horizontal(self):
@@ -139,7 +149,7 @@ class LayoutUtility:
 
     def reset(self):
         """
-        Resets one-shot states (e.g. button clicks).
+        Resets one-shot states (e.g., button click flags).
         """
         for key in self._button_state:
             self._button_state[key] = False
