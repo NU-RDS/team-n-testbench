@@ -15,7 +15,7 @@ class DummyDock(ImmediateInspectorDock):
         )
 
         # Create a horizontal group with a button and toggle.
-        self.builder.begin_horizontal()
+        self.builder.begin_horizontal(boxed=True)
 
         if self.builder.button("Test Button", font_size=12):
             print("Test Button was pressed!")
