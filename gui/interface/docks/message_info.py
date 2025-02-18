@@ -23,7 +23,7 @@ class MessageHistoryDock(ImmediateInspectorDock):
             if show:
                 for field_name in proto.field_names():
                     field = proto.find_field(field_name).value()
-                    self.builder.begin_vertical()
+                    self.builder.begin_vertical(boxed=True)
                     self.builder.label(f"Field: {field_name}")
                     self.builder.label(f"Type: {field.type}")
                     self.builder.label(f"Size: {DataField.get_size_of_type(field.type)}")
