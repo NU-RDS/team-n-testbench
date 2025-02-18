@@ -30,8 +30,8 @@ class OpenGLWidget(QtOpenGL.QGLWidget):
         GL.glVertex3f(0.5, -0.5, 0.0)
         GL.glEnd()
 
-@dock("OpenGL Dock")
-class OpenGLDock(BaseDockWidget):
+@dock("Simulation")
+class SimulationDock(BaseDockWidget):
     def __init__(self, parent=None):
         super().__init__("OpenGL Dock", parent)
         self.main_widget = OpenGLWidget(self)

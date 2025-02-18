@@ -68,10 +68,15 @@ class MainWindow(QMainWindow):
 
     def load_workspace(self):
         """Load workspace and recreate docks before restoring window state."""
-        if not PathUtil.file_exists("workspace.json"):
-            return
         try:
-            with open(PathUtil.file("workspace.json"), "r") as file:
+            # check if the workspace file exists
+            workspace_path = PathUtil.file("workspace.json") if PathUtil.file_exists("workspace.json") else PathUtil.asset_file_path("def_workspace.json")
+            print(f"Loading workspace from {workspace_path}")
+            if not workspace_path:
+                print("No workspace file found.")
+                return
+
+            with open(workspace_path, "r") as file:
                 data = json.load(file)
 
             # Recreate the open docks
