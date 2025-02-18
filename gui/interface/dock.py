@@ -1,6 +1,7 @@
 from PyQt5 import QtWidgets, QtOpenGL, sip
 from PyQt5.QtWidgets import QMainWindow, QDockWidget, QWidget, QVBoxLayout, QLabel, QGridLayout
 from PyQt5.QtCore import Qt, QObjectCleanupHandler
+
 import pkgutil
 import importlib
 import interface.docks
@@ -16,7 +17,6 @@ class BaseDockWidget(QDockWidget):
             | QDockWidget.DockWidgetFloatable
             | QDockWidget.DockWidgetClosable
         )
-
     def show_dock(self, main_window, area=Qt.RightDockWidgetArea):
         """
         Instantiate the dock widget, add it to the provided main_window,

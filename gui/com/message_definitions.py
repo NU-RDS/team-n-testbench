@@ -37,7 +37,7 @@ class MessageDefinitions:
     
     @staticmethod
     def all_proto_ids():
-        return [proto.id for proto in MessageDefinitions.all_protos()]
+        return [proto.identifier() for proto in MessageDefinitions.all_protos()]
 
 
     @staticmethod

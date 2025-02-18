@@ -16,6 +16,8 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.setWindowTitle("Robocom")
         self.setGeometry(100, 100, 800, 600)
+        self.setDockNestingEnabled(True)
+        self.setDockOptions(QMainWindow.AllowNestedDocks | QMainWindow.AllowTabbedDocks)
         self.open_docks = {}  # Keep track of open dock widgets
         # Create a menu to add new frames dynamically.
         self.setup_menus()
@@ -40,6 +42,8 @@ class MainWindow(QMainWindow):
         # create a new dock widget
         instance = docking_class()
         instance.show_dock(self)
+        # set the title of the dock widget
+        instance.setWindowTitle(docking_name)
         # store the dock widget so we can save it later
         self.open_docks[docking_name] = instance
     
