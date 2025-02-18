@@ -8,6 +8,7 @@ class ConsoleDock(ImmediateInspectorDock):
         super().__init__(parent)
         self.lines = []  # list of console output lines
         self.command_input_field = None  # persistent QLineEdit for command input
+        self.force_input_focus = True  # flag to force focus on the input field
 
     def add_line(self, line):
         """Append a new line to the console output and mark for redraw."""
@@ -24,13 +25,16 @@ class ConsoleDock(ImmediateInspectorDock):
             # Here you could also call a command interpreter
         self.command_input_field.clear()
         self.set_dirty()
+        self.show()
 
     def draw_inspector(self):
         self.builder.start()
-
+        print("Drawing console inspector")
+        
         # Begin scrollable region for console output.
         self.builder.begin_scroll()
         for line in self.lines:
+            print(f"Drawing line: {line}")
             self.builder.label(line, font_style=FontStyle.NORMAL)
         self.builder.end_scroll()
 
@@ -49,5 +53,8 @@ class ConsoleDock(ImmediateInspectorDock):
 
         # Manually add the QLineEdit widget into the current layout.
         self.builder._current_layout.addWidget(self.command_input_field)
-
         self.builder.end_horizontal()
+
+        # If the force flag is set, reassign focus to the input field.
+        if self.force_input_focus and self.command_input_field is not None:
+            self.command_input_field.setFocus()
