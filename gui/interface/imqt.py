@@ -43,6 +43,7 @@ class LayoutUtility:
         self._button_state = {}  # Map: unique widget ID -> bool (one-shot click flag)
         self._toggle_state = {}  # Map: unique widget ID -> bool
         self._foldout_state = {} # Map: unique widget ID -> bool (expanded/collapsed)
+        self._toggle_group_state = {}  # Map: unique widget ID -> bool (group enabled/disabled)
 
         # Counter dictionary for generating unique keys.
         self._key_counter = {}
@@ -289,6 +290,14 @@ class LayoutUtility:
     # --------------------------------------------------------------------------
     # FOLDOUT HEADER GROUP (STATEFUL)
     # --------------------------------------------------------------------------
+    def _set_foldout_state(self, widget_id, value):
+        """
+        Internal helper to update the foldout's expanded/collapsed state.
+        """
+        self._foldout_state[widget_id] = value
+        self.dock.set_dirty()
+        self.dock.show()
+
     def begin_foldout_header_group(self, title, boxed=False, box_color=None):
         """
         Begins a foldout header group that spans the full width.
@@ -298,57 +307,41 @@ class LayoutUtility:
         :param title: The header title.
         :param boxed: If True, wraps the foldout in a box.
         :param box_color: Optional border color for the box.
-        :return: The QToolButton used as the foldout header.
+        :return: whether the foldout is expanded.
         """
-        # Generate a unique ID for the foldout, store a default of True if not present
         widget_id = self._get_key(title)
         if widget_id not in self._foldout_state:
             self._foldout_state[widget_id] = True
 
-        # Create a container for the entire foldout group.
-        container = QWidget()
+        # just make a button with a label
+        button = QPushButton(title)
+        button.setCheckable(True)
+        button.setChecked(self._foldout_state[widget_id])
+        apply_style(button, font_size=12)
+        button.clicked.connect(
+            lambda checked, wid=widget_id: self._set_foldout_state(wid, checked)
+        )
+
+        self._current_layout.addWidget(button)
+
         if boxed:
+            container = QWidget()
+            layout = QVBoxLayout()
+            container.setLayout(layout)
             computed_color = box_color if box_color else self._compute_box_color()
             container.setStyleSheet(
                 f"border: 1px solid {computed_color}; padding: 5px;"
             )
-        container_layout = QVBoxLayout()
-        container_layout.setContentsMargins(0, 0, 0, 0)
-        container.setLayout(container_layout)
+            self._layout_stack.append(layout)
+            self._current_layout = layout
+        else:
+            v_layout = QVBoxLayout()
+            self._current_layout.addLayout(v_layout)
+            self._layout_stack.append(v_layout)
+            self._current_layout = v_layout
+        
+        return self._foldout_state[widget_id]
 
-        # Create a toggle button that acts as the header.
-        header_button = QToolButton()
-        header_button.setText(title)
-        header_button.setCheckable(True)
-        header_button.setChecked(self._foldout_state[widget_id])
-        header_button.setArrowType(Qt.DownArrow if self._foldout_state[widget_id] else Qt.RightArrow)
-        header_button.setSizePolicy(
-            header_button.sizePolicy().Expanding, header_button.sizePolicy().Preferred
-        )
-        header_button.setStyleSheet("text-align: left; padding: 5px;")
-
-        # Create a container for the foldout's content.
-        content_container = QWidget()
-        content_layout = QVBoxLayout()
-        content_layout.setContentsMargins(5, 5, 5, 5)
-        content_container.setLayout(content_layout)
-        content_container.setVisible(self._foldout_state[widget_id])
-
-        # When the header is toggled, show/hide the content container and update state
-        def _on_foldout_toggled(checked, wid=widget_id):
-            self._set_foldout_state(wid, checked)
-            content_container.setVisible(checked)
-            header_button.setArrowType(Qt.DownArrow if checked else Qt.RightArrow)
-
-        header_button.toggled.connect(lambda checked: _on_foldout_toggled(checked, widget_id))
-
-        container_layout.addWidget(header_button)
-        container_layout.addWidget(content_container)
-        self._current_layout.addWidget(container)
-        # Push the content layout onto the stack so subsequent widgets are added there.
-        self._layout_stack.append(content_layout)
-        self._current_layout = content_layout
-        return header_button
 
     def end_foldout_header_group(self):
         """
