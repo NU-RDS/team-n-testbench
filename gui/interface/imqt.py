@@ -6,17 +6,15 @@ from PyQt5.QtWidgets import (
     QLabel,
     QScrollArea,
     QWidget,
-    QToolButton,
     QGroupBox,
     QSizePolicy,
+    QSpacerItem,
 )
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QGraphicsOpacityEffect
 
 
-def apply_style(
-    widget, text_color=None, bg_color=None, font_size=None, extra_styles=""
-):
+def apply_style(widget, text_color=None, bg_color=None, font_size=None, extra_styles=""):
     styles = []
     if text_color:
         styles.append(f"color: {text_color};")
@@ -44,9 +42,7 @@ class LayoutUtility:
         self._button_state = {}  # Map: unique widget ID -> bool (one-shot click flag)
         self._toggle_state = {}  # Map: unique widget ID -> bool
         self._foldout_state = {}  # Map: unique widget ID -> bool (expanded/collapsed)
-        self._toggle_group_state = (
-            {}
-        )  # Map: unique widget ID -> bool (group enabled/disabled)
+        self._toggle_group_state = {}  # Map: unique widget ID -> bool (group enabled/disabled)
 
         # Counter dictionary for generating unique keys.
         self._key_counter = {}
@@ -75,9 +71,7 @@ class LayoutUtility:
     # --------------------------------------------------------------------------
     # BUTTON
     # --------------------------------------------------------------------------
-    def button(
-        self, label, text_color=None, bg_color=None, font_size=None, extra_styles=""
-    ):
+    def button(self, label, text_color=None, bg_color=None, font_size=None, extra_styles=""):
         """
         Creates a new button each time.
         Returns True if the button was clicked (since the last call) then resets the flag.
@@ -104,15 +98,7 @@ class LayoutUtility:
     # --------------------------------------------------------------------------
     # TOGGLE
     # --------------------------------------------------------------------------
-    def toggle(
-        self,
-        label,
-        initial_value=False,
-        text_color=None,
-        bg_color=None,
-        font_size=None,
-        extra_styles="",
-    ):
+    def toggle(self, label, initial_value=False, text_color=None, bg_color=None, font_size=None, extra_styles=""):
         """
         Creates a new toggle (checkbox) each time.
         Returns the current boolean state.
@@ -124,9 +110,7 @@ class LayoutUtility:
         chk = QCheckBox(label)
         chk.setChecked(self._toggle_state[widget_id])
         apply_style(chk, text_color, bg_color, font_size, extra_styles)
-        chk.stateChanged.connect(
-            lambda state, wid=widget_id: self._set_toggle_state(wid, state)
-        )
+        chk.stateChanged.connect(lambda state, wid=widget_id: self._set_toggle_state(wid, state))
         self._current_layout.addWidget(chk)
         self.dock.set_dirty()
         return self._toggle_state[widget_id]
@@ -140,9 +124,7 @@ class LayoutUtility:
     # --------------------------------------------------------------------------
     # LABEL
     # --------------------------------------------------------------------------
-    def label(
-        self, text, text_color=None, bg_color=None, font_size=None, extra_styles=""
-    ):
+    def label(self, text, text_color=None, bg_color=None, font_size=None, extra_styles=""):
         """
         Creates a new label each time.
         """
@@ -176,15 +158,10 @@ class LayoutUtility:
         if boxed:
             container = QWidget()
             layout = QHBoxLayout()
-            if indent:
-                layout.setContentsMargins(indent, 0, 0, 0)
-            else:
-                layout.setContentsMargins(0, 0, 0, 0)
+            layout.setContentsMargins(indent if indent else 0, 0, 0, 0)
             container.setLayout(layout)
             computed_color = box_color if box_color else self._compute_box_color()
-            container.setStyleSheet(
-                f"border: 1px solid {computed_color}; padding: 5px;"
-            )
+            container.setStyleSheet(f"border: 1px solid {computed_color}; padding: 5px;")
             self._current_layout.addWidget(container)
             self._layout_stack.append(layout)
             self._current_layout = layout
@@ -213,15 +190,10 @@ class LayoutUtility:
         if boxed:
             container = QWidget()
             layout = QVBoxLayout()
-            if indent:
-                layout.setContentsMargins(indent, 0, 0, 0)
-            else:
-                layout.setContentsMargins(0, 0, 0, 0)
+            layout.setContentsMargins(indent if indent else 0, 0, 0, 0)
             container.setLayout(layout)
             computed_color = box_color if box_color else self._compute_box_color()
-            container.setStyleSheet(
-                f"border: 1px solid {computed_color}; padding: 5px;"
-            )
+            container.setStyleSheet(f"border: 1px solid {computed_color}; padding: 5px;")
             self._current_layout.addWidget(container)
             self._layout_stack.append(layout)
             self._current_layout = layout
@@ -333,18 +305,14 @@ class LayoutUtility:
         # Force the button to expand to full width and have a fixed, smaller height.
         button.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         button.setFixedHeight(20)
-        button.setStyleSheet(
-            "QPushButton { text-align: left; padding: 2px 5px; margin: 0px; }"
-        )
+        button.setStyleSheet("QPushButton { text-align: left; padding: 2px 5px; margin: 0px; }")
 
         def _on_foldout_toggled(checked, wid=widget_id):
             self._set_foldout_state(wid, checked)
             new_arrow = "v" if checked else ">"
             button.setText(f"{new_arrow} {title}")
 
-        button.clicked.connect(
-            lambda checked, wid=widget_id: _on_foldout_toggled(checked, wid)
-        )
+        button.clicked.connect(lambda checked, wid=widget_id: _on_foldout_toggled(checked, wid))
         self._current_layout.addWidget(button)
 
         # Create a container for the foldout's content.
@@ -353,9 +321,7 @@ class LayoutUtility:
             layout = QVBoxLayout()
             container.setLayout(layout)
             computed_color = box_color if box_color else self._compute_box_color()
-            container.setStyleSheet(
-                f"border: 1px solid {computed_color}; padding: 5px;"
-            )
+            container.setStyleSheet(f"border: 1px solid {computed_color}; padding: 5px;")
             self._layout_stack.append(layout)
             self._current_layout = layout
         else:
@@ -387,9 +353,7 @@ class LayoutUtility:
     # --------------------------------------------------------------------------
     # TOGGLE GROUP
     # --------------------------------------------------------------------------
-    def begin_toggle_group(
-        self, label, initial_state=True, boxed=False, box_color=None, indent=10
-    ):
+    def begin_toggle_group(self, label, initial_state=True, boxed=False, box_color=None, indent=10):
         """
         Begins a toggle group.
         Creates a vertical group with a header that can be toggled on/off.
@@ -409,9 +373,7 @@ class LayoutUtility:
         group_box.setLayout(group_layout)
         if boxed:
             computed_color = box_color if box_color else self._compute_box_color()
-            group_box.setStyleSheet(
-                f"border: 1px solid {computed_color}; padding: 5px;"
-            )
+            group_box.setStyleSheet(f"border: 1px solid {computed_color}; padding: 5px;")
         else:
             group_layout.setContentsMargins(indent, 0, 0, 0)
         self._current_layout.addWidget(group_box)
@@ -426,3 +388,30 @@ class LayoutUtility:
         if len(self._layout_stack) > 1:
             self._layout_stack.pop()
             self._current_layout = self._layout_stack[-1]
+
+    # --------------------------------------------------------------------------
+    # SPACE METHODS
+    # --------------------------------------------------------------------------
+    def space(self, size=10):
+        """
+        Adds a fixed space of 'size' pixels along the primary direction of the current layout.
+        """
+        if isinstance(self._current_layout, QVBoxLayout):
+            spacer = QSpacerItem(0, size, QSizePolicy.Fixed, QSizePolicy.Fixed)
+        elif isinstance(self._current_layout, QHBoxLayout):
+            spacer = QSpacerItem(size, 0, QSizePolicy.Fixed, QSizePolicy.Fixed)
+        else:
+            spacer = QSpacerItem(0, size, QSizePolicy.Fixed, QSizePolicy.Fixed)
+        self._current_layout.addItem(spacer)
+
+    def flexible_space(self):
+        """
+        Adds a flexible space that expands to fill the available space along the primary direction.
+        """
+        if isinstance(self._current_layout, QVBoxLayout):
+            spacer = QSpacerItem(0, 0, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        elif isinstance(self._current_layout, QHBoxLayout):
+            spacer = QSpacerItem(0, 0, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        else:
+            spacer = QSpacerItem(0, 0, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self._current_layout.addItem(spacer)

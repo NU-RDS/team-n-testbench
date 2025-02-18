@@ -23,10 +23,13 @@ class MessageHistoryDock(ImmediateInspectorDock):
             if show:
                 for field_name in proto.field_names():
                     field = proto.find_field(field_name).value()
+                    self.builder.begin_vertical()
                     self.builder.label(f"Field: {field_name}")
                     self.builder.label(f"Type: {field.type}")
                     self.builder.label(f"Size: {DataField.get_size_of_type(field.type)}")
                     self.builder.label(f"Offset: {field.offset}")
+                    self.builder.end_vertical()
+                    self.builder.space(2)
 
             self.builder.end_foldout_header_group()
 
