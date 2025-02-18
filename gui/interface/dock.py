@@ -43,22 +43,16 @@ class ImmediateInspectorDock(BaseDockWidget):
         Rebuild the inspector UI if it is marked as dirty.
         This simulates an immediate-mode GUI where the UI is regenerated when needed.
         """
-        print("ImmediateInspectorDock::show()")
         if not self.is_dirty:
             # No update needed if not dirty.
             super().show()  # Still show the dock
             return
 
         print("Redrawing inspector")
-        
-        # --- Option 1: Reparent the existing layout to a temporary widget ---
-        # Create a temporary widget and reparent the current layout.
         temp = QWidget()
         temp.setLayout(self.layout)
         # Schedule the temporary widget for deletion. This will remove the old layout and its children.
         temp.deleteLater()
-        
-        # --- Option 2: Use a QObjectCleanupHandler to ensure deletion of the old layout ---
         cleanup_handler = QObjectCleanupHandler()
         cleanup_handler.add(self.layout)
 
@@ -69,8 +63,6 @@ class ImmediateInspectorDock(BaseDockWidget):
 
         self.main_widget.update()
         self.update()
-
-        print("Rebuilding inspector UI...")
         self.draw_inspector()
         self.is_dirty = False
         super().show()
@@ -79,7 +71,6 @@ class ImmediateInspectorDock(BaseDockWidget):
         """
         Mark the inspector as dirty so that its UI will be rebuilt.
         """
-        print("Setting dirty!")
         self.is_dirty = True
 
     def draw_inspector(self):

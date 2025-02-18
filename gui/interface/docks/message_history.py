@@ -1,14 +1,13 @@
 from interface.dock import dock, ImmediateInspectorDock
 from rdscom.rdscom import (Message, CommunicationChannel)
-from gui import ApplicationContext
+from app_context import ApplicationContext
 
 @dock("Message History")
 class MessageHistoryDock(ImmediateInspectorDock):
     def __init__(self, parent=None):
         super().__init__(parent)
-
-        context = ApplicationContext.get_instance()
-        context.mcu_com.add_receive_callback(self.update_message_history)
+        print("MessageHistoryDock init")
+        ApplicationContext.mcu_com.add_receive_callback(self.update_message_history)
         self.message_history = []
 
     def draw_inspector(self):
