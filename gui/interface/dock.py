@@ -1,6 +1,6 @@
-from PyQt5 import QtWidgets, QtOpenGL, sip
+
 from PyQt5.QtWidgets import QMainWindow, QDockWidget, QWidget, QVBoxLayout, QLabel, QGridLayout
-from PyQt5.QtCore import Qt, QObjectCleanupHandler
+from PyQt5.QtCore import Qt, QObjectCleanupHandler, QByteArray
 
 import pkgutil
 import importlib
