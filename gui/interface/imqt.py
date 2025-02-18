@@ -57,7 +57,12 @@ def apply_style(
 
     # any extra CSS
     if extra_styles:
-        styles.append(extra_styles)
+        # if this is just a string, append it as-is
+        if isinstance(extra_styles, str):
+            styles.append(extra_styles)
+        # if it's a list, join the items with a space
+        elif isinstance(extra_styles, list):
+            styles.append(" ".join(extra_styles))
 
     widget.setStyleSheet(" ".join(styles))
 

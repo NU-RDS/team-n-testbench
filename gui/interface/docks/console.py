@@ -1,6 +1,7 @@
 from PyQt5.QtWidgets import QLineEdit
 from interface.dock import dock, ImmediateInspectorDock
 from interface.imqt import LayoutUtility, FontStyle
+from PyQt5.QtCore import Qt
 
 @dock("Console")
 class ConsoleDock(ImmediateInspectorDock):
@@ -27,16 +28,32 @@ class ConsoleDock(ImmediateInspectorDock):
         self.set_dirty()
         self.show()
 
+    def draw_console(self):
+        # draw the console UI
+        # so we combine all of the lien into a single string with \n as separator
+        console_text = "\n".join(self.lines)
+
+        # Begin scrollable region for console output.
+        self.builder.begin_scroll()
+
+        styles = [
+            "font-family: 'Courier New', monospace;",  # Monospaced font.
+            "font-size: 12px;",                        # Reasonable font size.
+            "padding: 10px;",                          # Some internal padding.
+            "border: 1px solid #333;",                 # A dark border.
+            "white-space: pre-wrap;"                   # Preserve line breaks.
+        ]
+        # and we draw the label with a slightly darker background color, make it transparent
+        label = self.builder.label(console_text, bg_color="rgba(0, 0, 0, 0.1)", extra_styles=styles)
+        label.setAlignment(Qt.AlignBottom | Qt.AlignLeft)
+        self.builder.end_scroll()
+
     def draw_inspector(self):
         self.builder.start()
         print("Drawing console inspector")
-        
-        # Begin scrollable region for console output.
-        self.builder.begin_scroll()
-        for line in self.lines:
-            print(f"Drawing line: {line}")
-            self.builder.label(line, font_style=FontStyle.NORMAL)
-        self.builder.end_scroll()
+    
+        # Draw the console output.
+        self.draw_console()
 
         # Horizontal grouping for input controls.
         self.builder.begin_horizontal()
