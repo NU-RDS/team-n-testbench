@@ -7,6 +7,8 @@ from util.path import PathUtil
 from interface.dock import DockRegistry
 import json
 
+import qtmodern.styles
+import qtmodern.windows
 
 
 # Our main window contains the central OpenGL widget and several dockable frames.
@@ -102,8 +104,8 @@ class AppInterface:
         self.app.setStyleSheet(PathUtil.asset_file_contents("styles/gui.qss"))
 
         # Instantiate our MainWindow with integrated dockable frames.
-        self.mainWin = MainWindow()
-        self.mainWin.show()
+        self.main_win = MainWindow()
+        self.main_win.show()
 
     def tick(self):
         # Process events; useful if you have a larger system loop.
