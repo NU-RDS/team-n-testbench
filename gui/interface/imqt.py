@@ -9,6 +9,7 @@ from PyQt5.QtWidgets import (
     QGroupBox,
     QSizePolicy,
     QSpacerItem,
+    QFrame,
 )
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QGraphicsOpacityEffect
@@ -39,26 +40,23 @@ class LayoutUtility:
         self._current_layout = self.dock.layout
 
         # Persistent state dictionaries.
-        self._button_state = {}  # Map: unique widget ID -> bool (one-shot click flag)
-        self._toggle_state = {}  # Map: unique widget ID -> bool
-        self._foldout_state = {}  # Map: unique widget ID -> bool (expanded/collapsed)
-        self._toggle_group_state = {}  # Map: unique widget ID -> bool (group enabled/disabled)
+        self._button_state = {}      # Map: unique widget ID -> bool (one-shot click)
+        self._toggle_state = {}      # Map: unique widget ID -> bool
+        self._foldout_state = {}     # Map: unique widget ID -> bool (expanded/collapsed)
+        self._toggle_group_state = {}# Map: unique widget ID -> bool (group enabled/disabled)
 
         # Counter dictionary for generating unique keys.
         self._key_counter = {}
 
     def start(self):
-        """
-        Resets the key counters. Call this at the beginning of each inspector update.
-        """
+        """Resets the key counters at the beginning of each inspector update."""
         self._key_counter = {}
-        # Reset the layout stack to start with the main layout.
         self._layout_stack = [self.dock.layout]
         self._current_layout = self.dock.layout
 
     def _get_key(self, base_key):
         """
-        Utility function that generates a unique widget ID based on the base_key.
+        Generates a unique widget ID based on the base_key.
         For the first occurrence it returns base_key, then appends a number for subsequent ones.
         """
         if base_key not in self._key_counter:
@@ -109,7 +107,7 @@ class LayoutUtility:
 
     def _set_toggle_state(self, widget_id, state):
         print(f"Setting toggle state: {widget_id} -> {state}")
-        self._toggle_state[widget_id] = state == Qt.Checked
+        self._toggle_state[widget_id] = (state == Qt.Checked)
         self.dock.set_dirty()
         self.dock.show()
 
@@ -128,26 +126,33 @@ class LayoutUtility:
     # UTILITY
     # --------------------------------------------------------------------------
     def _compute_box_color(self):
+        """
+        Compute a border color based on the current depth in the layout stack.
+        """
         depth = len(self._layout_stack) - 1
         value = max(0, 220 - depth * 10)
         return f"rgb({value}, {value}, {value})"
 
     def _create_boxed_container(self, layout_class, indent=0, box_color=None):
-        container = QWidget()
-        # Create a unique object name for this container.
-        unique_name = "boxedContainer_" + self._get_key("boxed")
-        print(f"Unique name: {unique_name}")
-        container.setObjectName(unique_name)
-        layout = layout_class()
-        layout.setContentsMargins(indent if indent else 0, 0, 0, 0)
-        container.setLayout(layout)
+        """
+        Create a QFrame-based container with a simple box outline.
+        """
+        frame = QFrame()
+        frame.setFrameShape(QFrame.Box)
+        frame.setFrameShadow(QFrame.Plain)
+        frame.setLineWidth(1)
+
+        frame_id = self._get_key("box")
+
         computed_color = box_color if box_color else self._compute_box_color()
-        # Only apply border to the container, not its children.
-        container.setStyleSheet(
-            f"QWidget#{unique_name} {{ border: 1px solid {computed_color}; padding: 5px; }} "
-            f"QWidget#{unique_name} * {{ border: none; }}"
-        )
-        return container, layout
+
+        frame.setObjectName(frame_id)
+        frame.setStyleSheet(f"QFrame#{frame_id} {{ border: 1px solid {computed_color}; padding: 5px; }}")
+
+        layout = layout_class()
+        layout.setContentsMargins(indent, 0, 0, 0)
+        frame.setLayout(layout)
+        return frame, layout
 
     # --------------------------------------------------------------------------
     # GROUPING METHODS (WITH OPTIONAL BOXING AND INDENT)
@@ -235,7 +240,7 @@ class LayoutUtility:
     # --------------------------------------------------------------------------
     # FOLDOUT HEADER GROUP (STATEFUL) WITH INDENT OPTION USING PUSHBUTTON
     # --------------------------------------------------------------------------
-    def begin_foldout_header_group(self, title, boxed=False, box_color=None, indent=10):
+    def begin_foldout_header_group(self, title, boxed=False, box_color=None, indent=0):
         widget_id = self._get_key(title)
         if widget_id not in self._foldout_state:
             self._foldout_state[widget_id] = True
@@ -253,8 +258,8 @@ class LayoutUtility:
 
         if boxed:
             container, layout = self._create_boxed_container(QVBoxLayout, indent, box_color)
-            self._layout_stack.append(layout)
             self._current_layout.addWidget(container)
+            self._layout_stack.append(layout)
             self._current_layout = layout
         else:
             v_layout = QVBoxLayout()
@@ -290,14 +295,9 @@ class LayoutUtility:
         group_layout = QVBoxLayout()
         group_box.setLayout(group_layout)
         if boxed:
-            # Use a unique object name for the group box so the border applies only to it.
-            unique_name = "boxedGroup_" + self._get_key("group")
-            group_box.setObjectName(unique_name)
+            # If you prefer QFrame here, you could do so similarly.
             computed_color = box_color if box_color else self._compute_box_color()
-            group_box.setStyleSheet(
-                f"QGroupBox#{unique_name} {{ border: 1px solid {computed_color}; padding: 5px; }} "
-                f"QGroupBox#{unique_name} * {{ border: none; }}"
-            )
+            group_box.setStyleSheet(f"QGroupBox {{ border: 1px solid {computed_color}; padding: 5px; }}")
         else:
             group_layout.setContentsMargins(indent, 0, 0, 0)
         self._current_layout.addWidget(group_box)
