@@ -7,15 +7,14 @@ from util.path import PathUtil
 from interface.dock import DockRegistry
 import json
 
-import qtmodern.styles
-import qtmodern.windows
+from qt_material import apply_stylesheet
 
 
 # Our main window contains the central OpenGL widget and several dockable frames.
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("N-Tendon Robotic Finger Control GUI")
+        self.setWindowTitle("Robocom")
         self.setGeometry(100, 100, 800, 600)
         self.open_docks = {}  # Keep track of open dock widgets
         # Create a menu to add new frames dynamically.
@@ -99,10 +98,8 @@ class MainWindow(QMainWindow):
 class AppInterface:
     def __init__(self):
         self.app = QtWidgets.QApplication(sys.argv)
-
-        # Apply a modern dark-themed stylesheet.
-        self.app.setStyleSheet(PathUtil.asset_file_contents("styles/gui.qss"))
-
+        
+        apply_stylesheet(self.app, theme='light_purple.xml', invert_secondary=True)
         # Instantiate our MainWindow with integrated dockable frames.
         self.main_win = MainWindow()
         self.main_win.show()
