@@ -104,7 +104,7 @@ class AppInterface:
         self.app = QtWidgets.QApplication(sys.argv)
         # (Optional) apply a global stylesheet
         # from qt_material import apply_stylesheet
-        apply_stylesheet(self.app, theme='light_purple.xml', invert_secondary=True)
+        apply_stylesheet(self.app, theme='dark_amber.xml', invert_secondary=True)
         self.main_win = MainWindow()
         self.main_win.show()
 

@@ -12,7 +12,6 @@ class MessageHistoryDock(ImmediateInspectorDock):
         self.message_history = []
 
     def draw_label(self, label, value):
-        print(f"{label}: {value}")
         self.builder.begin_horizontal()
         self.builder.label(label, font_style=FontStyle.BOLD)
         value_str = str(value)
@@ -40,7 +39,6 @@ class MessageHistoryDock(ImmediateInspectorDock):
                     self.draw_label("Field Offset", field.offset)
 
                     self.builder.end_vertical()
-                    self.builder.space(2)
 
             self.builder.end_foldout_header_group()
 
