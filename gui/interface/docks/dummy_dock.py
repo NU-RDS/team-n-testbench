@@ -1,4 +1,3 @@
-from PyQt5.QtWidgets import QLabel
 from interface.dock import dock, ImmediateInspectorDock
 
 @dock("Dummy Dock")

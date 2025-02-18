@@ -15,16 +15,24 @@ from interface.app import AppInterface
 DEFAULT_PORT = "COM4" if sys.platform == "win32" else "/dev/ttyACM0"
 
 class ApplicationContext:
+    mcu_com : MCUCom
+    app_interface : AppInterface
+    _instance : "ApplicationContext" = None
+
     @staticmethod
-    def get_instance():
-        if not hasattr(ApplicationContext, "instance"):
-            # throw an error
-            raise Exception("ApplicationContext not initialized")
-        return ApplicationContext.instance
+    def get_instance() -> "ApplicationContext":
+        if ApplicationContext._instance is None:
+            raise Exception("Application context not initialized")
+        return ApplicationContext._instance
+    
+    @staticmethod
+    def set_instance(instance : "ApplicationContext"):
+        if ApplicationContext._instance is not None:
+            raise Exception("Application context already initialized")
+        ApplicationContext._instance = instance
     
     def __init__(self, args):
         self.mcu_com = MCUCom(args.port, args.baudrate)
-        self.instance = self
         self.app_interface = AppInterface()
 
     def tick(self):
@@ -39,9 +47,11 @@ def main():
 
     args = parser.parse_args()
     app_context = ApplicationContext(args)
+    ApplicationContext.set_instance(app_context)
+
 
     while True:
-        app_context.instance.tick()
+        ApplicationContext.get_instance().tick()
 
 
 if __name__ == "__main__":

@@ -1,6 +1,6 @@
-from PyQt5 import QtWidgets, QtOpenGL
-from PyQt5.QtWidgets import QMainWindow, QDockWidget, QWidget, QVBoxLayout, QLabel
-from PyQt5.QtCore import Qt
+from PyQt5 import QtWidgets, QtOpenGL, sip
+from PyQt5.QtWidgets import QMainWindow, QDockWidget, QWidget, QVBoxLayout, QLabel, QGridLayout
+from PyQt5.QtCore import Qt, QObjectCleanupHandler
 import pkgutil
 import importlib
 import interface.docks
@@ -35,7 +35,7 @@ class ImmediateInspectorDock(BaseDockWidget):
         self.setWidget(self.main_widget)
         # Initially mark the inspector as dirty so it builds its UI.
         self.is_dirty = True
-                # Create a persistent LayoutUtility instance for this dock.
+        # Create a persistent LayoutUtility instance for this dock.
         self.builder = LayoutUtility(self)
 
     def show(self):
@@ -48,13 +48,27 @@ class ImmediateInspectorDock(BaseDockWidget):
             # No update needed if not dirty.
             super().show()  # Still show the dock
             return
-        
+
         print("Redrawing inspector")
-        # Clear the current layout.
-        while self.layout.count():
-            child = self.layout.takeAt(0)
-            if child.widget():
-                child.widget().deleteLater()
+        
+        # --- Option 1: Reparent the existing layout to a temporary widget ---
+        # Create a temporary widget and reparent the current layout.
+        temp = QWidget()
+        temp.setLayout(self.layout)
+        # Schedule the temporary widget for deletion. This will remove the old layout and its children.
+        temp.deleteLater()
+        
+        # --- Option 2: Use a QObjectCleanupHandler to ensure deletion of the old layout ---
+        cleanup_handler = QObjectCleanupHandler()
+        cleanup_handler.add(self.layout)
+
+        # Create a new layout for our main widget.
+        new_layout = QVBoxLayout(self.main_widget)
+        self.main_widget.setLayout(new_layout)
+        self.layout = new_layout
+
+        self.main_widget.update()
+        self.update()
 
         print("Rebuilding inspector UI...")
         self.draw_inspector()
@@ -79,18 +93,16 @@ class ImmediateInspectorDock(BaseDockWidget):
 
 def dock(name):
     """
-    A decorator that adds a dock widget to the DockRegistery.
+    A decorator that adds a dock widget to the DockRegistry.
     """
-
     def decorator(cls):
         DockRegistry.add_dock(name, cls)
         return cls
-
     return decorator
 
 
 class DockRegistry:
-    docks = {}  # global to hold all dock widgets by name
+    docks = {}  # Global to hold all dock widgets by name
 
     @staticmethod
     def add_dock(name, cls):
