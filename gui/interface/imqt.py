@@ -8,6 +8,7 @@ from PyQt5.QtWidgets import (
     QWidget,
     QToolButton,
     QGroupBox,
+    QSizePolicy,
 )
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QGraphicsOpacityEffect
@@ -42,8 +43,10 @@ class LayoutUtility:
         # Persistent state dictionaries.
         self._button_state = {}  # Map: unique widget ID -> bool (one-shot click flag)
         self._toggle_state = {}  # Map: unique widget ID -> bool
-        self._foldout_state = {} # Map: unique widget ID -> bool (expanded/collapsed)
-        self._toggle_group_state = {}  # Map: unique widget ID -> bool (group enabled/disabled)
+        self._foldout_state = {}  # Map: unique widget ID -> bool (expanded/collapsed)
+        self._toggle_group_state = (
+            {}
+        )  # Map: unique widget ID -> bool (group enabled/disabled)
 
         # Counter dictionary for generating unique keys.
         self._key_counter = {}
@@ -162,16 +165,21 @@ class LayoutUtility:
         return f"rgb({value}, {value}, {value})"
 
     # --------------------------------------------------------------------------
-    # GROUPING METHODS (WITH OPTIONAL BOXING)
+    # GROUPING METHODS (WITH OPTIONAL BOXING AND INDENT)
     # --------------------------------------------------------------------------
-    def begin_horizontal(self, boxed=False, box_color=None):
+    def begin_horizontal(self, boxed=False, box_color=None, indent=0):
         """
         Begins a horizontal grouping.
         If boxed is True, wraps the group in a container with a border.
+        Optionally indents the group (by setting the left margin).
         """
         if boxed:
             container = QWidget()
             layout = QHBoxLayout()
+            if indent:
+                layout.setContentsMargins(indent, 0, 0, 0)
+            else:
+                layout.setContentsMargins(0, 0, 0, 0)
             container.setLayout(layout)
             computed_color = box_color if box_color else self._compute_box_color()
             container.setStyleSheet(
@@ -182,6 +190,8 @@ class LayoutUtility:
             self._current_layout = layout
         else:
             h_layout = QHBoxLayout()
+            if indent:
+                h_layout.setContentsMargins(indent, 0, 0, 0)
             self._current_layout.addLayout(h_layout)
             self._layout_stack.append(h_layout)
             self._current_layout = h_layout
@@ -194,14 +204,19 @@ class LayoutUtility:
             self._layout_stack.pop()
             self._current_layout = self._layout_stack[-1]
 
-    def begin_vertical(self, boxed=False, box_color=None):
+    def begin_vertical(self, boxed=False, box_color=None, indent=0):
         """
         Begins a vertical grouping.
         If boxed is True, wraps the group in a container with a border.
+        Optionally indents the group (by setting the left margin).
         """
         if boxed:
             container = QWidget()
             layout = QVBoxLayout()
+            if indent:
+                layout.setContentsMargins(indent, 0, 0, 0)
+            else:
+                layout.setContentsMargins(0, 0, 0, 0)
             container.setLayout(layout)
             computed_color = box_color if box_color else self._compute_box_color()
             container.setStyleSheet(
@@ -212,6 +227,8 @@ class LayoutUtility:
             self._current_layout = layout
         else:
             v_layout = QVBoxLayout()
+            if indent:
+                v_layout.setContentsMargins(indent, 0, 0, 0)
             self._current_layout.addLayout(v_layout)
             self._layout_stack.append(v_layout)
             self._current_layout = v_layout
@@ -288,42 +305,49 @@ class LayoutUtility:
             self._current_layout = self._layout_stack[-1]
 
     # --------------------------------------------------------------------------
-    # FOLDOUT HEADER GROUP (STATEFUL)
+    # FOLDOUT HEADER GROUP (STATEFUL) WITH INDENT OPTION USING PUSHBUTTON
     # --------------------------------------------------------------------------
-    def _set_foldout_state(self, widget_id, value):
-        """
-        Internal helper to update the foldout's expanded/collapsed state.
-        """
-        self._foldout_state[widget_id] = value
-        self.dock.set_dirty()
-        self.dock.show()
-
-    def begin_foldout_header_group(self, title, boxed=False, box_color=None):
+    def begin_foldout_header_group(self, title, boxed=False, box_color=None, indent=10):
         """
         Begins a foldout header group that spans the full width.
-        The header is implemented as a toggle button with special styling,
-        and we store expanded/collapsed state in _foldout_state.
+        The header is implemented as a checkable QPushButton with a prefixed arrow.
+        The state (expanded/collapsed) is stored in _foldout_state.
+        Optionally indents the content of the group.
 
         :param title: The header title.
         :param boxed: If True, wraps the foldout in a box.
         :param box_color: Optional border color for the box.
-        :return: whether the foldout is expanded.
+        :param indent: The left margin (indent) for the content inside the foldout.
+        :return: The current expanded state (True if expanded).
         """
         widget_id = self._get_key(title)
         if widget_id not in self._foldout_state:
             self._foldout_state[widget_id] = True
 
-        # just make a button with a label
-        button = QPushButton(title)
+        # Create a checkable QPushButton to act as the header.
+        button = QPushButton()
         button.setCheckable(True)
         button.setChecked(self._foldout_state[widget_id])
-        apply_style(button, font_size=12)
-        button.clicked.connect(
-            lambda checked, wid=widget_id: self._set_foldout_state(wid, checked)
+        arrow = "v" if self._foldout_state[widget_id] else ">"
+        button.setText(f"{arrow} {title}")
+        # Force the button to expand to full width and have a fixed, smaller height.
+        button.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        button.setFixedHeight(20)
+        button.setStyleSheet(
+            "QPushButton { text-align: left; padding: 2px 5px; margin: 0px; }"
         )
 
+        def _on_foldout_toggled(checked, wid=widget_id):
+            self._set_foldout_state(wid, checked)
+            new_arrow = "v" if checked else ">"
+            button.setText(f"{new_arrow} {title}")
+
+        button.clicked.connect(
+            lambda checked, wid=widget_id: _on_foldout_toggled(checked, wid)
+        )
         self._current_layout.addWidget(button)
 
+        # Create a container for the foldout's content.
         if boxed:
             container = QWidget()
             layout = QVBoxLayout()
@@ -336,12 +360,13 @@ class LayoutUtility:
             self._current_layout = layout
         else:
             v_layout = QVBoxLayout()
+            # Set a left margin for indentation.
+            v_layout.setContentsMargins(indent, 0, 0, 0)
             self._current_layout.addLayout(v_layout)
             self._layout_stack.append(v_layout)
             self._current_layout = v_layout
-        
-        return self._foldout_state[widget_id]
 
+        return self._foldout_state[widget_id]
 
     def end_foldout_header_group(self):
         """
@@ -363,16 +388,18 @@ class LayoutUtility:
     # TOGGLE GROUP
     # --------------------------------------------------------------------------
     def begin_toggle_group(
-        self, label, initial_state=True, boxed=False, box_color=None
+        self, label, initial_state=True, boxed=False, box_color=None, indent=10
     ):
         """
         Begins a toggle group.
-        Creates a vertical group with a nice little header that can be toggled on/off.
+        Creates a vertical group with a header that can be toggled on/off.
+        Optionally wraps the group in a border and indents the content.
 
-        :param label: The label to display in the group header.
+        :param label: The label for the toggle group.
         :param initial_state: Whether the group is initially enabled.
-        :param boxed: If True, apply a border to the group.
+        :param boxed: If True, applies a border to the group.
         :param box_color: Optional border color.
+        :param indent: Left margin (indent) for the group's content.
         :return: The QGroupBox created.
         """
         group_box = QGroupBox(label)
@@ -385,6 +412,8 @@ class LayoutUtility:
             group_box.setStyleSheet(
                 f"border: 1px solid {computed_color}; padding: 5px;"
             )
+        else:
+            group_layout.setContentsMargins(indent, 0, 0, 0)
         self._current_layout.addWidget(group_box)
         self._layout_stack.append(group_layout)
         self._current_layout = group_layout
