@@ -1,3 +1,4 @@
+from enum import Enum
 from PyQt5.QtWidgets import (
     QVBoxLayout,
     QHBoxLayout,
@@ -15,16 +16,49 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QGraphicsOpacityEffect
 
 
-def apply_style(widget, text_color=None, bg_color=None, font_size=None, extra_styles=""):
+class FontStyle(Enum):
+    NORMAL = 0
+    BOLD = 1
+    ITALIC = 2
+    BOLD_ITALIC = 3
+
+
+def apply_style(
+    widget,
+    text_color=None,
+    bg_color=None,
+    font_size=None,
+    extra_styles="",
+    font_style=FontStyle.NORMAL
+):
+    """
+    Applies the given style options to 'widget'.
+    Now supports bold, italic, or bold+italic via 'font_style'.
+    """
     styles = []
+
+    # text color
     if text_color:
         styles.append(f"color: {text_color};")
+
+    # background color
     if bg_color:
         styles.append(f"background-color: {bg_color};")
+
+    # font size
     if font_size:
         styles.append(f"font-size: {font_size}px;")
+
+    # font style
+    if font_style in (FontStyle.BOLD, FontStyle.BOLD_ITALIC):
+        styles.append("font-weight: bold;")
+    if font_style in (FontStyle.ITALIC, FontStyle.BOLD_ITALIC):
+        styles.append("font-style: italic;")
+
+    # any extra CSS
     if extra_styles:
         styles.append(extra_styles)
+
     widget.setStyleSheet(" ".join(styles))
 
 
@@ -32,18 +66,16 @@ class LayoutUtility:
     def __init__(self, imdock):
         """
         Initialize with an ImmediateInspectorDock (or similar) instance.
-        This builder does not cache widget pointers—each call creates new widgets.
-        Persistent state (for buttons, toggles, etc.) is maintained using unique keys.
         """
         self.dock = imdock
         self._layout_stack = [self.dock.layout]
         self._current_layout = self.dock.layout
 
         # Persistent state dictionaries.
-        self._button_state = {}      # Map: unique widget ID -> bool (one-shot click)
-        self._toggle_state = {}      # Map: unique widget ID -> bool
-        self._foldout_state = {}     # Map: unique widget ID -> bool (expanded/collapsed)
-        self._toggle_group_state = {}# Map: unique widget ID -> bool (group enabled/disabled)
+        self._button_state = {}
+        self._toggle_state = {}
+        self._foldout_state = {}
+        self._toggle_group_state = {}
 
         # Counter dictionary for generating unique keys.
         self._key_counter = {}
@@ -56,7 +88,7 @@ class LayoutUtility:
 
     def _get_key(self, base_key):
         """
-        Generates a unique widget ID based on the base_key.
+        Generates a unique widget ID based on base_key.
         For the first occurrence it returns base_key, then appends a number for subsequent ones.
         """
         if base_key not in self._key_counter:
@@ -81,7 +113,7 @@ class LayoutUtility:
         self.dock.set_dirty()
 
         was_clicked = self._button_state[widget_id]
-        self._button_state[widget_id] = False  # Reset one-shot flag
+        self._button_state[widget_id] = False
         return was_clicked
 
     def _set_button_state(self, widget_id, value):
@@ -106,18 +138,30 @@ class LayoutUtility:
         return self._toggle_state[widget_id]
 
     def _set_toggle_state(self, widget_id, state):
-        print(f"Setting toggle state: {widget_id} -> {state}")
         self._toggle_state[widget_id] = (state == Qt.Checked)
         self.dock.set_dirty()
         self.dock.show()
 
     # --------------------------------------------------------------------------
-    # LABEL
+    # LABEL (with optional FontStyle)
     # --------------------------------------------------------------------------
-    def label(self, text, text_color=None, bg_color=None, font_size=None, extra_styles=""):
+    def label(
+        self,
+        text,
+        text_color=None,
+        bg_color=None,
+        font_size=None,
+        extra_styles="",
+        font_style=FontStyle.NORMAL
+    ):
+        """
+        Creates a new label each time. You can specify font_style as:
+        FontStyle.NORMAL, FontStyle.BOLD, FontStyle.ITALIC, or FontStyle.BOLD_ITALIC
+        """
         widget_id = self._get_key(text)
         lbl = QLabel(text)
-        apply_style(lbl, text_color, bg_color, font_size, extra_styles)
+        # Pass 'font_style' into apply_style
+        apply_style(lbl, text_color, bg_color, font_size, extra_styles, font_style=font_style)
         self._current_layout.addWidget(lbl)
         self.dock.set_dirty()
         return lbl
@@ -126,27 +170,20 @@ class LayoutUtility:
     # UTILITY
     # --------------------------------------------------------------------------
     def _compute_box_color(self):
-        """
-        Compute a border color based on the current depth in the layout stack.
-        """
         depth = len(self._layout_stack) - 1
         value = max(0, 220 - depth * 10)
         return f"rgb({value}, {value}, {value})"
 
     def _create_boxed_container(self, layout_class, indent=0, box_color=None):
-        """
-        Create a QFrame-based container with a simple box outline.
-        """
         frame = QFrame()
         frame.setFrameShape(QFrame.Box)
         frame.setFrameShadow(QFrame.Plain)
         frame.setLineWidth(1)
 
         frame_id = self._get_key("box")
-
         computed_color = box_color if box_color else self._compute_box_color()
-
         frame.setObjectName(frame_id)
+        # Only the QFrame gets the border, children are unaffected
         frame.setStyleSheet(f"QFrame#{frame_id} {{ border: 1px solid {computed_color}; padding: 5px; }}")
 
         layout = layout_class()
@@ -238,7 +275,7 @@ class LayoutUtility:
             self._current_layout = self._layout_stack[-1]
 
     # --------------------------------------------------------------------------
-    # FOLDOUT HEADER GROUP (STATEFUL) WITH INDENT OPTION USING PUSHBUTTON
+    # FOLDOUT HEADER GROUP (STATEFUL) USING PUSHBUTTON
     # --------------------------------------------------------------------------
     def begin_foldout_header_group(self, title, boxed=False, box_color=None, indent=0):
         widget_id = self._get_key(title)
@@ -253,7 +290,13 @@ class LayoutUtility:
         button.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         button.setFixedHeight(20)
         button.setStyleSheet("QPushButton { text-align: left; padding: 2px 5px; margin: 0px; }")
-        button.clicked.connect(lambda checked, wid=widget_id: self._on_foldout_toggled(checked, wid, title, button))
+
+        def _on_foldout_toggled(checked, wid=widget_id):
+            self._set_foldout_state(wid, checked)
+            new_arrow = "v" if checked else ">"
+            button.setText(f"{new_arrow} {title}")
+
+        button.clicked.connect(lambda checked, wid=widget_id: _on_foldout_toggled(checked, wid))
         self._current_layout.addWidget(button)
 
         if boxed:
@@ -270,20 +313,15 @@ class LayoutUtility:
 
         return self._foldout_state[widget_id]
 
-    def _on_foldout_toggled(self, checked, widget_id, title, button):
-        self._set_foldout_state(widget_id, checked)
-        new_arrow = "v" if checked else ">"
-        button.setText(f"{new_arrow} {title}")
+    def _set_foldout_state(self, widget_id, value):
+        self._foldout_state[widget_id] = value
+        self.dock.set_dirty()
+        self.dock.show()
 
     def end_foldout_header_group(self):
         if len(self._layout_stack) > 1:
             self._layout_stack.pop()
             self._current_layout = self._layout_stack[-1]
-
-    def _set_foldout_state(self, widget_id, value):
-        self._foldout_state[widget_id] = value
-        self.dock.set_dirty()
-        self.dock.show()
 
     # --------------------------------------------------------------------------
     # TOGGLE GROUP
@@ -295,9 +333,10 @@ class LayoutUtility:
         group_layout = QVBoxLayout()
         group_box.setLayout(group_layout)
         if boxed:
-            # If you prefer QFrame here, you could do so similarly.
             computed_color = box_color if box_color else self._compute_box_color()
-            group_box.setStyleSheet(f"QGroupBox {{ border: 1px solid {computed_color}; padding: 5px; }}")
+            group_box.setStyleSheet(
+                f"QGroupBox {{ border: 1px solid {computed_color}; padding: 5px; }}"
+            )
         else:
             group_layout.setContentsMargins(indent, 0, 0, 0)
         self._current_layout.addWidget(group_box)
@@ -311,7 +350,7 @@ class LayoutUtility:
             self._current_layout = self._layout_stack[-1]
 
     # --------------------------------------------------------------------------
-    # SPACE METHODS (Like Unity's GUILayout.Space and FlexibleSpace)
+    # SPACE METHODS (Unity-like GUILayout.Space and FlexibleSpace)
     # --------------------------------------------------------------------------
     def space(self, size=10):
         if isinstance(self._current_layout, QVBoxLayout):
