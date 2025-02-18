@@ -3,7 +3,9 @@ from PyQt5.QtWidgets import (
     QHBoxLayout,
     QPushButton,
     QCheckBox,
-    QLabel
+    QLabel,
+    QScrollArea,
+    QWidget
 )
 from PyQt5.QtCore import Qt
 
@@ -150,3 +152,34 @@ class LayoutUtility:
             self._layout_stack.pop()
             self._current_layout = self._layout_stack[-1]
 
+    def begin_scroll(self, orientation=Qt.Vertical):
+        """
+        Begins a scrollable region. Widgets added after this call will be placed
+        inside a scrollable container.
+        
+        :param orientation: Qt.Vertical (default) for a vertical scroll region,
+                            or Qt.Horizontal for a horizontal scroll region.
+        """
+        # Create a scroll area and a container widget with the appropriate layout.
+        scroll_area = QScrollArea()
+        scroll_area.setWidgetResizable(True)
+        container = QWidget()
+        if orientation == Qt.Vertical:
+            container_layout = QVBoxLayout()
+        else:
+            container_layout = QHBoxLayout()
+        container.setLayout(container_layout)
+        scroll_area.setWidget(container)
+        # Add the scroll area to the current layout.
+        self._current_layout.addWidget(scroll_area)
+        # Push the container's layout onto the stack.
+        self._layout_stack.append(container_layout)
+        self._current_layout = container_layout
+
+    def end_scroll(self):
+        """
+        Ends the current scrollable region.
+        """
+        if len(self._layout_stack) > 1:
+            self._layout_stack.pop()
+            self._current_layout = self._layout_stack[-1]

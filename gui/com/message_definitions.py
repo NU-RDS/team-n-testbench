@@ -20,7 +20,7 @@ from rdscom.rdscom import (
 
 class MessageDefinitions:
     @staticmethod
-    def all_protos():
+    def all_protos() -> list[DataPrototype]:
         return [
             MessageDefinitions.heartbeat_proto(),
             MessageDefinitions.motor_control_proto(),
@@ -34,6 +34,27 @@ class MessageDefinitions:
             MessageDefinitions.error_message_proto(),
             MessageDefinitions.stop_proto(),
         ]
+    
+    @staticmethod
+    def get_human_name(proto_id : int) -> str:
+        human_names = [
+            "Heartbeat",
+            "Motor Control",
+            "Motor Event",
+            "Control Go",
+            "Control Done",
+            "Start Sensor Datastream",
+            "Sensor Datastream",
+            "Stop Sensor Datastream",
+            "Clear Control Queue",
+            "Error Message",
+            "Stop",
+        ]
+
+        if proto_id < 0 or proto_id >= len(human_names):
+            return "Unknown"
+        return human_names[proto_id]
+
     
     @staticmethod
     def all_proto_ids():
