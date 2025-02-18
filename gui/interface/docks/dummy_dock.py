@@ -11,18 +11,16 @@ class DummyDock(ImmediateInspectorDock):
         # Use the builder API exclusively.
         self.builder.label(
             "This is a dummy dock widget",
-            text_color="black",
-            bg_color="lightgray",
             font_size=14
         )
 
         # Create a horizontal group with a button and toggle.
         self.builder.begin_horizontal()
 
-        if self.builder.button("Test Button", text_color="white", bg_color="blue", font_size=12):
+        if self.builder.button("Test Button", font_size=12):
             print("Test Button was pressed!")
 
-        toggle_val = self.builder.toggle("Enable Option", initial_value=True, text_color="black")
+        toggle_val = self.builder.toggle("Enable Option", initial_value=True)
         if toggle_val:
             self.builder.label("option is on")
         else:
@@ -34,7 +32,6 @@ class DummyDock(ImmediateInspectorDock):
         self.builder.begin_vertical()
         self.builder.label(
             "This is a vertically grouped label",
-            text_color="darkblue",
             font_size=16
         )
 
