@@ -16,7 +16,7 @@ class MainWindow(QMainWindow):
         self.setGeometry(100, 100, 800, 600)
         self.setDockNestingEnabled(True)
         self.setDockOptions(QMainWindow.AllowNestedDocks | QMainWindow.AllowTabbedDocks)
-        self.open_docks = {}  # key: dock name, value: dock instance
+        self.open_docks = {}  # key: dock instance name, value: dock instance
         
         self.setup_menus()
         # Load the workspace (docks + main window state)
@@ -38,8 +38,9 @@ class MainWindow(QMainWindow):
         instance.show_dock(self)
         instance.setWindowTitle(docking_name)
         # Ensure unique object names for state restoration
-        instance.setObjectName(f"{docking_name}_{len(self.open_docks)}")
-        self.open_docks[docking_name] = instance
+        instance_name = f"{docking_name}_{len(self.open_docks)}"
+        instance.setObjectName(f"{instance_name}")
+        self.open_docks[instance_name] = instance
 
     def closeEvent(self, event):
         """Save workspace on close."""
@@ -76,6 +77,10 @@ class MainWindow(QMainWindow):
             # Recreate the open docks
             open_dock_names = data.get("open_docks", [])
             for dock_name in open_dock_names:
+                # get rid of the _# suffix
+                # so anything before the last underscore is the dock name
+                # and anything after is the instance number
+                dock_name = dock_name.rsplit("_", 1)[0]               
                 docking_class = DockRegistry.get_dock(dock_name)
                 if docking_class:
                     self.add_new_frame(dock_name, docking_class)
