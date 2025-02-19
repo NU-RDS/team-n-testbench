@@ -108,6 +108,26 @@ class Mesh:
                             )
         return Mesh(vertices, indices)
     
+    @staticmethod
+    def multiple_from_obj_file(file_path: str) -> list["Mesh"]:
+        """
+        Load a mesh from an OBJ file.
+
+        :param file_path: The path to the OBJ file.
+        :return: A list of new Mesh objects.
+        """
+        contents = ""
+        with open(file_path, "r") as file:
+            contents = file.read()
+        mesh_strings = contents.split("o ")
+        meshes = []
+        for mesh_string in mesh_strings:
+            if mesh_string == "":
+                continue
+            mesh = Mesh.from_obj_string(mesh_string)
+            meshes.append(mesh)
+        return meshes
+    
 
 
 class MeshHandle:

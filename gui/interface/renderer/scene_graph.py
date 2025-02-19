@@ -49,6 +49,7 @@ class SceneNode:
 
     def add_child(self, child: "SceneNode"):
         self.children.append(child)
+        return child
 
     def _traverse_helper(self, callback, parent_transform: glm.mat4, level: int):
         """

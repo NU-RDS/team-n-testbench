@@ -4,6 +4,7 @@ import glm
 from interface.renderer.mesh import MeshBuffer, MeshHandle, Mesh
 from interface.renderer.material import Material
 from interface.renderer.scene_graph import SceneNode, Transform, RenderingInfo
+from interface.renderer.camera import Camera
 
 class RendererLocations:
     def __init__(self, shader):
@@ -18,12 +19,15 @@ class RendererContext:
     scene_root : SceneNode = None
     mesh_buffer : MeshBuffer = None
     renderer_locations : RendererLocations = None
+    camera : Camera = None
 
     def __init__(self):
         self.current_shader = 0
         self.current_material = None
         self.scene_root = SceneNode.empty_node("Root")
         self.mesh_buffer = MeshBuffer()
+        self.renderer_locations = None
+        self.camera = Camera.default()
 
     def add_mesh(self, mesh : Mesh, mesh_name : str):
         self.mesh_buffer.add_mesh(mesh, mesh_name)
@@ -36,8 +40,16 @@ class RendererContext:
         mesh_handle = self.mesh_buffer.get_handle(mesh_name)
         rendering_info = RenderingInfo(transform, material, mesh_handle)
         node = SceneNode(mesh_name, rendering_info)
-        parent.add_child(node)
+        if parent is None:
+            return self.scene_root.add_child(node)
 
+        return parent.add_child(node)
+
+    def pass_camera_uniforms(self):
+        projection = self.camera.get_projection_matrix()
+        view = self.camera.transform.get_matrix()
+        GL.glUniformMatrix4fv(self.renderer_locations.projection, 1, GL.GL_FALSE, glm.value_ptr(projection))
+        GL.glUniformMatrix4fv(self.renderer_locations.view, 1, GL.GL_FALSE, glm.value_ptr(view))
 
 class Renderer:
     def __init__(self):
@@ -47,6 +59,13 @@ class Renderer:
     def bind_buffer(self):
         self.context.mesh_buffer.bind()
         self.mesh_dirty = False
+
+    def add_child(self, mesh_name : str, material : Material, transform : glm.mat4, parent : SceneNode=None):
+        return self.context.add_node(mesh_name, material, transform, parent)
+    
+    def add_mesh(self, mesh : Mesh, mesh_name : str):
+        self.context.add_mesh(mesh, mesh_name)
+        self.mesh_dirty = True
 
     def render(self):
         if self.mesh_dirty:
