@@ -5,6 +5,7 @@
 #include "ODriveCAN.h"
 #include "odrive_utils/odrive_msgs.hpp"
 #include "odrive_utils/odrive_callbacks.hpp"
+#include "robot_description/finger.hpp"
 
 /// @brief ODrive Controller class for managing communication with an ODrive motor controller
 
@@ -87,6 +88,29 @@ public:
     Serial.println("Setting to Torque mode");
 
     return true;
+  }
+
+  /// @brief Sets desired motor torque to move motor to motor angle
+  /// @param phi_des Desired motor angle
+  void set_position(float phi_des)
+  {
+    // Get motor angles
+    const auto phi = odrive_user_data_.last_feedback.Pos_Estimate;
+    
+    // add PID
+    const auto kp = 1e-1;
+    const auto phi_dif = phi_des - phi;
+    const auto desired_torque = kp * phi_dif;
+
+    // Ensure torque is not too large
+    if (desired_torque >= max_torque*0.8) {
+      odrive_.setTorque(max_torque * 0.8);
+    } else if (desired_torque <= - max_torque * 0.8) {
+      odrive_.setTorque(- max_torque * 0.8);
+    } else {
+      odrive.setTorque(desired_torque);
+    }
+    return;
   }
 
 
