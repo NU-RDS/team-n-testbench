@@ -3,7 +3,6 @@
 #include "ODriveCAN.h"
 #include <FlexCAN_T4.h>
 #include "ODriveFlexCAN.hpp"
-#include "teensy_can.h"
 #include "defines.h"
 #include "odrive_utils/odrive_msgs.hpp"
 #include "odrive_utils/odrive_errors.hpp"
@@ -13,9 +12,9 @@
 /// \param user_data - The pointer to the user data struct
 void onFeedback(Get_Encoder_Estimates_msg_t & msg, void * user_data)
 {
-  ODriveUserData * odrv_user_data = static_cast<ODriveUserData *>(user_data);
-  odrv_user_data->last_feedback = msg;
-  odrv_user_data->received_feedback = true;
+  ODriveUserData * odrive_user_data = static_cast<ODriveUserData *>(user_data);
+  odrive_user_data->last_feedback = msg;
+  odrive_user_data->received_feedback = true;
 }
 
 /// \brief: Called every time a heartbeat message arrives from the ODrive
@@ -23,13 +22,13 @@ void onFeedback(Get_Encoder_Estimates_msg_t & msg, void * user_data)
 /// \param user_data - The pointer to the user data struct
 void onHeartbeat(Heartbeat_msg_t & msg, void * user_data)
 {
-  ODriveUserData * odrv_user_data = static_cast<ODriveUserData *>(user_data);
-  odrv_user_data->last_heartbeat = msg;
-  odrv_user_data->received_heartbeat = true;
-  odrv_user_data->last_heartbeat_time = millis();
-  if (odrv_user_data->last_error != odrv_user_data->last_heartbeat.Axis_Error) {
-    odrv_user_data->last_error = odrv_user_data->last_heartbeat.Axis_Error;
-    odrive_print_error(odrv_user_data->last_error);
+  ODriveUserData * odrive_user_data = static_cast<ODriveUserData *>(user_data);
+  odrive_user_data->last_heartbeat = msg;
+  odrive_user_data->received_heartbeat = true;
+  odrive_user_data->last_heartbeat_time = millis();
+  if (odrive_user_data->last_error != odrive_user_data->last_heartbeat.Axis_Error) {
+    odrive_user_data->last_error = odrive_user_data->last_heartbeat.Axis_Error;
+    odrive_print_error(odrive_user_data->last_error);
   }
 }
 
@@ -38,7 +37,7 @@ void onHeartbeat(Heartbeat_msg_t & msg, void * user_data)
 /// \param user_data - The pointer to the user data struct
 void onTemperature(Get_Temperature_msg_t & msg, void * user_data)
 {
-  ODriveUserData * odrv_user_data = static_cast<ODriveUserData *>(user_data);
-  odrv_user_data->last_temperature = msg;
-  odrv_user_data->received_temperature = true;
+  ODriveUserData * odrive_user_data = static_cast<ODriveUserData *>(user_data);
+  odrive_user_data->last_temperature = msg;
+  odrive_user_data->received_temperature = true;
 }

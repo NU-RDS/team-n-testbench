@@ -1,5 +1,6 @@
 #pragma once
 #include <Arduino.h>
+#include "defines.h"
 
 /// @brief Color struct for RGB values
 struct Color
@@ -21,7 +22,7 @@ Color green = Color{0, 1, 0};
 Color blue = Color{0, 0, 1};
 Color yellow = Color{1, 1, 0};
 Color cyan = Color{0, 1, 1};
-Color magneta = Color{1, 0, 1};
+Color magenta = Color{1, 0, 1};
 Color white = Color{1, 1, 1};
 Color off = Color{0, 0, 0};
 

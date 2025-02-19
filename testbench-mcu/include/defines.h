@@ -1,4 +1,4 @@
-#define CAN_BAUDRATE 1000000
+#define CAN_BAUDRATE 250000
 
 // SYSTEM ID: robot finger - 0, robot thumb - 1, haptic finger - 2, haptic thumb - 3
 #define SYSTEM_ID 0
