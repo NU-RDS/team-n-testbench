@@ -58,7 +58,7 @@ class Renderer:
         self.mesh_dirty = False
 
     def add_child(self, mesh_name : str, material : Material, transform : glm.mat4, parent : SceneNode=None, draw_mode : int = GL.GL_TRIANGLES):
-        return self.context.add_node(mesh_name, material, transform, parent)
+        return self.context.add_node(mesh_name, material, transform, parent, draw_mode)
     
     def add_mesh(self, mesh : Mesh, mesh_name : str):
         self.context.add_mesh(mesh, mesh_name)
@@ -73,6 +73,11 @@ class Renderer:
         GL.glEnable(GL.GL_CULL_FACE)
         GL.glCullFace(GL.GL_BACK)
         GL.glFrontFace(GL.GL_CCW)
+        GL.glEnable(GL.GL_BLEND)
+        # enable transparency
+        GL.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA)
+        
+
 
 
     def render(self):
@@ -112,4 +117,11 @@ class Renderer:
         GL.glUniformMatrix4fv(self.context.renderer_locations.model, 1, GL.GL_FALSE, glm.value_ptr(transform))
         # Calculate byte offset (each uint is 4 bytes)
         offset = ctypes.c_void_p(mesh_handle.starting_index * 4)
+
+        if draw_mode == GL.GL_TRIANGLES:
+            GL.glDisable(GL.GL_CULL_FACE)
+            GL.glDrawElements(GL.GL_TRIANGLES, mesh_handle.index_count, GL.GL_UNSIGNED_INT, offset)
+            GL.glEnable(GL.GL_CULL_FACE)
+
+
         GL.glDrawElements(draw_mode, mesh_handle.index_count, GL.GL_UNSIGNED_INT, offset)

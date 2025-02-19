@@ -3,9 +3,11 @@
 // Inputs from the vertex shader.
 in vec3 v_normal;
 in vec3 v_fragPos;
+in vec3 v_cameraPos;
 
 // Uniform color
 uniform vec3 u_color;
+uniform bool u_fade;
 
 // Output fragment color.
 out vec4 FragColor;
@@ -33,7 +35,16 @@ void main()
     
     // Combine all the lighting components
     vec3 result = (ambient + diffuse + specular) * u_color;
+
+    // fade the color based on the distance from the camera
+    float distance = length(v_cameraPos - v_fragPos);
+    float fade = 1.0 - smoothstep(0.0, 30.0, distance);
+
+    if (!u_fade) {
+        fade = 1.0;
+    }
+
     
     // Output the fragment color
-    FragColor = vec4(result, 1.0);
+    FragColor = vec4(result, fade);
 }

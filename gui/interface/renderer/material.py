@@ -9,6 +9,7 @@ class UniformLocations:
         self.model = GL.glGetUniformLocation(shader, "u_model")
         self.view = GL.glGetUniformLocation(shader, "u_view")
         self.projection = GL.glGetUniformLocation(shader, "u_proj")
+        self.use_fade = GL.glGetUniformLocation(shader, "u_fade")
 
 class ShaderPair:
     def __init__(self, vertex_shader: str, fragment_shader: str):
@@ -84,6 +85,7 @@ class MaterialProperties:
     def __init__(self):
         self.shader = -1
         self.color = glm.vec3(0.0, 0.0, 0.0)  # Using glm.vec3 for color
+        self.use_fade = False
 
 
 class Material:
@@ -111,10 +113,13 @@ class Material:
             self.properties.color.z,
         )
 
+        GL.glUniform1i(rendering_context.renderer_locations.use_fade, self.properties.use_fade)
+
     @staticmethod
-    def base_color(rendering_context, color: glm.vec3) -> "Material":
+    def base_color(rendering_context, color: glm.vec3, fade : bool = False) -> "Material":
         properties = MaterialProperties()
         properties.color = color
+        properties.use_fade = fade
 
         return Material(
             rendering_context.shader_registry.get_from_paths(

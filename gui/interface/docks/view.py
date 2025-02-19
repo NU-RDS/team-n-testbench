@@ -28,8 +28,10 @@ class OpenGLWidget(QtOpenGL.QGLWidget):
             Mesh.from_obj_file(PathUtil.asset_file_path("meshes/crystal.obj")), "crystal"
         )
 
+        grid_size = 1000
+
         self.renderer.add_mesh(
-            Grid.create_grid_data(100, 1), "grid"
+            Grid.create_grid_data(grid_size, 0.5), "grid"
         )
 
         position_magnitude = 100
@@ -59,7 +61,7 @@ class OpenGLWidget(QtOpenGL.QGLWidget):
 
         self.renderer.add_child(
             "grid",
-            Material.base_color(self.renderer.context, glm.vec3(0.0, 1.0, 0.0)),
+            Material.base_color(self.renderer.context, glm.vec3(0.0, 1.0, 1.0), fade=True),
             Transform().set_scale(glm.vec3(1.0, 1.0, 1.0)),
             draw_mode=GL.GL_LINES
         )

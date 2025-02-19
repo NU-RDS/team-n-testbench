@@ -226,16 +226,16 @@ class Grid:
         for i in range(-grid_size, grid_size + 1):
             x = i * spacing
             # Two vertices per line.
-            vertices.append(Vertex(glm.vec3(x, 0.0, -grid_size * spacing), glm.vec3(0, 1, 0)))
-            vertices.append(Vertex(glm.vec3(x, 0.0, grid_size * spacing), glm.vec3(0, 1, 0)))
+            vertices.append(Vertex(glm.vec3(x, 0.001, -grid_size * spacing), glm.vec3(0, 1, 0)))
+            vertices.append(Vertex(glm.vec3(x, 0.001, grid_size * spacing), glm.vec3(0, 1, 0)))
             # Add indices (each pair makes a line)
             start_index = len(vertices) - 2
             indices.extend([start_index, start_index + 1])
         # For each line parallel to X (horizontal lines)
         for i in range(-grid_size, grid_size + 1):
             z = i * spacing
-            vertices.append(Vertex(glm.vec3(-grid_size * spacing, 0.0, z), glm.vec3(0, 1, 0)))
-            vertices.append(Vertex(glm.vec3(grid_size * spacing, 0.0, z), glm.vec3(0, 1, 0)))
+            vertices.append(Vertex(glm.vec3(-grid_size * spacing, 0.001, z), glm.vec3(0, 1, 0)))
+            vertices.append(Vertex(glm.vec3(grid_size * spacing, 0.001, z), glm.vec3(0, 1, 0)))
             start_index = len(vertices) - 2
             indices.extend([start_index, start_index + 1])
         return Mesh(vertices, indices)
