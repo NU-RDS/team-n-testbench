@@ -6,6 +6,9 @@
 #include "utils/helpers.hpp"
 #include "utils/matrix.hpp"
 
+/// @brief Maximum torque values
+static const float max_torque = 0.036; // Hard maximum
+
 /// @brief Link lengths in m
 static constexpr float link_1_length = 0.0; // TODO: actual lengths
 static constexpr float link_2_length = 0.0;
@@ -19,6 +22,7 @@ static const float r_pulley = 0.01; // 20 mm diameter pulley
 static constexpr float transmission_1 = r_motor / r_pulley;
 static constexpr float transmission_2 = -r_motor / r_idler;
 static constexpr float transmission_3 = r_motor / r_pulley;
+
 
 // [  t1  0  ]
 // [  t2  t3 ]
