@@ -45,8 +45,11 @@ class RendererContext:
     def pass_camera_uniforms(self):
         projection = self.camera.get_projection_matrix()
         view = self.camera.get_view_matrix()
+        camera_position = self.camera.transform.position
         GL.glUniformMatrix4fv(self.renderer_locations.projection, 1, GL.GL_FALSE, glm.value_ptr(projection))
         GL.glUniformMatrix4fv(self.renderer_locations.view, 1, GL.GL_FALSE, glm.value_ptr(view))
+        GL.glUniform3f(self.renderer_locations.camera_position, camera_position.x, camera_position.y, camera_position.z)
+
 
 class Renderer:
     def __init__(self):

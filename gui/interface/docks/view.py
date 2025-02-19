@@ -104,7 +104,6 @@ class OpenGLWidget(QtOpenGL.QGLWidget):
             self.renderer.context.camera.transform.rotation = (
                 rot_y * rot_x * self.renderer.context.camera.transform.rotation
             )
-            self.update()
 
         # Right mouse button: pan camera.
         elif event.buttons() & Qt.RightButton:
@@ -112,7 +111,6 @@ class OpenGLWidget(QtOpenGL.QGLWidget):
             # Invert X delta for natural panning.
             pan_delta = glm.vec3(-delta.x() * pan_speed, delta.y() * pan_speed, 0)
             self.renderer.context.camera.transform.position += pan_delta
-            self.update()
 
     def mouseReleaseEvent(self, event):
         self.last_mouse_pos = None
@@ -122,7 +120,6 @@ class OpenGLWidget(QtOpenGL.QGLWidget):
         zoom_speed = 0.001
         delta = event.angleDelta().y()
         self.renderer.context.camera.transform.position.z += delta * zoom_speed
-        self.update()
 
 
 @dock("Simulation")

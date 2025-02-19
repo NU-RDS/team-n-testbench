@@ -12,7 +12,6 @@ uniform mat4 u_proj;
 // Outputs to the fragment shader
 out vec3 v_normal;
 out vec3 v_fragPos;
-out vec3 v_cameraPos;
 
 void main()
 {
@@ -33,5 +32,4 @@ void main()
     vec4 normal = u_model * vec4(a_normal, 0.0);
     v_normal = normal.xyz;
     v_fragPos = vec3(u_model * vec4(a_position, 1.0));
-    v_cameraPos = vec3(u_view[3]);
 }

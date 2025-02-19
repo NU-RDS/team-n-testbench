@@ -10,6 +10,7 @@ class UniformLocations:
         self.view = GL.glGetUniformLocation(shader, "u_view")
         self.projection = GL.glGetUniformLocation(shader, "u_proj")
         self.use_fade = GL.glGetUniformLocation(shader, "u_fade")
+        self.camera_position = GL.glGetUniformLocation(shader, "u_cameraPos")
 
 class ShaderPair:
     def __init__(self, vertex_shader: str, fragment_shader: str):
