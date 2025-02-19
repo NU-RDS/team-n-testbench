@@ -1,9 +1,14 @@
 import glm
 from OpenGL import GL
 
-from interface.renderer.renderer import RendererLocations
 from util.path import PathUtil
 
+class UniformLocations:
+    def __init__(self, shader):
+        self.color = GL.glGetUniformLocation(shader, "u_color")
+        self.model = GL.glGetUniformLocation(shader, "u_model")
+        self.view = GL.glGetUniformLocation(shader, "u_view")
+        self.projection = GL.glGetUniformLocation(shader, "u_projection")
 
 class ShaderPair:
     def __init__(self, vertex_shader: str, fragment_shader: str):
@@ -26,7 +31,6 @@ class ShaderPair:
 
         return shader_program
 
-
 class ShaderRegistry:
     shaders = {}
     shader_ids = {}
@@ -35,7 +39,6 @@ class ShaderRegistry:
         self.shaders = {}
         self.shader_ids = {}
 
-    @staticmethod
     def register(self, vertex_shader_path: str, fragment_shader_path: str):
         if (vertex_shader_path, fragment_shader_path) in self.shaders:
             return self.shaders[(vertex_shader_path, fragment_shader_path)]
@@ -51,9 +54,14 @@ class ShaderRegistry:
         self.shaders[(vertex_shader_path, fragment_shader_path)] = shader_program
         self.shader_ids[shader_program] = shader_pair
 
-    @staticmethod
+    def get_from_paths(self, vertex_shader_path: str, fragment_shader_path: str) -> int:
+        if (vertex_shader_path, fragment_shader_path) not in self.shaders:
+            self.register(vertex_shader_path, fragment_shader_path)
+
+        return self.shaders[(vertex_shader_path, fragment_shader_path)]
+
     def get(self, shader_id: int) -> ShaderPair:
-        if shader_id not in self.shader_ids:
+        if shader_id not in self.shader_ids.keys():
             return None
 
         return self.shader_ids[shader_id]
@@ -79,7 +87,7 @@ class Material:
         if rendering_context.current_shader != self.shader:
             self.active_shader = self.shader
             GL.glUseProgram(self.shader)
-            rendering_context.renderer_locations = RendererLocations(self.shader)
+            rendering_context.renderer_locations = UniformLocations(self.shader)
             rendering_context.pass_camera_uniforms()
 
         GL.glUniform3f(
@@ -90,14 +98,14 @@ class Material:
         )
 
     @staticmethod
-    def base_color(color: glm.vec3) -> "Material":
+    def base_color(rendering_context, color: glm.vec3) -> "Material":
         properties = MaterialProperties()
         properties.color = color
 
         return Material(
-            ShaderRegistry.get(
-                PathUtil.asset_file_path("shaders/base.vert"),
-                PathUtil.asset_file_path("shaders/base.frag"),
+            rendering_context.shader_registry.get_from_paths(
+                PathUtil.asset_file_path("shaders/vert.glsl"),
+                PathUtil.asset_file_path("shaders/frag.glsl"),
             ),
             properties,
         )

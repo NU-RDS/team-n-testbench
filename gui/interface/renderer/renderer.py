@@ -2,24 +2,20 @@ from OpenGL import GL
 import glm
 
 from interface.renderer.mesh import MeshBuffer, MeshHandle, Mesh
-from interface.renderer.material import Material
+from interface.renderer.material import Material, UniformLocations, ShaderRegistry
 from interface.renderer.scene_graph import SceneNode, Transform, RenderingInfo
 from interface.renderer.camera import Camera
 
-class RendererLocations:
-    def __init__(self, shader):
-        self.color = GL.glGetUniformLocation(shader, "u_color")
-        self.model = GL.glGetUniformLocation(shader, "u_model")
-        self.view = GL.glGetUniformLocation(shader, "u_view")
-        self.projection = GL.glGetUniformLocation(shader, "u_projection")
+
 
 class RendererContext:
     current_shader : int = 0
     current_material : Material = None
     scene_root : SceneNode = None
     mesh_buffer : MeshBuffer = None
-    renderer_locations : RendererLocations = None
+    renderer_locations : UniformLocations = None
     camera : Camera = None
+    shader_registry : ShaderRegistry = None
 
     def __init__(self):
         self.current_shader = 0
@@ -28,6 +24,7 @@ class RendererContext:
         self.mesh_buffer = MeshBuffer()
         self.renderer_locations = None
         self.camera = Camera.default()
+        self.shader_registry = ShaderRegistry()
 
     def add_mesh(self, mesh : Mesh, mesh_name : str):
         self.mesh_buffer.add_mesh(mesh, mesh_name)

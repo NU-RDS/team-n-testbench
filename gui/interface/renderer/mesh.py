@@ -1,5 +1,6 @@
 import glm 
 from OpenGL import GL
+import numpy as np
 
 class Vertex:
     def __init__(self, position: glm.vec3, normal: glm.vec3):
@@ -163,13 +164,36 @@ class MeshBuffer:
     def get_index_buffer(self):
         return self.mesh_ibos
     
+    def get_handle(self, mesh_name: str) -> MeshHandle:
+        if mesh_name not in self.mesh_handles:
+            return MeshHandle.make_empty()
+        return self.mesh_handles[mesh_name]
+    
     def bind(self):
-        # Create the VBO and IBO
-        vbo = GL.glGenBuffers(1)
-        GL.glBindBuffer(GL.GL_ARRAY_BUFFER, vbo)
-        GL.glBufferData(GL.GL_ARRAY_BUFFER, len(self.mesh_vbos) * 4, (GL.GLfloat * len(self.mesh_vbos))(*self.mesh_vbos, usage=GL.GL_STATIC_DRAW)
-        ibo = GL.glGenBuffers(1)
-        GL.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, ibo)
-        GL.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, len(self.mesh_ibos) * 4, (GL.GLuint * len(self.mesh_ibos))(*self.mesh_ibos, usage=GL.GL_STATIC_DRAW)
+        """
+        Create and bind the VAO, VBO, and IBO, and upload the mesh data to the GPU.
+        """
+        # Generate and bind a Vertex Array Object (VAO)
+        self.vao = GL.glGenVertexArrays(1)
+        GL.glBindVertexArray(self.vao)
+
+        # Create and bind a Vertex Buffer Object (VBO)
+        self.vbo = GL.glGenBuffers(1)
+        GL.glBindBuffer(GL.GL_ARRAY_BUFFER, self.vbo)
+        # Convert the list of floats into a numpy array of type float32.
+        vertex_data = np.array(self.mesh_vbos, dtype=np.float32)
+        GL.glBufferData(GL.GL_ARRAY_BUFFER, vertex_data.nbytes, vertex_data, GL.GL_STATIC_DRAW)
+
+        # Create and bind an Index Buffer Object (IBO or EBO)
+        self.ibo = GL.glGenBuffers(1)
+        GL.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, self.ibo)
+        # Convert the list of indices into a numpy array of type uint32.
+        index_data = np.array(self.mesh_ibos, dtype=np.uint32)
+        GL.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, index_data.nbytes, index_data, GL.GL_STATIC_DRAW)
+
+        # Setup the vertex attribute pointers.
+        # Here, attribute location 0 is for positions, and location 1 is for normals.
         Vertex.set_vertex_attrib_pointers()
-        return vbo, ibo
+
+        # Unbind the VAO (the element array buffer binding is stored in the VAO)
+        GL.glBindVertexArray(0)

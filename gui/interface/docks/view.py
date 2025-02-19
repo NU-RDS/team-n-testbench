@@ -20,12 +20,12 @@ class OpenGLWidget(QtOpenGL.QGLWidget):
     def initializeGL(self):
         GL.glClearColor(0.0, 0.0, 0.0, 1.0)
         self.renderer.add_mesh(
-            Mesh.from_obj(PathUtil.get_resource("crystal.obj")), "crystal"
+            Mesh.from_obj_file(PathUtil.asset_file_path("meshes/crystal.obj")), "crystal"
         )
 
         self.renderer.add_child(
             "crystal",
-            Material.base_color(glm.vec3(1.0, 0.0, 0.0)),
+            Material.base_color(self.renderer.context, glm.vec3(1.0, 0.0, 0.0)),
             Transform()
         )
 
