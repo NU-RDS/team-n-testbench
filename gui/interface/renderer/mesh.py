@@ -40,10 +40,6 @@ class Mesh:
         self.vertices = vertices  # List of Vertex objects
         self.indices = indices  # List of int
 
-        print(f"Created mesh with {len(vertices)} vertices and {len(indices)} indices.")
-        print("Vertices")
-        print(vertices)
-
     def add_to_buffer(self, vbos: list, ibos: list):
         for vertex in self.vertices:
             vertex.add_to_vbo(vbos)
@@ -212,3 +208,34 @@ class MeshBuffer:
 
         # Unbind the VAO (the element array buffer binding is stored in the VAO)
         GL.glBindVertexArray(0)
+
+class Grid:
+    @staticmethod
+    def create_grid_data(grid_size=10, spacing=1.0):
+        """
+        Creates a grid on the XZ plane.
+        grid_size: half-extent in number of cells (grid spans from -grid_size to grid_size)
+        spacing: distance between grid lines.
+        Returns a tuple (vertices, indices) where:
+        - vertices is a list of Vertex objects.
+        - indices is a list of integers for drawing with GL_LINES.
+        """
+        vertices = []
+        indices = []
+        # For each line parallel to Z (vertical lines)
+        for i in range(-grid_size, grid_size + 1):
+            x = i * spacing
+            # Two vertices per line.
+            vertices.append(Vertex(glm.vec3(x, 0.0, -grid_size * spacing), glm.vec3(0, 1, 0)))
+            vertices.append(Vertex(glm.vec3(x, 0.0, grid_size * spacing), glm.vec3(0, 1, 0)))
+            # Add indices (each pair makes a line)
+            start_index = len(vertices) - 2
+            indices.extend([start_index, start_index + 1])
+        # For each line parallel to X (horizontal lines)
+        for i in range(-grid_size, grid_size + 1):
+            z = i * spacing
+            vertices.append(Vertex(glm.vec3(-grid_size * spacing, 0.0, z), glm.vec3(0, 1, 0)))
+            vertices.append(Vertex(glm.vec3(grid_size * spacing, 0.0, z), glm.vec3(0, 1, 0)))
+            start_index = len(vertices) - 2
+            indices.extend([start_index, start_index + 1])
+        return Mesh(vertices, indices)

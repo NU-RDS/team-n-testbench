@@ -8,7 +8,7 @@ from interface.dock import dock, BaseDockWidget, ImmediateInspectorDock
 from interface.renderer.renderer import Renderer
 from interface.renderer.material import Material, MaterialProperties
 from interface.renderer.scene_graph import SceneNode, Transform
-from interface.renderer.mesh import Mesh, MeshHandle
+from interface.renderer.mesh import Mesh, MeshHandle, Grid
 from util.path import PathUtil
 
 import random
@@ -25,11 +25,15 @@ class OpenGLWidget(QtOpenGL.QGLWidget):
             Mesh.from_obj_file(PathUtil.asset_file_path("meshes/crystal.obj")), "crystal"
         )
 
+        self.renderer.add_mesh(
+            Grid.create_grid_data(100, 1), "grid"
+        )
+
         position_magnitude = 100
         scale_magnitude = 10
         red_material = Material.base_color(self.renderer.context, glm.vec3(1.0, 0.0, 0.0))
 
-        for i in range(100):
+        for i in range(10):
             random_position = glm.vec3(
                 random.uniform(-position_magnitude, position_magnitude),
                 random.uniform(-position_magnitude, position_magnitude),
@@ -49,6 +53,13 @@ class OpenGLWidget(QtOpenGL.QGLWidget):
                     set_position(random_position).
                     set_scale(random_scale)
             )
+
+        self.renderer.add_child(
+            "grid",
+            Material.base_color(self.renderer.context, glm.vec3(0.0, 1.0, 0.0)),
+            Transform().set_scale(glm.vec3(1.0, 1.0, 1.0)),
+            draw_mode=GL.GL_LINES
+        )
 
         self.renderer.begin_rendering()
 

@@ -33,9 +33,9 @@ class RendererContext:
         mesh = Mesh.from_obj(file_path)
         self.add_mesh(mesh, mesh_name)
 
-    def add_node(self, mesh_name : str, material : Material, transform : Transform, parent : SceneNode):
+    def add_node(self, mesh_name : str, material : Material, transform : Transform, parent : SceneNode, draw_mode : int = GL.GL_TRIANGLES):
         mesh_handle = self.mesh_buffer.get_handle(mesh_name)
-        rendering_info = RenderingInfo(transform, material, mesh_handle)
+        rendering_info = RenderingInfo(transform, material, mesh_handle, draw_mode)
         node = SceneNode(mesh_name, rendering_info)
         if parent is None:
             return self.scene_root.add_child(node)
@@ -62,7 +62,7 @@ class Renderer:
         self.context.mesh_buffer.bind()
         self.mesh_dirty = False
 
-    def add_child(self, mesh_name : str, material : Material, transform : glm.mat4, parent : SceneNode=None):
+    def add_child(self, mesh_name : str, material : Material, transform : glm.mat4, parent : SceneNode=None, draw_mode : int = GL.GL_TRIANGLES):
         return self.context.add_node(mesh_name, material, transform, parent)
     
     def add_mesh(self, mesh : Mesh, mesh_name : str):
@@ -97,16 +97,14 @@ class Renderer:
         material = rendering_info.material
         mesh_handle = rendering_info.mesh_handle
         material.apply(self.context)
-        self.render_mesh(mesh_handle, current_transform)
+        self.render_mesh(mesh_handle, current_transform, rendering_info.draw_mode)
 
-    def render_mesh(self, mesh_handle : MeshHandle, transform : glm.mat4):
+    def render_mesh(self, mesh_handle : MeshHandle, transform : glm.mat4, draw_mode : int = GL.GL_TRIANGLES):
         if MeshHandle.is_empty(mesh_handle):
             return
-        
-        # print("Rendering with transform")
-        # print(transform)
-        # print(f"Rendering mesh from {mesh_handle.starting_index} to {mesh_handle.ending_index}")
+    
+        print(f"Rendering mesh from {mesh_handle.starting_index} to {mesh_handle.ending_index}")
         GL.glUniformMatrix4fv(self.context.renderer_locations.model, 1, GL.GL_FALSE, glm.value_ptr(transform))
         # Calculate byte offset (each uint is 4 bytes)
         offset = ctypes.c_void_p(mesh_handle.starting_index * 4)
-        GL.glDrawElements(GL.GL_TRIANGLES, mesh_handle.index_count, GL.GL_UNSIGNED_INT, offset)
+        GL.glDrawElements(draw_mode, mesh_handle.index_count, GL.GL_UNSIGNED_INT, offset)

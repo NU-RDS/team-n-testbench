@@ -1,3 +1,4 @@
+from OpenGL import GL
 import glm
 
 from interface.renderer.material import Material
@@ -39,10 +40,11 @@ class Transform:
 
 class RenderingInfo:
     def __init__(
-        self, transform: Transform, material: Material, mesh_handle: MeshHandle):
+        self, transform: Transform, material: Material, mesh_handle: MeshHandle, draw_mode: int = GL.GL_TRIANGLES):
         self.transform = transform
         self.material = material
         self.mesh_handle = mesh_handle
+        self.draw_mode = draw_mode
 
 
 class SceneNode:
