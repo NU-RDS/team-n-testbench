@@ -29,12 +29,12 @@ public:
         canbus0_.enableFIFOInterrupt();
         canbus0_.onReceive(F);
 
-        // canbus1_.begin();
-        // canbus1_.setBaudRate(CAN_BAUDRATE);
-        // canbus1_.setMaxMB(16);
-        // canbus1_.enableFIFO();
-        // canbus1_.enableFIFOInterrupt();
-        // canbus1_.onReceive(F);
+        canbus1_.begin();
+        canbus1_.setBaudRate(CAN_BAUDRATE);
+        canbus1_.setMaxMB(16);
+        canbus1_.enableFIFO();
+        canbus1_.enableFIFOInterrupt();
+        canbus1_.onReceive(F);
 
     }
 
@@ -44,13 +44,13 @@ public:
     /// \return false if unsuccessful
     bool initialize() {
         find_odrive(odrive0_);
-        // find_odrive(odrive1_);
+        find_odrive(odrive1_);
 
         odrive0_.startup_odrive_checks();
-        // odrive1_.startup_odrive_checks();
+        odrive1_.startup_odrive_checks();
 
         startup_odrive(odrive0_);
-        // startup_odrive(odrive1_);
+        startup_odrive(odrive1_);
 
         return true;
     }
@@ -59,10 +59,10 @@ public:
     void tick() {
 
         pumpEvents(canbus0_);
-        // pumpEvents(canbus1_);
+        pumpEvents(canbus1_);
 
         odrive0_.odrive_user_data_.heartbeat_timeout = (millis() - odrive0_.odrive_user_data_.last_heartbeat_time) > ODRIVE_HEARTBEAT_TIMEOUT;
-        // odrive1_.odrive_user_data_.heartbeat_timeout = (millis() - odrive1_.odrive_user_data_.last_heartbeat_time) > ODRIVE_HEARTBEAT_TIMEOUT;
+        odrive1_.odrive_user_data_.heartbeat_timeout = (millis() - odrive1_.odrive_user_data_.last_heartbeat_time) > ODRIVE_HEARTBEAT_TIMEOUT;
         
     }
 
@@ -70,8 +70,8 @@ public:
     /// \return true if any are timed out
     /// \return false if none are timed out
     bool commsTimeout() {
-        return odrive0_.odrive_user_data_.heartbeat_timeout;
-            //    odrive1_.odrive_user_data_.heartbeat_timeout or
+        return odrive0_.odrive_user_data_.heartbeat_timeout or 
+               odrive1_.odrive_user_data_.heartbeat_timeout;
 
     }
 

@@ -19,7 +19,7 @@ ODriveManager<CAN3> odrive1 = ODriveManager<CAN3>(canbus1, ODRIVE1_ID, odrive1_u
 void onOdriveCanMessage(const CanMsg &msg)
 {
     onReceive(msg, odrive0.odrive_);
-    // onReceive(msg, odrive1.odrive_);
+    onReceive(msg, odrive1.odrive_);
 }
 
 ComManager comms_manager{canbus0,
@@ -54,15 +54,17 @@ void setup() {
 void loop() {
 
     comms_manager.tick();
-    odrive0.odrive_.setTorque(0.011);
+    odrive0.set_position(0.1);
+    odrive1.set_position(0.1);
 
     if (odrive0_user_data.received_feedback) {
         Get_Encoder_Estimates_msg_t feedback = odrive0_user_data.last_feedback;
         odrive0_user_data.received_feedback = false;
         Serial.print("odrv0-pos:");
         Serial.print(feedback.Pos_Estimate);
-        Serial.print("odrv0-vel:");
+        Serial.print("\nodrv0-vel:");
         Serial.print(feedback.Vel_Estimate);
+        Serial.print("\n");
 
       }
 

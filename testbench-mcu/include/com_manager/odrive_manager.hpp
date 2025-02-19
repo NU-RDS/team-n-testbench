@@ -125,6 +125,30 @@ public:
   }
 
 
+  /// @brief Sets desired motor torque to move motor to motor angle
+  /// @param phi_des Desired motor angle
+  void set_position(float phi_des)
+  {
+    // Get motor angles
+    const auto phi = odrive_user_data_.last_feedback.Pos_Estimate;
+    
+    // add PID
+    const auto kp = 5e-2;
+    const auto phi_dif = phi_des - phi;
+    const auto desired_torque = kp * phi_dif;
+    const auto max_torque = 0.036;
+
+    // Ensure torque is not too large
+    if (desired_torque >= max_torque*0.8) {
+      odrive_.setTorque(max_torque * 0.8);
+    } else if (desired_torque <= - max_torque * 0.8) {
+      odrive_.setTorque(- max_torque * 0.8);
+    } else {
+      odrive_.setTorque(desired_torque);
+    }
+    return;
+  }
+
 public:
 
   /// @brief Address of canline for this odrive
