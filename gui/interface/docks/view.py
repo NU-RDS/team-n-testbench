@@ -20,12 +20,12 @@ class OpenGLWidget(QtOpenGL.QGLWidget):
         self.renderer = Renderer()
 
     def initializeGL(self):
-        GL.glClearColor(0.1, 0.2, 0.25, 1.0)
+    
         self.renderer.add_mesh(
             Mesh.from_obj_file(PathUtil.asset_file_path("meshes/crystal.obj")), "crystal"
         )
 
-        position_magnitude = 10
+        position_magnitude = 100
         scale_magnitude = 10
         red_material = Material.base_color(self.renderer.context, glm.vec3(1.0, 0.0, 0.0))
 
@@ -50,12 +50,16 @@ class OpenGLWidget(QtOpenGL.QGLWidget):
                     set_scale(random_scale)
             )
 
+        self.renderer.begin_rendering()
+
 
     def resizeGL(self, width, height):
-        pass
+        GL.glViewport(0, 0, width, height)
+
 
     def paintGL(self):
         self.renderer.render()
+        GL.glGetError()
 
 
 @dock("Simulation")

@@ -33,6 +33,8 @@ class Mesh:
         self.vertices = vertices  # List of Vertex objects
         self.indices = indices  # List of int
 
+        print(f"Created mesh with {len(vertices)} vertices and {len(indices)} indices.")
+
     def add_to_buffer(self, vbos: list, ibos: list):
         for vertex in self.vertices:
             vertex.add_to_vbo(vbos)

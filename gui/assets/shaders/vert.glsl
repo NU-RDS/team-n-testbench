@@ -16,16 +16,20 @@ out vec3 v_fragPos;
 void main()
 {
     // Transform the vertex position into world space.
-    vec4 worldPosition = u_model * vec4(a_position, 1.0);
-    v_fragPos = worldPosition.xyz;
-    
-    // Transform the normal.
-    // Using the inverse transpose of the model matrix ensures correct normal transformation.
+    mat4 mvp = u_proj * u_view * u_model;
+    vec4 pos = mvp * vec4(a_position, 1.0);
+
+    // check that the vertex is in front of the camera
+    if(pos.z < 0.0) {
+        // if not, set the vertex position to the origin
+        pos = vec4(0.0, 0.0, 0.0, 0.0);
+    }
+
+    pos = pos / pos.w;
+    gl_Position = pos;
+
+    // Pass the normal to the fragment shader
     v_normal = mat3(transpose(inverse(u_model))) * a_normal;
-
-    vec4 position = u_proj * u_view * worldPosition;
-
-    // set position to something arbitrary for debuging, like just put it in the middle of the screen
-    gl_Position = vec4(0.0, 0.0, 0.0, 1.0);
-
+    v_fragPos = vec3(u_model * vec4(a_position, 1.0));
+    
 }

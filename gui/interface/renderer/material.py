@@ -8,7 +8,7 @@ class UniformLocations:
         self.color = GL.glGetUniformLocation(shader, "u_color")
         self.model = GL.glGetUniformLocation(shader, "u_model")
         self.view = GL.glGetUniformLocation(shader, "u_view")
-        self.projection = GL.glGetUniformLocation(shader, "u_projection")
+        self.projection = GL.glGetUniformLocation(shader, "u_proj")
 
 class ShaderPair:
     def __init__(self, vertex_shader: str, fragment_shader: str):
