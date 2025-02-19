@@ -29,47 +29,55 @@ class ShaderPair:
         GL.glAttachShader(shader_program, fragment_shader)
         GL.glLinkProgram(shader_program)
 
+        print(GL.glGetProgramInfoLog(shader_program))
+
         return shader_program
 
 class ShaderRegistry:
-    shaders = {}
-    shader_ids = {}
+    keys_to_shader_ids = {}
+    shader_ids_to_pair = {}
 
     def __init__(self):
-        self.shaders = {}
-        self.shader_ids = {}
+        self.keys_to_shader_ids = {}
+        self.shader_ids_to_pair = {}
 
-    def register(self, vertex_shader_path: str, fragment_shader_path: str):
-        if (vertex_shader_path, fragment_shader_path) in self.shaders:
-            return self.shaders[(vertex_shader_path, fragment_shader_path)]
+    def _generate_shader_key(self, vertex_shader_path: str, fragment_shader_path: str) -> str:
+        return f"{vertex_shader_path},{fragment_shader_path}"
 
-        with open(vertex_shader_path, "r") as file:
-            vertex_shader = file.read()
+    def register(self, vertex_shader_path: str, fragment_shader_path: str) -> int:
+        # does this shader pair already exist?
+        key = self._generate_shader_key(vertex_shader_path, fragment_shader_path)
+        if key in self.keys_to_shader_ids:
+            return self.keys_to_shader_ids[key]
 
-        with open(fragment_shader_path, "r") as file:
-            fragment_shader = file.read()
+        shader_pair = ShaderPair(
+            PathUtil.read_file(vertex_shader_path),
+            PathUtil.read_file(fragment_shader_path),
+        )
+        shader_id = shader_pair.compile()
+        print(f"Registered shader pair {key} with id {shader_id}")
+        self.keys_to_shader_ids[key] = shader_id
+        self.shader_ids_to_pair[shader_id] = shader_pair
 
-        shader_pair = ShaderPair(vertex_shader, fragment_shader)
-        shader_program = shader_pair.compile()
-        self.shaders[(vertex_shader_path, fragment_shader_path)] = shader_program
-        self.shader_ids[shader_program] = shader_pair
+        return shader_id
 
     def get_from_paths(self, vertex_shader_path: str, fragment_shader_path: str) -> int:
-        if (vertex_shader_path, fragment_shader_path) not in self.shaders:
-            self.register(vertex_shader_path, fragment_shader_path)
+        if (vertex_shader_path, fragment_shader_path) not in self.keys_to_shader_ids:
+            return self.register(vertex_shader_path, fragment_shader_path)
 
-        return self.shaders[(vertex_shader_path, fragment_shader_path)]
+        return self.keys_to_shader_ids[self._generate_shader_key(vertex_shader_path, fragment_shader_path)]
 
     def get(self, shader_id: int) -> ShaderPair:
-        if shader_id not in self.shader_ids.keys():
+        print(self.shader_ids_to_pair.keys())
+        if shader_id not in self.shader_ids_to_pair.keys():
             return None
 
-        return self.shader_ids[shader_id]
+        return self.shader_ids_to_pair[shader_id]
 
 
 class MaterialProperties:
     def __init__(self):
-        self.shader = 0
+        self.shader = -1
         self.color = glm.vec3(0.0, 0.0, 0.0)  # Using glm.vec3 for color
 
 
@@ -79,19 +87,21 @@ class Material:
         self.properties = properties
 
     def apply(self, rendering_context):
+        print("Applying material with shader", self.shader)
         if rendering_context.current_material == self:
             return
 
         rendering_context.current_material = self
 
         if rendering_context.current_shader != self.shader:
+            print("Switching shader to", self.shader)
             self.active_shader = self.shader
             GL.glUseProgram(self.shader)
             rendering_context.renderer_locations = UniformLocations(self.shader)
             rendering_context.pass_camera_uniforms()
 
         GL.glUniform3f(
-            GL.glGetUniformLocation(self.shader, "u_color"),
+            rendering_context.renderer_locations.color,
             self.properties.color.x,
             self.properties.color.y,
             self.properties.color.z,

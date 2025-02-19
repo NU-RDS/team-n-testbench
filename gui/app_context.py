@@ -16,7 +16,6 @@ class ApplicationContext:
             raise Exception("ApplicationContext already initialized")
         ApplicationContext.mcu_com = MCUCom(args.port, args.baudrate)
         ApplicationContext.app_interface = AppInterface()
-        print("ApplicationContext initialized.")
 
     @staticmethod
     def tick():

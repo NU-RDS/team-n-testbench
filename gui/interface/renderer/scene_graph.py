@@ -27,8 +27,7 @@ class Transform:
 
 class RenderingInfo:
     def __init__(
-        self, transform: Transform, material: Material, mesh_handle: MeshHandle
-    ):
+        self, transform: Transform, material: Material, mesh_handle: MeshHandle):
         self.transform = transform
         self.material = material
         self.mesh_handle = mesh_handle

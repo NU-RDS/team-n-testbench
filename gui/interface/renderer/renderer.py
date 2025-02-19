@@ -9,7 +9,7 @@ from interface.renderer.camera import Camera
 
 
 class RendererContext:
-    current_shader : int = 0
+    current_shader : int = -1
     current_material : Material = None
     scene_root : SceneNode = None
     mesh_buffer : MeshBuffer = None
@@ -18,7 +18,7 @@ class RendererContext:
     shader_registry : ShaderRegistry = None
 
     def __init__(self):
-        self.current_shader = 0
+        self.current_shader = -1
         self.current_material = None
         self.scene_root = SceneNode.empty_node("Root")
         self.mesh_buffer = MeshBuffer()
@@ -72,6 +72,10 @@ class Renderer:
         self.context.scene_root.traverse(self.render_node)
 
     def render_node(self, node : SceneNode, current_transform : glm.mat4, level : int):
+        if MeshHandle.is_empty(node.rendering_info.mesh_handle):
+            return
+
+        
         rendering_info = node.rendering_info
         material = rendering_info.material
         mesh_handle = rendering_info.mesh_handle

@@ -6,7 +6,6 @@ from app_context import ApplicationContext
 class MessageHistoryDock(ImmediateInspectorDock):
     def __init__(self, parent=None):
         super().__init__(parent)
-        print("MessageHistoryDock init")
         ApplicationContext.mcu_com.add_receive_callback(self.update_message_history)
         self.message_history = []
 

@@ -42,3 +42,8 @@ class PathUtil:
     @staticmethod
     def file_exists(path : str):
         return os.path.exists(PathUtil.file(path, False))
+    
+    @staticmethod
+    def read_file(path : str):
+        with open(path, "r") as file:
+            return file.read()
