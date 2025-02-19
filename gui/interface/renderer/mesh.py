@@ -1,9 +1,6 @@
-import glm  # PyGLM
+import glm 
+from OpenGL import GL
 
-
-# ---------------------------
-# Mesh and Vertex Classes
-# ---------------------------
 class Vertex:
     def __init__(self, position: glm.vec3, normal: glm.vec3):
         self.position = position
@@ -14,6 +11,20 @@ class Vertex:
         # Using .x, .y, .z for glm.vec3 (for both position and color).
         vbo.extend([self.position.x, self.position.y, self.position.z])
         vbo.extend([self.normal.x, self.normal.y, self.normal.z])
+
+    @staticmethod
+    def set_vertex_attrib_pointers():
+        # setup a_position attribute, and a_normal attribute
+        GL.glEnableVertexAttribArray(0)
+        GL.glVertexAttribPointer(0, 3, GL.GL_FLOAT, GL.GL_FALSE, 6 * 4, None)
+        GL.glEnableVertexAttribArray(1)
+        GL.glVertexAttribPointer(1, 3, GL.GL_FLOAT, GL.GL_FALSE, 6 * 4, 12)
+
+    @staticmethod
+    def unset_vertex_attrib_pointers():
+        # Unset the vertex attribute pointers for the VBO.
+        GL.glDisableVertexAttribArray(0)
+        GL.glDisableVertexAttribArray(1)
 
 
 class Mesh:
@@ -96,6 +107,7 @@ class Mesh:
                                 ]
                             )
         return Mesh(vertices, indices)
+    
 
 
 class MeshHandle:
@@ -130,3 +142,14 @@ class MeshBuffer:
 
     def get_index_buffer(self):
         return self.mesh_ibos
+    
+    def bind(self):
+        # Create the VBO and IBO
+        vbo = GL.glGenBuffers(1)
+        GL.glBindBuffer(GL.GL_ARRAY_BUFFER, vbo)
+        GL.glBufferData(GL.GL_ARRAY_BUFFER, len(self.mesh_vbos) * 4, (GL.GLfloat * len(self.mesh_vbos))(*self.mesh_vbos, usage=GL.GL_STATIC_DRAW)
+        ibo = GL.glGenBuffers(1)
+        GL.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, ibo)
+        GL.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, len(self.mesh_ibos) * 4, (GL.GLuint * len(self.mesh_ibos))(*self.mesh_ibos, usage=GL.GL_STATIC_DRAW)
+        Vertex.set_vertex_attrib_pointers()
+        return vbo, ibo

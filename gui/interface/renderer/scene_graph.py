@@ -1,5 +1,8 @@
 import glm
 
+from interface.renderer.material import Material
+from interface.renderer.mesh import MeshHandle
+
 class Transform:
     def __init__(self):
         self.position = glm.vec3(0.0, 0.0, 0.0)
@@ -31,14 +34,18 @@ class RenderingInfo:
         self.mesh_handle = mesh_handle
 
 
-# ---------------------------
-# Scene Graph Node
-# ---------------------------
 class SceneNode:
     def __init__(self, name: str, render_info: RenderingInfo):
         self.name = name
         self.rendering_info = render_info
         self.children = []
+
+    @staticmethod
+    def empty_node(name: str) -> "SceneNode":
+        """
+        Create an empty scene node with the given name.
+        """
+        return SceneNode(name, RenderingInfo(Transform(), Material(0, None), MeshHandle(0, 0)))
 
     def add_child(self, child: "SceneNode"):
         self.children.append(child)
