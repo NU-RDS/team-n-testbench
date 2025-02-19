@@ -125,7 +125,6 @@ private:
   /// \brief struct to store user data in
   ODriveUserData & odrive_user_data_;
 
-
 };
 
 #endif // __ODRIVE_MANAGER_H__

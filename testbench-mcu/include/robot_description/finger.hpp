@@ -10,8 +10,8 @@
 static const float max_torque = 0.036; // Hard maximum
 
 /// @brief Link lengths in m
-static constexpr float link_1_length = 0.0; // TODO: actual lengths
-static constexpr float link_2_length = 0.0;
+static constexpr float link_1_length = 44.165e-03; // link lengths in meters
+static constexpr float link_2_length = 51.208e-03;
 
 /// @brief Important radii
 static const float r_motor = 0.005; // 10 mm diameter shaft of otor
@@ -42,14 +42,13 @@ static constexpr Limits<float> joint_1_soft_limits = convert_angular_units(
     {15.0, 70.0},
     AngleUnits::DEGREES,
     AngleUnits::RADIANS);
-
 static constexpr Limits<float> joint_2_soft_limits = convert_angular_units(
     {15.0, 70.0},
     AngleUnits::DEGREES,
     AngleUnits::RADIANS);
 
-/// @brief Torque limit in N-m
-static constexpr float motor_torque_limit = 5.0f; // N*m
+// /// @brief Torque limit in N-m
+// static constexpr float motor_torque_limit = 0.036f; // N*m
 
 /// @brief Joint calibration offset angle (calculated on startup)
 static constexpr float joint_1_cali_offset = convert_angular_units(
@@ -65,7 +64,7 @@ static constexpr Limits<float> joint_1_vel_limits{-10.0, 10.0};
 /// @brief Joint 2 velocity limits
 static constexpr Limits<float> joint_2_vel_limits{-10.0, 10.0};
 
-/// @brief Performs forward kinematics for the haptic finger.
+/// @brief Performs forward kinematics for the finger.
 /// @param joint_angles {theta_1, theta_2} in radians for the joints.
 /// @returns {x, y, z} of the end effector.
 std::vector<float> forward_kinematics(std::vector<float> joint_angles)
@@ -73,29 +72,73 @@ std::vector<float> forward_kinematics(std::vector<float> joint_angles)
     const auto theta_0 = joint_angles.at(0);
     const auto theta_1 = joint_angles.at(1);
 
-    const float xe = link_1_length * cos(theta_1) + link_1_length * cos(theta_1 + theta_2);
+    const float xe = link_1_length * cos(theta_0) + link_1_length * cos(theta_0 + theta_1);
     const float ye = 0.0;
-    const float ze = - link_1_length * sin(theta_1) -
-                     link_2_length * sin(theta_1 + theta_2); // (negative because positive joint rotation results in curling/downward motion)
+
+    // TODO: check last line
+    const float ze = link_1_length * sin(theta_0) +
+                     link_2_length * sin(theta_0 + theta_1); 
 
     return {xe, ye, ze};
 }
 
-// /// @brief Performs inverse kinematics for the haptic finger.
-// /// @param pos {x, y, z} in meters of the end effector.
-// /// @returns {theta_0, theta_1} of the joints in radians required to move to the location.
-// std::vector<float> inverse_kinematics(std::vector<float> pos)
-// {
-//     const auto radius = pos.at(0) * pos.at(0) + pos.at(2) * pos.at(2);
-//     const auto theta_1 = (radius - link_0_length * link_0_length - link_1_length * link_1_length) /
-//                          (2 * link_0_length * link_1_length);
-//     const auto theta_0 = std::atan2(pos.at(2), pos.at(0)) -
-//                          std::atan2(
-//                              link_1_length * sin(theta_1),
-//                              link_0_length + link_1_length * cos(theta_1));
+/// @brief Performs inverse kinematics for 2R finger.
+/// @param pos {x, y, z} in meters of the end effector.
+/// @returns {theta_1, theta_2} of the joints in radians required to move to the location.
+std::vector<float> inverse_kinematics(std::vector<float> pos)
+{
+    // Check joint space of robot
+    const auto radius2 = pos.at(0) * pos.at(0) + pos.at(2) * pos.at(2); // radius squared
+    const auto radius = std::sqrt(radius2); // radius of finger
+    if ((radius > link_1_length + link_2_length) || (radius < link_1_length - link_2_length)) {
+        // invalid ik - outside of joint space
+        return {999.0, 999.0}; // invalid result
+    }
 
-//     return {-theta_0, -theta_1};
-// }
+    // Calculate relevant angles
+    const auto gamma = std::atan2(pos.at(2), pos.at(0));
+    const auto alpha = std::acos((radius2 + link_1_length * link_1_length - link_2_length * link_2_length) /
+                                 (2 *radius * link_1_length));
+    const auto beta = std::acos((link_1_length * link_1_length + link_2_length * link_2_length - radius2) /
+                                (2 * link_1_length * link_2_length));
+    
+    // Calculate desired theta values
+    const auto theta_0_1 = gamma - alpha; // theta 0, solution 1
+    const auto theta_0_2 = gamma + alpha; // theta 0, solution 2
+    const auto theta_1_1 = M_PI - beta; // theta 1, solution 1
+    const auto theta_1_2 = beta - M_PI; // theta 1, solution 2
+
+    // Check validity of theta angles
+    bool solution_1 = false;
+    bool solution_2 = false;
+    if ((joint_1_limits.over_limits(theta_0_1) == 0.0) and (joint_2_limits.over_limits(theta_1_1) == 0.0)) {
+        solution_1 = true;
+    } 
+    if ((joint_1_limits.over_limits(theta_0_2) == 0.0) and (joint_2_limits.over_limits(theta_1_2) == 0.0)) {
+        solution_2 = true;
+    } 
+
+    // If two available, prefer normal bending motion
+    if (solution_1 and solution_2) {
+        // Prefer theta_2 < 0
+        // TODO: CHANGE TO ONLY VALID JOINT WITH LIMITS
+        if (theta_1_1 < theta_1_2) {
+            return {theta_0_1, theta_1_1}; 
+        } else {
+            return {theta_0_2, theta_1_2};
+        }
+    } 
+    
+    if (solution_1) {
+        return {theta_0_1, theta_1_2};
+    }
+
+    if (solution_2) {
+        return {theta_0_2, theta_1_2};
+    }
+
+    return {999.0, 999.0};
+}
 
 
 /// @brief Determines the joint angles given the motor angles
@@ -105,9 +148,9 @@ std::vector<float> motors_to_joints(std::vector<float> motor_vars)
 {
     const auto phi_0 = motor_vars.at(0);
     const auto phi_1 = motor_vars.at(1);
-    const auto theta_1 = phi_1 * transmission_1;
-    const auto theta_2 = phi_1 * transmission_2 + phi_2 * transmission_1;
-    return {theta_1, theta_2};
+    const auto theta_0 = phi_0 * transmission_1;
+    const auto theta_1 = phi_0 * transmission_2 + phi_1 * transmission_3;
+    return {theta_0, theta_1};
 }
 
 /// @brief Determines the motor angles given the joint angles
@@ -115,11 +158,11 @@ std::vector<float> motors_to_joints(std::vector<float> motor_vars)
 /// @returns {phi_1, phi_2} or {phi_1_dot, phi_2_dot}
 std::vector<float> joints_to_motors(std::vector<float> joint_vars)
 {
-    const auto theta_1 = joint_vars.at(0);
-    const auto theta_2 = joint_vars.at(1);
-    const auto phi_1 = transmission_1 * theta_1 + transmission_2 * theta_2;
-    const auto phi_2 = transmission_3 * theta_2;
-    return {phi_1, phi_2};
+    const auto theta_0 = joint_vars.at(0);
+    const auto theta_1 = joint_vars.at(1);
+    const auto phi_0 = transmission_1 * theta_0 + transmission_2 * theta_1;
+    const auto phi_1 = transmission_3 * theta_1;
+    return {phi_0, phi_1};
 }
 
 /// @brief Determines the joint angles (including the offset values)
@@ -149,13 +192,13 @@ std::vector<float> theta_to_phi(std::vector<float> joint_thetas)
 /// @returns motor torque
 std::vector<float> tau_to_torque(std::vector<float> joint_taus)
 {
-    const auto tau_1 = joint_taus.at(0);
-    const auto tau_2 = joint_taus.at(1);
+    const auto tau_0 = joint_taus.at(0);
+    const auto tau_1 = joint_taus.at(1);
 
-    const auto torque_1 = transmission_1 * tau_1 + transmission_2 * tau_2;
-    const auto torque_2 = transmission_3 * tau_3;
+    const auto torque_0 = transmission_1 * tau_0 + transmission_2 * tau_1;
+    const auto torque_1 = transmission_3 * tau_1;
 
-    return {torque_1, torque_2};
+    return {torque_0, torque_1};
 }
 
 /// @brief Determines the joint torque values to send given the motor torques
@@ -163,13 +206,13 @@ std::vector<float> tau_to_torque(std::vector<float> joint_taus)
 /// @returns joint torque
 std::vector<float> torque_to_tau(std::vector<float> motor_torques)
 {
-    const auto torque_1 = motor_torques.at(0);
-    const auto torque_2 = motor_torques.at(1);
+    const auto torque_0 = motor_torques.at(0);
+    const auto torque_1 = motor_torques.at(1);
 
-    const auto tau_1 = transmission_1 * torque_1;
-    const auto tau_2 = transmission_2 * torque_2;
+    const auto tau_0 = transmission_1 * torque_0;
+    const auto tau_1 = transmission_2 * torque_0 + transmission_3 * torque_1;
 
-    return {tau_1, tau_2};
+    return {tau_0, tau_1};
 }
 
 // Matrix spatial_jacobian(std::vector<float> joint_angles)
