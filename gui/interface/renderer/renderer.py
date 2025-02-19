@@ -103,8 +103,8 @@ class Renderer:
         if MeshHandle.is_empty(mesh_handle):
             return
         
-        print("Rendering with transform")
-        print(transform)
+        # print("Rendering with transform")
+        # print(transform)
         # print(f"Rendering mesh from {mesh_handle.starting_index} to {mesh_handle.ending_index}")
         GL.glUniformMatrix4fv(self.context.renderer_locations.model, 1, GL.GL_FALSE, glm.value_ptr(transform))
         # Calculate byte offset (each uint is 4 bytes)

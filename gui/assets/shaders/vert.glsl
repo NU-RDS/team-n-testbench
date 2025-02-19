@@ -29,7 +29,7 @@ void main()
     gl_Position = pos;
 
     // Pass the normal to the fragment shader
-    v_normal = mat3(transpose(inverse(u_model))) * a_normal;
+    vec4 normal = u_model * vec4(a_normal, 0.0);
+    v_normal = normal.xyz;
     v_fragPos = vec3(u_model * vec4(a_position, 1.0));
-    
 }

@@ -1,6 +1,7 @@
 import glm 
 from OpenGL import GL
 import numpy as np
+import ctypes
 
 class Vertex:
     def __init__(self, position: glm.vec3, normal: glm.vec3):
@@ -19,13 +20,19 @@ class Vertex:
         GL.glEnableVertexAttribArray(0)
         GL.glVertexAttribPointer(0, 3, GL.GL_FLOAT, GL.GL_FALSE, 6 * 4, None)
         GL.glEnableVertexAttribArray(1)
-        GL.glVertexAttribPointer(1, 3, GL.GL_FLOAT, GL.GL_FALSE, 6 * 4, 12)
+        GL.glVertexAttribPointer(1, 3, GL.GL_FLOAT, GL.GL_FALSE, 6 * 4, ctypes.c_void_p(12))
 
     @staticmethod
     def unset_vertex_attrib_pointers():
         # Unset the vertex attribute pointers for the VBO.
         GL.glDisableVertexAttribArray(0)
         GL.glDisableVertexAttribArray(1)
+
+    def __str__(self):
+        return f"Vertex({self.position.x}, {self.position.y}, {self.position.z} | {self.normal.x}, {self.normal.y}, {self.normal.z})"
+    
+    def __repr__(self):
+        return self.__str__()
 
 
 class Mesh:
@@ -34,6 +41,8 @@ class Mesh:
         self.indices = indices  # List of int
 
         print(f"Created mesh with {len(vertices)} vertices and {len(indices)} indices.")
+        print("Vertices")
+        print(vertices)
 
     def add_to_buffer(self, vbos: list, ibos: list):
         for vertex in self.vertices:
