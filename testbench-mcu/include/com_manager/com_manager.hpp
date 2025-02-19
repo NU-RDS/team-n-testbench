@@ -5,6 +5,12 @@
 #include <vector>
 #include "com_manager/odrive_manager.hpp"
 
+/// @brief Proportional gain
+const auto kp = 0.005;
+
+/// @brief Motor torque limit
+const auto motor_torque_limit = 0.036; // N-m
+
 /// @brief Basic Communication Manager class for handling multiple CAN buses
 template <CAN_DEV_TABLE CAN>
 class ComManager {
@@ -127,7 +133,7 @@ public:
     }
 
     /// @brief Moves the first joint to a desired angle.
-    /// @param joint_angle desired angle of the first joint (rad).
+    /// @param theta_des desired angle of the first joint (rad).
     void move_j1(float theta_des) 
     {
         // Get position difference
@@ -148,7 +154,7 @@ public:
     }
 
     /// @brief Moves the second joint to a desired angle.
-    /// @param joint_angle desired angle of the first joint (rad).
+    /// @param theta_des desired angle of the second joint (rad).
     void move_j2(float theta_des) 
     {
         // Get position difference
