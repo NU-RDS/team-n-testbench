@@ -11,6 +11,18 @@ class Transform:
         self.rotation = glm.quat(1, 0, 0, 0)
         self.scale = glm.vec3(1.0, 1.0, 1.0)
 
+    def set_position(self, position: glm.vec3):
+        self.position = position
+        return self
+    
+    def set_rotation(self, rotation: glm.quat):
+        self.rotation = rotation
+        return self
+    
+    def set_scale(self, scale: glm.vec3):
+        self.scale = scale
+        return self
+
     def get_matrix(self) -> glm.mat4:
         """
         Constructs a 4x4 transformation matrix from position, rotation, and scale.

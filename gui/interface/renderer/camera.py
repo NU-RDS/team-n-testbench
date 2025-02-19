@@ -50,7 +50,9 @@ class Camera:
     
     @staticmethod
     def default() -> "Camera":
-        return Camera.perspective(45.0, 1.0, 0.1, 100.0)
+        camera = Camera.perspective(45.0, 1.0, 0.1, 100.0)
+        camera.transform.position = glm.vec3(0.0, 0.0, -100.0)
+        return camera
     
     def update_aspect_ratio(self, aspect_ratio: float):
         if self.mode == CameraMode.PERSPECTIVE:

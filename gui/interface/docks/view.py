@@ -11,6 +11,8 @@ from interface.renderer.scene_graph import SceneNode, Transform
 from interface.renderer.mesh import Mesh, MeshHandle
 from util.path import PathUtil
 
+import random
+
 class OpenGLWidget(QtOpenGL.QGLWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -18,16 +20,34 @@ class OpenGLWidget(QtOpenGL.QGLWidget):
         self.renderer = Renderer()
 
     def initializeGL(self):
-        GL.glClearColor(0.0, 0.0, 0.0, 1.0)
+        GL.glClearColor(0.1, 0.2, 0.25, 1.0)
         self.renderer.add_mesh(
             Mesh.from_obj_file(PathUtil.asset_file_path("meshes/crystal.obj")), "crystal"
         )
 
-        self.renderer.add_child(
-            "crystal",
-            Material.base_color(self.renderer.context, glm.vec3(1.0, 0.0, 0.0)),
-            Transform()
-        )
+        position_magnitude = 100
+        scale_magnitude = 10
+
+        for i in range(1000):
+            random_position = glm.vec3(
+                random.uniform(-position_magnitude, position_magnitude),
+                random.uniform(-position_magnitude, position_magnitude),
+                random.uniform(-position_magnitude, position_magnitude),
+            )
+
+            random_scale = glm.vec3(
+                random.uniform(0, scale_magnitude),
+                random.uniform(0, scale_magnitude),
+                random.uniform(0, scale_magnitude),
+            )
+
+            self.renderer.add_child(
+                "crystal",
+                Material.base_color(self.renderer.context, glm.vec3(1.0, 0.0, 0.0)),
+                Transform().
+                    set_position(random_position).
+                    set_scale(random_scale)
+            )
 
 
     def resizeGL(self, width, height):

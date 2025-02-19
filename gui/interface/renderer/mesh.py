@@ -143,6 +143,10 @@ class MeshHandle:
     @staticmethod
     def make_empty() -> "MeshHandle":
         return MeshHandle(0, 0)
+    
+    @property
+    def ending_index(self):
+        return self.starting_index + self.index_count
 
 
 class MeshBuffer:
