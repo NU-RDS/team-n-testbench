@@ -76,9 +76,6 @@ class Renderer:
         GL.glEnable(GL.GL_BLEND)
         # enable transparency
         GL.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA)
-        
-
-
 
     def render(self):
         if self.mesh_dirty:
@@ -118,10 +115,11 @@ class Renderer:
         # Calculate byte offset (each uint is 4 bytes)
         offset = ctypes.c_void_p(mesh_handle.starting_index * 4)
 
-        if draw_mode == GL.GL_TRIANGLES:
-            GL.glDisable(GL.GL_CULL_FACE)
-            GL.glDrawElements(GL.GL_TRIANGLES, mesh_handle.index_count, GL.GL_UNSIGNED_INT, offset)
-            GL.glEnable(GL.GL_CULL_FACE)
-
+        if draw_mode == GL.GL_LINES:
+            # disable writing to depth buffer for lines
+            GL.glDepthMask(GL.GL_FALSE)
+            GL.glDrawElements(draw_mode, mesh_handle.index_count, GL.GL_UNSIGNED_INT, offset)
+            GL.glDepthMask(GL.GL_TRUE)
+            return
 
         GL.glDrawElements(draw_mode, mesh_handle.index_count, GL.GL_UNSIGNED_INT, offset)

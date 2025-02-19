@@ -21,7 +21,7 @@ class OpenGLWidget(QtOpenGL.QGLWidget):
         # make a timer
         self.timer = QTimer()
         self.timer.timeout.connect(self.update)
-        self.timer.start(16)
+        # self.timer.start(16)
 
     def initializeGL(self):
         self.renderer.add_mesh(
@@ -33,6 +33,14 @@ class OpenGLWidget(QtOpenGL.QGLWidget):
         self.renderer.add_mesh(
             Grid.create_grid_data(grid_size, 0.5), "grid"
         )
+
+        self.renderer.add_child(
+            "grid",
+            Material.base_color(self.renderer.context, glm.vec3(0.0, 1.0, 1.0), fade=True),
+            Transform().set_scale(glm.vec3(1.0, 1.0, 1.0)),
+            draw_mode=GL.GL_LINES
+        )
+
 
         position_magnitude = 100
         scale_magnitude = 10
@@ -58,13 +66,6 @@ class OpenGLWidget(QtOpenGL.QGLWidget):
                     set_position(random_position).
                     set_scale(random_scale)
             )
-
-        self.renderer.add_child(
-            "grid",
-            Material.base_color(self.renderer.context, glm.vec3(0.0, 1.0, 1.0), fade=True),
-            Transform().set_scale(glm.vec3(1.0, 1.0, 1.0)),
-            draw_mode=GL.GL_LINES
-        )
 
         self.renderer.begin_rendering()
 
