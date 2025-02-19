@@ -1,4 +1,4 @@
-from PyQt5.QtCore import Qt, QSettings
+from PyQt5.QtCore import Qt, QSettings, QTimer
 from PyQt5.QtWidgets import QMainWindow, QDockWidget, QWidget, QVBoxLayout, QLabel
 from OpenGL import GL
 from PyQt5 import QtWidgets, QtOpenGL
@@ -16,11 +16,14 @@ import random
 class OpenGLWidget(QtOpenGL.QGLWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
-
         self.renderer = Renderer()
 
+        # make a timer
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.update)
+        self.timer.start(16)
+
     def initializeGL(self):
-    
         self.renderer.add_mesh(
             Mesh.from_obj_file(PathUtil.asset_file_path("meshes/crystal.obj")), "crystal"
         )
@@ -33,7 +36,7 @@ class OpenGLWidget(QtOpenGL.QGLWidget):
         scale_magnitude = 10
         red_material = Material.base_color(self.renderer.context, glm.vec3(1.0, 0.0, 0.0))
 
-        for i in range(10):
+        for i in range(100):
             random_position = glm.vec3(
                 random.uniform(-position_magnitude, position_magnitude),
                 random.uniform(-position_magnitude, position_magnitude),
@@ -69,6 +72,10 @@ class OpenGLWidget(QtOpenGL.QGLWidget):
 
 
     def paintGL(self):
+        # tell the camera about the new aspect ratio
+        aspect_ratio = self.width() / self.height()
+        self.renderer.context.camera.update_aspect_ratio(aspect_ratio)
+
         self.renderer.render()
         GL.glGetError()
 

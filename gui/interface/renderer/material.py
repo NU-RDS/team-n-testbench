@@ -90,7 +90,6 @@ class Material:
         if rendering_context.current_material == self:
             return
 
-        print("Swapping to material with shader", self.shader)
         rendering_context.current_material = self
 
         if rendering_context.current_shader != self.shader:

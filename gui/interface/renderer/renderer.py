@@ -45,11 +45,6 @@ class RendererContext:
     def pass_camera_uniforms(self):
         projection = self.camera.get_projection_matrix()
         view = self.camera.get_view_matrix()
-        print("Passing camera uniforms")
-        print("Projection")
-        print(projection)
-        print("View")
-        print(view)
         GL.glUniformMatrix4fv(self.renderer_locations.projection, 1, GL.GL_FALSE, glm.value_ptr(projection))
         GL.glUniformMatrix4fv(self.renderer_locations.view, 1, GL.GL_FALSE, glm.value_ptr(view))
 
@@ -97,13 +92,14 @@ class Renderer:
         material = rendering_info.material
         mesh_handle = rendering_info.mesh_handle
         material.apply(self.context)
+        self.context.pass_camera_uniforms()
         self.render_mesh(mesh_handle, current_transform, rendering_info.draw_mode)
 
     def render_mesh(self, mesh_handle : MeshHandle, transform : glm.mat4, draw_mode : int = GL.GL_TRIANGLES):
         if MeshHandle.is_empty(mesh_handle):
             return
     
-        print(f"Rendering mesh from {mesh_handle.starting_index} to {mesh_handle.ending_index}")
+        # print(f"Rendering mesh from {mesh_handle.starting_index} to {mesh_handle.ending_index}")
         GL.glUniformMatrix4fv(self.context.renderer_locations.model, 1, GL.GL_FALSE, glm.value_ptr(transform))
         # Calculate byte offset (each uint is 4 bytes)
         offset = ctypes.c_void_p(mesh_handle.starting_index * 4)
