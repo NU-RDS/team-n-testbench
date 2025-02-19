@@ -73,6 +73,11 @@ class ShaderRegistry:
             return None
 
         return self.shader_ids_to_pair[shader_id]
+    
+
+    def get_any_shader(self) -> int:
+        # return the first shader in the registry
+        return list(self.keys_to_shader_ids.values())[0]
 
 
 class MaterialProperties:

@@ -81,6 +81,15 @@ class Renderer:
 
         GL.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT)
         GL.glBindVertexArray(self.context.mesh_buffer.vao)
+
+        # set whatever shader pair
+        shader_id = self.context.shader_registry.get_any_shader()
+        if self.context.current_shader != shader_id:
+            self.context.current_shader = shader_id
+            GL.glUseProgram(shader_id)
+            self.context.renderer_locations = UniformLocations(shader_id)
+
+        self.context.pass_camera_uniforms()
         self.context.scene_root.traverse(self.render_node)
         GL.glBindVertexArray(0)
 
@@ -92,7 +101,7 @@ class Renderer:
         material = rendering_info.material
         mesh_handle = rendering_info.mesh_handle
         material.apply(self.context)
-        self.context.pass_camera_uniforms()
+
         self.render_mesh(mesh_handle, current_transform, rendering_info.draw_mode)
 
     def render_mesh(self, mesh_handle : MeshHandle, transform : glm.mat4, draw_mode : int = GL.GL_TRIANGLES):
