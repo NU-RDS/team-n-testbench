@@ -87,15 +87,15 @@ class Material:
         self.properties = properties
 
     def apply(self, rendering_context):
-        print("Applying material with shader", self.shader)
         if rendering_context.current_material == self:
             return
 
+        print("Swapping to material with shader", self.shader)
         rendering_context.current_material = self
 
         if rendering_context.current_shader != self.shader:
             print("Switching shader to", self.shader)
-            self.active_shader = self.shader
+            rendering_context.current_shader = self.shader
             GL.glUseProgram(self.shader)
             rendering_context.renderer_locations = UniformLocations(self.shader)
             rendering_context.pass_camera_uniforms()

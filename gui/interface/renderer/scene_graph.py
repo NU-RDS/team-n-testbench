@@ -73,7 +73,7 @@ class SceneNode:
         # Compute the local transformation matrix.
         local_transform = self.rendering_info.transform.get_matrix()
         # Combine with parent's transformation.
-        current_transform = parent_transform * local_transform
+        current_transform = glm.mul(parent_transform, local_transform)
 
         # Call the callback for the current node.
         callback(self, current_transform, level)

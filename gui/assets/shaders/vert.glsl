@@ -22,7 +22,10 @@ void main()
     // Transform the normal.
     // Using the inverse transpose of the model matrix ensures correct normal transformation.
     v_normal = mat3(transpose(inverse(u_model))) * a_normal;
-    
-    // Transform the position into clip space.
-    gl_Position = u_proj * u_view * worldPosition;
+
+    vec4 position = u_proj * u_view * worldPosition;
+
+    // set position to something arbitrary for debuging, like just put it in the middle of the screen
+    gl_Position = vec4(0.0, 0.0, 0.0, 1.0);
+
 }

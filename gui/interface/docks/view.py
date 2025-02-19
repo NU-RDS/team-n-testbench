@@ -25,10 +25,11 @@ class OpenGLWidget(QtOpenGL.QGLWidget):
             Mesh.from_obj_file(PathUtil.asset_file_path("meshes/crystal.obj")), "crystal"
         )
 
-        position_magnitude = 100
+        position_magnitude = 10
         scale_magnitude = 10
+        red_material = Material.base_color(self.renderer.context, glm.vec3(1.0, 0.0, 0.0))
 
-        for i in range(1000):
+        for i in range(100):
             random_position = glm.vec3(
                 random.uniform(-position_magnitude, position_magnitude),
                 random.uniform(-position_magnitude, position_magnitude),
@@ -43,7 +44,7 @@ class OpenGLWidget(QtOpenGL.QGLWidget):
 
             self.renderer.add_child(
                 "crystal",
-                Material.base_color(self.renderer.context, glm.vec3(1.0, 0.0, 0.0)),
+                red_material,
                 Transform().
                     set_position(random_position).
                     set_scale(random_scale)

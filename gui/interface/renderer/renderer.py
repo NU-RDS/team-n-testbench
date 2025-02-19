@@ -84,6 +84,6 @@ class Renderer:
     def render_mesh(self, mesh_handle : MeshHandle, transform : glm.mat4):
         if MeshHandle.is_empty(mesh_handle):
             return
-        print(f"Rendering mesh from {mesh_handle.starting_index} to {mesh_handle.ending_index}")
+        # print(f"Rendering mesh from {mesh_handle.starting_index} to {mesh_handle.ending_index}")
         GL.glUniformMatrix4fv(self.context.renderer_locations.model, 1, GL.GL_FALSE, glm.value_ptr(transform))
         GL.glDrawElements(GL.GL_TRIANGLES, mesh_handle.index_count, GL.GL_UNSIGNED_INT, mesh_handle.starting_index)
