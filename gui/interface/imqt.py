@@ -1,4 +1,3 @@
-from enum import Enum
 from PyQt5.QtWidgets import (
     QVBoxLayout,
     QHBoxLayout,
@@ -12,10 +11,11 @@ from PyQt5.QtWidgets import (
     QSpacerItem,
     QFrame,
     QSlider,
-    QLineEdit
+    QLineEdit,
 )
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QGraphicsOpacityEffect
+from enum import Enum
 
 
 class FontStyle(Enum):
@@ -24,48 +24,36 @@ class FontStyle(Enum):
     ITALIC = 2
     BOLD_ITALIC = 3
 
+class LayoutAlignment(Enum):
+    LEFT = Qt.AlignLeft
+    RIGHT = Qt.AlignRight
+    CENTER = Qt.AlignCenter
+    TOP = Qt.AlignTop
+    BOTTOM = Qt.AlignBottom
+    TOP_LEFT = Qt.AlignTop | Qt.AlignLeft
+    TOP_RIGHT = Qt.AlignTop | Qt.AlignRight
+    BOTTOM_LEFT = Qt.AlignBottom | Qt.AlignLeft
+    BOTTOM_RIGHT = Qt.AlignBottom | Qt.AlignRight
 
-def apply_style(
-    widget,
-    text_color=None,
-    bg_color=None,
-    font_size=None,
-    extra_styles="",
-    font_style=FontStyle.NORMAL
-):
-    """
-    Applies the given style options to 'widget'.
-    Now supports bold, italic, or bold+italic via 'font_style'.
-    """
+
+def apply_style(widget, text_color=None, bg_color=None, font_size=None, extra_styles="", font_style=FontStyle.NORMAL):
     styles = []
 
-    # text color
     if text_color:
         styles.append(f"color: {text_color};")
-
-    # background color
     if bg_color:
         styles.append(f"background-color: {bg_color};")
-
-    # font size
     if font_size:
         styles.append(f"font-size: {font_size}px;")
-
-    # font style
     if font_style in (FontStyle.BOLD, FontStyle.BOLD_ITALIC):
         styles.append("font-weight: bold;")
     if font_style in (FontStyle.ITALIC, FontStyle.BOLD_ITALIC):
         styles.append("font-style: italic;")
-
-    # any extra CSS
     if extra_styles:
-        # if this is just a string, append it as-is
         if isinstance(extra_styles, str):
             styles.append(extra_styles)
-        # if it's a list, join the items with a space
         elif isinstance(extra_styles, list):
             styles.append(" ".join(extra_styles))
-
     widget.setStyleSheet(" ".join(styles))
 
 
@@ -83,22 +71,19 @@ class LayoutUtility:
         self._toggle_state = {}
         self._foldout_state = {}
         self._toggle_group_state = {}
-        self._slider_state = {}
+        self._text_field_state = {}
+        self._slider_state = {}  # Map: unique widget ID -> int
+        self._slider_labels = {} # Map: unique widget ID -> QLabel displaying slider value
 
-        # Counter dictionary for generating unique keys.
         self._key_counter = {}
 
     def start(self):
-        """Resets the key counters at the beginning of each inspector update."""
+        """Resets the key counters and layout stack."""
         self._key_counter = {}
         self._layout_stack = [self.dock.layout]
         self._current_layout = self.dock.layout
 
     def _get_key(self, base_key):
-        """
-        Generates a unique widget ID based on base_key.
-        For the first occurrence it returns base_key, then appends a number for subsequent ones.
-        """
         if base_key not in self._key_counter:
             self._key_counter[base_key] = 0
             return base_key
@@ -153,76 +138,18 @@ class LayoutUtility:
     # --------------------------------------------------------------------------
     # LABEL (with optional FontStyle)
     # --------------------------------------------------------------------------
-    def label(
-        self,
-        text,
-        text_color=None,
-        bg_color=None,
-        font_size=None,
-        extra_styles="",
-        font_style=FontStyle.NORMAL
-    ):
-        """
-        Creates a new label each time. You can specify font_style as:
-        FontStyle.NORMAL, FontStyle.BOLD, FontStyle.ITALIC, or FontStyle.BOLD_ITALIC
-        """
+    def label(self, text, text_color=None, bg_color=None, font_size=None, extra_styles="", font_style=FontStyle.NORMAL):
         widget_id = self._get_key(text)
         lbl = QLabel(text)
-        # Pass 'font_style' into apply_style
         apply_style(lbl, text_color, bg_color, font_size, extra_styles, font_style=font_style)
         self._current_layout.addWidget(lbl)
         self.dock.set_dirty()
         return lbl
-    
-    # --------------------------------------------------------------------------
-    # SLIDER (with optional FontStyle)
-    # --------------------------------------------------------------------------
-    
-    def slider(self, label, initial_value, min_value, max_value, orientation=Qt.Horizontal,
-            text_color=None, bg_color=None, font_size=None, extra_styles=""):
-        """
-        Creates a new slider field.
-        'label' is used as the key for persistent state.
-        'initial_value', 'min_value', and 'max_value' set the slider's range and starting value.
-        'orientation' may be Qt.Horizontal or Qt.Vertical.
-        
-        Returns the current value of the slider.
-        """
-        widget_id = self._get_key(label)
-        if widget_id not in self._slider_state:
-            self._slider_state[widget_id] = initial_value
-
-        slider_widget = QSlider(orientation)
-        slider_widget.setMinimum(min_value)
-        slider_widget.setMaximum(max_value)
-        slider_widget.setValue(self._slider_state[widget_id])
-      
-        # (Note: QSlider styling is less straightforward; you can add a style if needed.)
-        slider_widget.valueChanged.connect(lambda value, wid=widget_id: self._set_slider_state(wid, value))
-        slider_widget.sliderReleased.connect(lambda wid=widget_id: self._on_slider_release(wid))
-        self._current_layout.addWidget(slider_widget)
-        # self.dock.set_dirty()
-        return self._slider_state[widget_id]
-
-    def _set_slider_state(self, widget_id, value):
-        print(f"Setting slider state for {widget_id} to {value}")
-        self._slider_state[widget_id] = value
-
-    def _on_slider_release(self, widget_id):
-        self.dock.set_dirty()
-        self.dock.show()
 
     # --------------------------------------------------------------------------
     # TEXT FIELD
     # --------------------------------------------------------------------------
     def text_field(self, label, initial_value="", placeholder="", text_color=None, bg_color=None, font_size=None, extra_styles="", font_style=FontStyle.NORMAL):
-        """
-        Creates a text field (QLineEdit) with persistent state.
-        'label' is used as a key for the field's state.
-        'initial_value' is used if no value is stored yet.
-        'placeholder' is displayed when the field is empty.
-        Returns the current text value.
-        """
         widget_id = self._get_key(label)
         if widget_id not in self._text_field_state:
             self._text_field_state[widget_id] = initial_value
@@ -242,13 +169,59 @@ class LayoutUtility:
         self.dock.set_dirty()
         self.dock.show()
 
+    # --------------------------------------------------------------------------
+    # SLIDER FIELD (with value display)
+    # --------------------------------------------------------------------------
+    def slider(self, label, initial_value, min_value, max_value, orientation=Qt.Horizontal,
+               text_color=None, bg_color=None, font_size=None, extra_styles=""):
+        """
+        Creates a slider field with a numeric display next to it.
+        Returns the current slider value.
+        """
+        widget_id = self._get_key(label)
+        if widget_id not in self._slider_state:
+            self._slider_state[widget_id] = initial_value
+
+        # Create a horizontal layout to hold slider and value label.
+        h_layout = QHBoxLayout()
+        slider_widget = QSlider(orientation)
+        slider_widget.setMinimum(min_value)
+        slider_widget.setMaximum(max_value)
+        slider_widget.setValue(self._slider_state[widget_id])
+        slider_widget.valueChanged.connect(lambda value, wid=widget_id: self._set_slider_state(wid, value))
+        slider_widget.sliderReleased.connect(lambda wid=widget_id: self._on_slider_release(wid))
+        h_layout.addWidget(slider_widget)
+
+        # Create a label to display the slider's current value.
+        value_label = QLabel(str(self._slider_state[widget_id]))
+        apply_style(value_label, text_color="white", bg_color="transparent", font_size=12)
+        h_layout.addWidget(value_label)
+
+        # Store the label for later updates.
+        if not hasattr(self, "_slider_labels"):
+            self._slider_labels = {}
+        self._slider_labels[widget_id] = value_label
+
+        self._current_layout.addLayout(h_layout)
+        return self._slider_state[widget_id]
+
+    def _set_slider_state(self, widget_id, value):
+        self._slider_state[widget_id] = value
+        # Update the label if it exists.
+        if hasattr(self, "_slider_labels") and widget_id in self._slider_labels:
+            self._slider_labels[widget_id].setText(str(value))
+        # Optionally, you might mark the dock dirty here.
+        # self.dock.set_dirty()
+
+    def _on_slider_release(self, widget_id):
+        self.dock.set_dirty()
+        self.dock.show()
 
     # --------------------------------------------------------------------------
     # UTILITY
     # --------------------------------------------------------------------------
     def _compute_box_color(self):
-        depth = len(self._layout_stack) - 1
-        value = max(0, 220 - depth * 10)
+        value = 200
         return f"rgb({value}, {value}, {value})"
 
     def _create_boxed_container(self, layout_class, indent=0, box_color=None):
@@ -256,24 +229,23 @@ class LayoutUtility:
         frame.setFrameShape(QFrame.Box)
         frame.setFrameShadow(QFrame.Plain)
         frame.setLineWidth(1)
-
         frame_id = self._get_key("box")
         computed_color = box_color if box_color else self._compute_box_color()
         frame.setObjectName(frame_id)
-        # Only the QFrame gets the border, children are unaffected
         frame.setStyleSheet(f"QFrame#{frame_id} {{ border: 1px solid {computed_color}; padding: 5px; }}")
-
         layout = layout_class()
         layout.setContentsMargins(indent, 0, 0, 0)
         frame.setLayout(layout)
         return frame, layout
 
     # --------------------------------------------------------------------------
-    # GROUPING METHODS (WITH OPTIONAL BOXING AND INDENT)
+    # GROUPING METHODS (WITH OPTIONAL BOXING, INDENT, AND ALIGNMENT)
     # --------------------------------------------------------------------------
-    def begin_horizontal(self, boxed=False, box_color=None, indent=0):
+    def begin_horizontal(self, boxed=False, box_color=None, indent=0, alignment: LayoutAlignment = None):
         if boxed:
             container, layout = self._create_boxed_container(QHBoxLayout, indent, box_color)
+            if alignment is not None:
+                layout.setAlignment(alignment.value)
             self._current_layout.addWidget(container)
             self._layout_stack.append(layout)
             self._current_layout = layout
@@ -281,18 +253,17 @@ class LayoutUtility:
             h_layout = QHBoxLayout()
             if indent:
                 h_layout.setContentsMargins(indent, 0, 0, 0)
+            if alignment is not None:
+                h_layout.setAlignment(alignment.value)
             self._current_layout.addLayout(h_layout)
             self._layout_stack.append(h_layout)
             self._current_layout = h_layout
 
-    def end_horizontal(self):
-        if len(self._layout_stack) > 1:
-            self._layout_stack.pop()
-            self._current_layout = self._layout_stack[-1]
-
-    def begin_vertical(self, boxed=False, box_color=None, indent=0):
+    def begin_vertical(self, boxed=False, box_color=None, indent=0, alignment: LayoutAlignment = None):
         if boxed:
             container, layout = self._create_boxed_container(QVBoxLayout, indent, box_color)
+            if alignment is not None:
+                layout.setAlignment(alignment.value)
             self._current_layout.addWidget(container)
             self._layout_stack.append(layout)
             self._current_layout = layout
@@ -300,9 +271,16 @@ class LayoutUtility:
             v_layout = QVBoxLayout()
             if indent:
                 v_layout.setContentsMargins(indent, 0, 0, 0)
+            if alignment is not None:
+                v_layout.setAlignment(alignment.value)
             self._current_layout.addLayout(v_layout)
             self._layout_stack.append(v_layout)
             self._current_layout = v_layout
+
+    def end_horizontal(self):
+        if len(self._layout_stack) > 1:
+            self._layout_stack.pop()
+            self._current_layout = self._layout_stack[-1]
 
     def end_vertical(self):
         if len(self._layout_stack) > 1:
@@ -367,13 +345,7 @@ class LayoutUtility:
         button.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         button.setFixedHeight(20)
         button.setStyleSheet("QPushButton { text-align: left; padding: 2px 5px; margin: 0px; }")
-
-        def _on_foldout_toggled(checked, wid=widget_id):
-            self._set_foldout_state(wid, checked)
-            new_arrow = "v" if checked else ">"
-            button.setText(f"{new_arrow} {title}")
-
-        button.clicked.connect(lambda checked, wid=widget_id: _on_foldout_toggled(checked, wid))
+        button.clicked.connect(lambda checked, wid=widget_id: self._on_foldout_toggled(checked, wid, title, button))
         self._current_layout.addWidget(button)
 
         if boxed:
@@ -389,6 +361,11 @@ class LayoutUtility:
             self._current_layout = v_layout
 
         return self._foldout_state[widget_id]
+
+    def _on_foldout_toggled(self, checked, widget_id, title, button):
+        self._set_foldout_state(widget_id, checked)
+        new_arrow = "v" if checked else ">"
+        button.setText(f"{new_arrow} {title}")
 
     def _set_foldout_state(self, widget_id, value):
         self._foldout_state[widget_id] = value
@@ -411,9 +388,7 @@ class LayoutUtility:
         group_box.setLayout(group_layout)
         if boxed:
             computed_color = box_color if box_color else self._compute_box_color()
-            group_box.setStyleSheet(
-                f"QGroupBox {{ border: 1px solid {computed_color}; padding: 5px; }}"
-            )
+            group_box.setStyleSheet(f"QGroupBox {{ border: 1px solid {computed_color}; padding: 5px; }}")
         else:
             group_layout.setContentsMargins(indent, 0, 0, 0)
         self._current_layout.addWidget(group_box)
@@ -427,7 +402,7 @@ class LayoutUtility:
             self._current_layout = self._layout_stack[-1]
 
     # --------------------------------------------------------------------------
-    # SPACE METHODS (Unity-like GUILayout.Space and FlexibleSpace)
+    # SPACE METHODS (Like Unity's GUILayout.Space and FlexibleSpace)
     # --------------------------------------------------------------------------
     def space(self, size=10):
         if isinstance(self._current_layout, QVBoxLayout):
