@@ -31,6 +31,11 @@ class ControlModes:
     def all_modes_str():
         return [ControlModes.to_string(mode) for mode in ControlModes.all_modes()]
 
+class ControlValues:
+    def __init__(self, control_value : int, simultaneous : bool):
+        self.control_value = control_value
+        self.simultaneous = simultaneous
+
 
 @dock("Control Panel")
 class ControlDock(ImmediateInspectorDock):
@@ -38,37 +43,22 @@ class ControlDock(ImmediateInspectorDock):
         super().__init__(parent)
 
     def send_control_command(
-        self, motor_num: int, control_mode: ControlModes, control_value: int
+        self, motor_num: int, control_mode: ControlModes, control_value: int, simultaneous: bool
     ):
         message = MessageDefinitions.create_motor_control_message(
-            MessageType.REQUEST, motor_num, control_mode, control_value, False
+            MessageType.REQUEST, motor_num, control_mode, control_value, simultaneous
         )
 
         ApplicationContext.mcu_com.send_buffer_message(message)
 
-    def draw_position_control(self):
-        self.builder.label("Position Control", font_style=FontStyle.BOLD)
-        self.builder.begin_horizontal()
-        value = self.builder.slider("Position", min_value=0, max_value=100, initial_value=50)
-        self.builder.end_horizontal()
+
+    def draw_control_value(self, type : str, label: str, default_value: int) -> ControlValues:
+        self.builder.label(label, font_style=FontStyle.BOLD)
+        value = self.builder.slider(type, default_value, min_value=-100, max_value=100)
+        simultaneous = self.builder.toggle("Simultaneous", initial_value=False)
+        return ControlValues(value, simultaneous)
         
-        return value
-
-    def draw_velocity_control(self):
-        self.builder.label("Velocity Control", font_style=FontStyle.BOLD)
-        self.builder.begin_horizontal()
-        value = self.builder.slider("Velocity", min_value=0, max_value=100, initial_value=50)
-        self.builder.end_horizontal()
-
-        return value
-
-    def draw_torque_control(self):
-        self.builder.label("Torque Control", font_style=FontStyle.BOLD)
-        self.builder.begin_horizontal()
-        value = self.builder.slider("Torque", min_value=0, max_value=100, initial_value=50)
-        self.builder.end_horizontal()
         
-        return value
 
     def draw_motor_control(self, motor_num: int):
         self.builder.label(f"Motor {motor_num}", font_style=FontStyle.BOLD)
@@ -78,21 +68,13 @@ class ControlDock(ImmediateInspectorDock):
             "Control Mode", options=ControlModes.all_modes_str(), initial_value=0
         )
 
-        control_value = 0
-        match mode:
-            case ControlModes.POSITION:
-                control_value = self.draw_position_control()
-            case ControlModes.VELOCITY:
-                control_value = self.draw_velocity_control()
-            case ControlModes.TORQUE:
-                control_value = self.draw_torque_control()
-            case _:
-                self.builder.label("Invalid Control Mode", font_style=FontStyle.BOLD)
+        mode_str = ControlModes.to_string(mode)
+        control_values = self.draw_control_value("Control Value", f"{mode_str} Value", 0)
 
         # button to submit control
         if self.builder.button("Submit Control"):
             control_mode = ControlModes.all_modes()[mode]
-            self.send_control_command(motor_num, control_mode, control_value)
+            self.send_control_command(motor_num, control_mode, control_values.control_value, control_values.simultaneous)
 
         self.builder.end_vertical()
 
