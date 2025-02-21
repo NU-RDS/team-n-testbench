@@ -12,6 +12,7 @@ from PyQt5.QtWidgets import (
     QFrame,
     QSlider,
     QLineEdit,
+    QComboBox,
 )
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QGraphicsOpacityEffect
@@ -74,6 +75,7 @@ class LayoutUtility:
         self._text_field_state = {}
         self._slider_state = {}  # Map: unique widget ID -> int
         self._slider_labels = {} # Map: unique widget ID -> QLabel displaying slider value
+        self._dropdown_state = {} # Map: unique widget ID -> int
 
         self._key_counter = {}
 
@@ -216,6 +218,30 @@ class LayoutUtility:
     def _on_slider_release(self, widget_id):
         self.dock.set_dirty()
         self.dock.show()
+
+    # --------------------------------------------------------------------------
+    # DROPDOWN FIELD
+    # --------------------------------------------------------------------------
+
+    def dropdown(self, label, options, initial_value=0, text_color=None, bg_color=None, font_size=None, extra_styles=""):
+        widget_id = self._get_key(label)
+
+        if widget_id not in self._dropdown_state:
+            self._dropdown_state[widget_id] = initial_value
+
+        dropdown = QComboBox()
+        dropdown.addItems(options)
+        dropdown.setCurrentIndex(self._dropdown_state[widget_id])
+        dropdown.currentIndexChanged.connect(lambda index, wid=widget_id: self._set_dropdown_state(wid, index))
+        self._current_layout.addWidget(dropdown)
+        self.dock.set_dirty()
+        return self._dropdown_state[widget_id]
+    
+    def _set_dropdown_state(self, widget_id, index):
+        self._dropdown_state[widget_id] = index
+        self.dock.set_dirty()
+        self.dock.show()
+
 
     # --------------------------------------------------------------------------
     # UTILITY
