@@ -105,9 +105,9 @@ class ControlDock(ImmediateInspectorDock):
         if len(current_group) > 0:
             command_groups.append(current_group)
 
+        # draw the groups
         for idx, group in enumerate(command_groups):
             group_title = f"Command Group {idx}"
-
             show = self.builder.begin_foldout_header_group(group_title)
             if show:
                 for command in group:
