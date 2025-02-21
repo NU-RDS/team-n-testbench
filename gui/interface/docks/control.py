@@ -15,7 +15,7 @@ class ControlDock(ImmediateInspectorDock):
         self.builder.label(f"Motor {motor_num}", font_style=FontStyle.BOLD)
         self.builder.begin_horizontal()
         self.builder.label("Speed")
-        # self.builder.slider(f"Speed {motor_num}", 0, 100, 50)
+        self.builder.slider(f"Speed {motor_num}", min_value=0, max_value=100, initial_value=50)
         self.builder.end_horizontal()
 
         self.builder.begin_horizontal()
@@ -42,7 +42,9 @@ class ControlDock(ImmediateInspectorDock):
             self.draw_motor_control(motor_num)
             self.builder.end_vertical()
 
+        self.builder.begin_scroll()
         self.draw_command_bufer()
+        self.builder.end_scroll()
 
         self.builder.end_horizontal()
 

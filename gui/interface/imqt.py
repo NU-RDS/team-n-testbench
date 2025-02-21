@@ -11,6 +11,8 @@ from PyQt5.QtWidgets import (
     QSizePolicy,
     QSpacerItem,
     QFrame,
+    QSlider,
+    QLineEdit
 )
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QGraphicsOpacityEffect
@@ -81,6 +83,7 @@ class LayoutUtility:
         self._toggle_state = {}
         self._foldout_state = {}
         self._toggle_group_state = {}
+        self._slider_state = {}
 
         # Counter dictionary for generating unique keys.
         self._key_counter = {}
@@ -170,6 +173,75 @@ class LayoutUtility:
         self._current_layout.addWidget(lbl)
         self.dock.set_dirty()
         return lbl
+    
+    # --------------------------------------------------------------------------
+    # SLIDER (with optional FontStyle)
+    # --------------------------------------------------------------------------
+    
+    def slider(self, label, initial_value, min_value, max_value, orientation=Qt.Horizontal,
+            text_color=None, bg_color=None, font_size=None, extra_styles=""):
+        """
+        Creates a new slider field.
+        'label' is used as the key for persistent state.
+        'initial_value', 'min_value', and 'max_value' set the slider's range and starting value.
+        'orientation' may be Qt.Horizontal or Qt.Vertical.
+        
+        Returns the current value of the slider.
+        """
+        widget_id = self._get_key(label)
+        if widget_id not in self._slider_state:
+            self._slider_state[widget_id] = initial_value
+
+        slider_widget = QSlider(orientation)
+        slider_widget.setMinimum(min_value)
+        slider_widget.setMaximum(max_value)
+        slider_widget.setValue(self._slider_state[widget_id])
+      
+        # (Note: QSlider styling is less straightforward; you can add a style if needed.)
+        slider_widget.valueChanged.connect(lambda value, wid=widget_id: self._set_slider_state(wid, value))
+        slider_widget.sliderReleased.connect(lambda wid=widget_id: self._on_slider_release(wid))
+        self._current_layout.addWidget(slider_widget)
+        # self.dock.set_dirty()
+        return self._slider_state[widget_id]
+
+    def _set_slider_state(self, widget_id, value):
+        print(f"Setting slider state for {widget_id} to {value}")
+        self._slider_state[widget_id] = value
+
+    def _on_slider_release(self, widget_id):
+        self.dock.set_dirty()
+        self.dock.show()
+
+    # --------------------------------------------------------------------------
+    # TEXT FIELD
+    # --------------------------------------------------------------------------
+    def text_field(self, label, initial_value="", placeholder="", text_color=None, bg_color=None, font_size=None, extra_styles="", font_style=FontStyle.NORMAL):
+        """
+        Creates a text field (QLineEdit) with persistent state.
+        'label' is used as a key for the field's state.
+        'initial_value' is used if no value is stored yet.
+        'placeholder' is displayed when the field is empty.
+        Returns the current text value.
+        """
+        widget_id = self._get_key(label)
+        if widget_id not in self._text_field_state:
+            self._text_field_state[widget_id] = initial_value
+
+        field = QLineEdit()
+        field.setText(self._text_field_state[widget_id])
+        if placeholder:
+            field.setPlaceholderText(placeholder)
+        apply_style(field, text_color, bg_color, font_size, extra_styles, font_style=font_style)
+        field.textChanged.connect(lambda text, wid=widget_id: self._set_text_field_state(wid, text))
+        self._current_layout.addWidget(field)
+        self.dock.set_dirty()
+        return self._text_field_state[widget_id]
+
+    def _set_text_field_state(self, widget_id, text):
+        self._text_field_state[widget_id] = text
+        self.dock.set_dirty()
+        self.dock.show()
+
 
     # --------------------------------------------------------------------------
     # UTILITY
