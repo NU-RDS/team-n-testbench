@@ -117,7 +117,7 @@ class ControlDock(ImmediateInspectorDock):
             self.draw_command(command)
         self.builder.begin_vertical()
         if self.builder.button("Send Command"):
-            print("Send Command")
+            ApplicationContext.mcu_com.send_buffer()
         self.builder.end_vertical()
 
     def draw_inspector(self):
