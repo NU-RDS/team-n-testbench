@@ -57,7 +57,7 @@ class ShaderRegistry:
             PathUtil.read_file(fragment_shader_path),
         )
         shader_id = shader_pair.compile()
-        print(f"Registered shader pair {key} with id {shader_id}")
+        # print(f"Registered shader pair {key} with id {shader_id}")
         self.keys_to_shader_ids[key] = shader_id
         self.shader_ids_to_pair[shader_id] = shader_pair
 

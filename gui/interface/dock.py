@@ -48,7 +48,7 @@ class ImmediateInspectorDock(BaseDockWidget):
             super().show()  # Still show the dock
             return
 
-        print("Redrawing inspector")
+        # print("Redrawing inspector")
         temp = QWidget()
         temp.setLayout(self.layout)
         # Schedule the temporary widget for deletion. This will remove the old layout and its children.

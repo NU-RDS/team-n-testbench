@@ -7,6 +7,7 @@ import serial
 
 class PySerialChannel(CommunicationChannel):
     def __init__(self, port, baudrate=115200):
+        self.history = []
         try :
             self.ser = serial.Serial(port, baudrate, timeout=0.1)
             self.is_open = True
@@ -24,6 +25,8 @@ class PySerialChannel(CommunicationChannel):
         data = self.ser.read(self.ser.in_waiting or 1)
         if len(data) > 0:
             print(f"[serial][len({len(data)})] {data.decode('utf8')}")
+
+        self.history.append(data)
         return bytearray(data)
 
     def send(self, message: Message) -> None:
@@ -33,3 +36,9 @@ class PySerialChannel(CommunicationChannel):
         
         serialized = message.serialize()
         self.ser.write(serialized)
+
+    def get_history(self):
+        return self.history
+    
+    def clear_history(self):
+        self.history = []

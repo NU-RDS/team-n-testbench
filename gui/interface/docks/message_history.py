@@ -8,6 +8,7 @@ class MessageHistoryDock(ImmediateInspectorDock):
     def __init__(self, parent=None):
         super().__init__(parent)
         ApplicationContext.mcu_com.add_receive_callback(self.update_message_history)
+        ApplicationContext.mcu_com.add_send_callback(self.update_message_history)
         self.message_history = []
 
     def draw_label(self, label, value):

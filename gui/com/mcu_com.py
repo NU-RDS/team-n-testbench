@@ -52,7 +52,7 @@ class MCUCom:
         self.comm_interface.send_message(message)
 
     def send_buffer_message(self, message: Message):
-        print("Buffering message")
+        # print("Buffering message")
         self.tx_message_buffer.append(message)
 
     def send_buffer(self):

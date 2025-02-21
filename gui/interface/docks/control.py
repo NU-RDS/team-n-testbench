@@ -123,10 +123,11 @@ class ControlDock(ImmediateInspectorDock):
             self.builder.end_foldout_header_group()
 
 
-
         self.builder.begin_vertical()
         if self.builder.button("Send Command"):
             ApplicationContext.mcu_com.send_buffer()
+            self.set_dirty()
+            self.show()
         self.builder.end_vertical()
 
     def draw_inspector(self):
