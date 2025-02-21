@@ -58,8 +58,6 @@ class ControlDock(ImmediateInspectorDock):
         simultaneous = self.builder.toggle("Simultaneous", initial_value=False)
         return ControlValues(value, simultaneous)
         
-        
-
     def draw_motor_control(self, motor_num: int):
         self.builder.label(f"Motor {motor_num}", font_style=FontStyle.BOLD)
 
@@ -89,16 +87,20 @@ class ControlDock(ImmediateInspectorDock):
     def draw_command_bufer(self):
         self.builder.label("Command Buffer", font_style=FontStyle.BOLD)
 
+        # group the commands
         command_groups = [] # lists of lists of commands
         current_group = []
         for command in ApplicationContext.mcu_com.get_buffered_messages():
             is_simultaneous = command.get_field("simultaneous").value()
-            if not is_simultaneous:
+            # if it is simultaneous, add it to the current group
+            if is_simultaneous:
+                print("Adding to current group")
+                current_group.append(command)
+            else:
                 if len(current_group) > 0:
                     command_groups.append(current_group)
                     current_group = []
-            
-            current_group.append(command)
+                command_groups.append([command])
 
         if len(current_group) > 0:
             command_groups.append(current_group)

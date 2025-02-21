@@ -82,13 +82,13 @@ class MessageDefinitions:
         - "motor_id": UINT8
         - "control_mode": UINT8
         - "control_value": FLOAT
-        - "simutaneous": BOOL
+        - "simultaneous": BOOL
         """
         proto = DataPrototype(1)
         proto.add_field("motor_id", DataFieldType.UINT8)
         proto.add_field("control_mode", DataFieldType.UINT8)
         proto.add_field("control_value", DataFieldType.FLOAT)
-        proto.add_field("simutaneous", DataFieldType.BOOL)
+        proto.add_field("simultaneous", DataFieldType.BOOL)
         return proto
 
     @staticmethod
@@ -319,7 +319,7 @@ class MessageDefinitions:
         msg.set_field("motor_id", motor_id)
         msg.set_field("control_mode", control_mode)
         msg.set_field("control_value", control_value)
-        msg.set_field("simutaneous", simultaneous)
+        msg.set_field("simultaneous", simultaneous)
         return msg
 
     @staticmethod
