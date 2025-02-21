@@ -97,7 +97,6 @@ class ControlDock(ImmediateInspectorDock):
         self.builder.end_vertical()
 
     def draw_command_creator(self):
-
         self.builder.begin_horizontal()
         for motor_num in range(2):
             self.builder.begin_vertical(boxed=True, alignment=LayoutAlignment.CENTER)
@@ -105,16 +104,42 @@ class ControlDock(ImmediateInspectorDock):
             self.builder.end_vertical()
         self.builder.end_horizontal()
 
-    def draw_command(self, command : Message):
-        self.builder.begin_vertical(boxed=True)
-        self.builder.label(f"Command ID: {command.message_number()}", font_style=FontStyle.BOLD)
-        self.builder.end_vertical()
-
     def draw_command_bufer(self):
         self.builder.label("Command Buffer", font_style=FontStyle.BOLD)
 
+        command_groups = [] # lists of lists of commands
+        current_group = []
         for command in ApplicationContext.mcu_com.get_buffered_messages():
-            self.draw_command(command)
+            is_simultaneous = command.get_field("simultaneous").value()
+            if not is_simultaneous:
+                if len(current_group) > 0:
+                    command_groups.append(current_group)
+                    current_group = []
+            
+            current_group.append(command)
+
+        if len(current_group) > 0:
+            command_groups.append(current_group)
+
+        for idx, group in enumerate(command_groups):
+            group_title = f"Command Group {idx}"
+
+            show = self.builder.begin_foldout_header_group(group_title)
+            if show:
+                for command in group:
+                    self.builder.begin_horizontal()
+                    motor_id = command.get_field("motor_id").value()
+                    control_mode = command.get_field("control_mode").value()
+                    control_value = command.get_field("control_value").value()
+
+                    self.builder.label(f"Motor ID: {motor_id}")
+                    self.builder.label(f"Mode: {ControlModes.to_string(control_mode)} ({control_mode})")
+                    self.builder.label(f"Value: {control_value}")
+                    self.builder.end_horizontal()
+            self.builder.end_foldout_header_group()
+
+
+
         self.builder.begin_vertical()
         if self.builder.button("Send Command"):
             ApplicationContext.mcu_com.send_buffer()

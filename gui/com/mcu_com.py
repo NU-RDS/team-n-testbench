@@ -28,7 +28,6 @@ class MCUCom:
         )
 
         self.tx_message_buffer = []
-
         self.on_send_callbacks = []  # listof func(message)
         self.on_receive_callbacks = []  # listof func(message)
 
@@ -60,8 +59,9 @@ class MCUCom:
         for message in self.tx_message_buffer:
             self.send_message(message)
 
+        self.tx_message_buffer = []
+
     def get_buffered_messages(self):
-        print(f"Returning {len(self.tx_message_buffer)} messages")
         return self.tx_message_buffer
 
     def tick(self):
