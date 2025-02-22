@@ -4,9 +4,6 @@
 #include <vector>
 #include "com_manager/odrive_manager.hpp"
 
-/// @brief Proportional gain
-const auto kp = 0.005;
-
 /// @brief Motor torque limit
 const auto motor_torque_limit = 0.036; // N-m
 
@@ -132,14 +129,14 @@ public:
         const auto theta_0_dif = theta_des - joint_thetas.at(0);
 
         // Send joints and get motor torque
-        const auto tau_0 = kp * theta_0_dif;
-        const auto torques = tau_to_torque({tau_0, 0.0});
+        const auto taus = theta_to_tau({theta_0_dif, 0.0}, {0.0, 0.0});
+        const auto torques = tau_to_torque(taus);
 
         // Send torque
         const auto torque_0 = limit<float>(torques.at(0), motor_torque_limit);
         const auto torque_1 = limit<float>(torques.at(1), motor_torque_limit);
-        odrives_.at(0).odrv_.setTorque(torque_0);
-        odrives_.at(1).odrv_.setTorque(torque_1);
+        odrives_.at(0).odrive_.setTorque(torque_0);
+        odrives_.at(1).odrive_.setTorque(torque_1);
     }
 
     /// @brief Moves the second joint to a desired angle.
@@ -153,14 +150,31 @@ public:
         const auto theta_1_dif = theta_des - joint_thetas.at(1);
 
         // Send joints and get motor torque
-        const auto tau_1 = kp * theta_1_dif;
-        const auto torques = tau_to_torque({0.0, tau_1});
+        const auto taus = theta_to_tau({0.0, theta_1_dif}, {0.0, 0.0});
+        const auto torques = tau_to_torque(taus);
 
         // Send torque
         const auto torque_0 = limit<float>(torques.at(0), motor_torque_limit);
         const auto torque_1 = limit<float>(torques.at(1), motor_torque_limit);
-        odrives_.at(0).odrv_.setTorque(torque_0);
-        odrives_.at(1).odrv_.setTorque(torque_1);
+        odrives_.at(0).odrive_.setTorque(torque_0);
+        odrives_.at(1).odrive_.setTorque(torque_1);
+    }
+
+    /// @brief Creates class to move finger in a circle
+    void move_circle() {
+        // get current motor angles
+        const auto phi_0 = odrives_.at(0).odrive_user_data_.last_feedback.Pos_Estimate;
+        const auto phi_1 = odrives_.at(1).odrive_user_data_.last_feedback.Pos_Estimate; 
+
+        // Call the move function and print the output torques
+        std::vector<float> torques = finger.move(phi_0, phi_1);
+        if (std::isnan(torques.at(0)) || std::isnan(torques.at(1))) {
+            // IK fail, not possible
+            // CHANGE STATE TO ERROR
+            break;
+        }
+        odrives_.at(0).odrive_.setTorque(torques.at(0));
+        odrives_.at(1).odrive_.setTorque(torques.at(1));
     }
 
 public:
@@ -176,6 +190,9 @@ public:
 
     /// \brief Address of second odrive
     ODriveManager<CAN3> &odrive1_;
+
+    /// FoldingFinger object to move in circle
+    FoldingFinger finger(2, {0.5, 0, 0.5}, 4, 1);
 
 };
 
