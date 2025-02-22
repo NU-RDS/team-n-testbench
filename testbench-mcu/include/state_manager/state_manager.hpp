@@ -189,9 +189,9 @@ public:
         switch (current_state)
         {
         case State::INIT:
-            // Check for the status of odrives, if they are active,
+            // Check for the any critical errors,
             // then transition to READY if not switch to ERROR state
-            if (not comms_manager_.comms_timeout()) {
+            if (not check_errors()) {
                 exit_state(current_state);
                 current_state = State::READY;
                 enter_state(current_state);
@@ -200,7 +200,7 @@ public:
 
             else {
                 exit_state(current_state);
-                current_state = State::READY;
+                current_state = State::ERROR;
                 enter_state(current_state);
                 Serial.println("Switching to ERROR");
             }
@@ -208,6 +208,14 @@ public:
             break;
         
         case State::READY:
+            // Transition to ERROR if any critical errors are found     
+            if (check_errors()) {
+                exit_state(current_state);
+                current_state = State::ERROR;
+                enter_state(current_state);
+                Serial.println("Switching to ERROR");
+            }
+
             // Transition to ACTIVE if the deadman switch is pressed
             if (deadman_switch_pressed_) {
                 exit_state(current_state);
@@ -216,9 +224,18 @@ public:
                 Serial.println("Switching to ACTIVE");
             }
 
+
             break;
 
         case State::ACTIVE:
+            // Transition to ERROR if any critical errors are found     
+            if (check_errors()) {
+                exit_state(current_state);
+                current_state = State::ERROR;
+                enter_state(current_state);
+                Serial.println("Switching to ERROR");
+            }
+            
             // Transition to ACTIVE if the deadman switch is released
             if (not deadman_switch_pressed_)
             {
@@ -231,8 +248,7 @@ public:
             break;
 
         case State::ERROR:
-            // check if manual error clear was pressed, if so, change state to initializing
-            // if estop disabled, comms controller ready, then change state to initializing
+            // 
             if (not comms_manager_.comms_timeout())
             {
                 exit_state(current_state);

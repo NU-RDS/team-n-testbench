@@ -64,7 +64,7 @@ void setup() {
     time_group_us.AddTimer(500, []() { state_manager.execute_state(); });
 
 
-    Serial.println("Setup complete\n\n");
+    Serial.println("Setup complete");
 
 }
 
@@ -87,6 +87,5 @@ void loop() {
         Serial.println(feedback.Vel_Estimate);
 
       }
-
 
 }
