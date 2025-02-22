@@ -4,9 +4,6 @@
 #include <vector>
 #include "com_manager/odrive_manager.hpp"
 
-/// @brief Motor torque limit
-const auto motor_torque_limit = 0.036; // N-m
-
 /// @brief Basic Communication Manager class for handling multiple CAN buses
 class ComManager {
 public:
@@ -32,12 +29,12 @@ public:
         canbus0_.enableFIFOInterrupt();
         canbus0_.onReceive(F);
 
-        // canbus1_.begin();
-        // canbus1_.setBaudRate(CAN_BAUDRATE);
-        // canbus1_.setMaxMB(16);
-        // canbus1_.enableFIFO();
-        // canbus1_.enableFIFOInterrupt();
-        // canbus1_.onReceive(F);
+        canbus1_.begin();
+        canbus1_.setBaudRate(CAN_BAUDRATE);
+        canbus1_.setMaxMB(16);
+        canbus1_.enableFIFO();
+        canbus1_.enableFIFOInterrupt();
+        canbus1_.onReceive(F);
 
     }
 
@@ -47,13 +44,13 @@ public:
     /// \return false if unsuccessful
     bool initialize() {
         find_odrive(odrive0_);
-        // find_odrive(odrive1_);
+        find_odrive(odrive1_);
 
         odrive0_.startup_odrive_checks();
-        // odrive1_.startup_odrive_checks();
+        odrive1_.startup_odrive_checks();
 
         startup_odrive(odrive0_);
-        // startup_odrive(odrive1_);
+        startup_odrive(odrive1_);
 
         return true;
     }
@@ -62,19 +59,19 @@ public:
     void tick() {
 
         pumpEvents(canbus0_);
-        // pumpEvents(canbus1_);
+        pumpEvents(canbus1_);
 
         odrive0_.odrive_user_data_.heartbeat_timeout = (millis() - odrive0_.odrive_user_data_.last_heartbeat_time) > ODRIVE_HEARTBEAT_TIMEOUT;
-        // odrive1_.odrive_user_data_.heartbeat_timeout = (millis() - odrive1_.odrive_user_data_.last_heartbeat_time) > ODRIVE_HEARTBEAT_TIMEOUT;
+        odrive1_.odrive_user_data_.heartbeat_timeout = (millis() - odrive1_.odrive_user_data_.last_heartbeat_time) > ODRIVE_HEARTBEAT_TIMEOUT;
         
     }
 
     /// \brief Communication timeout on either of ODrives
     /// \return true if any are timed out
     /// \return false if none are timed out
-    bool commsTimeout() {
-        return odrive0_.odrive_user_data_.heartbeat_timeout;
-            //    odrive1_.odrive_user_data_.heartbeat_timeout or
+    bool comms_timeout() {
+        return odrive0_.odrive_user_data_.heartbeat_timeout or 
+               odrive1_.odrive_user_data_.heartbeat_timeout;
 
     }
 
@@ -118,64 +115,6 @@ public:
         Serial.println("ODrive running!");
     }
 
-    /// @brief Moves the first joint to a desired angle.
-    /// @param theta_des desired angle of the first joint (rad).
-    void move_j1(float theta_des) 
-    {
-        // Get position difference
-        const auto phi_0 = odrives_.at(0).odrive_user_data_.last_feedback.Pos_Estimate;
-        const auto phi_1 = odrives_.at(1).odrive_user_data_.last_feedback.Pos_Estimate; 
-        const auto joint_thetas = motors_to_joints({phi_0, phi_1}); // TODO: ONCE WE CALIBRATE CHANGE FUNCTION TO PHI TO THETA
-        const auto theta_0_dif = theta_des - joint_thetas.at(0);
-
-        // Send joints and get motor torque
-        const auto taus = theta_to_tau({theta_0_dif, 0.0}, {0.0, 0.0});
-        const auto torques = tau_to_torque(taus);
-
-        // Send torque
-        const auto torque_0 = limit<float>(torques.at(0), motor_torque_limit);
-        const auto torque_1 = limit<float>(torques.at(1), motor_torque_limit);
-        odrives_.at(0).odrive_.setTorque(torque_0);
-        odrives_.at(1).odrive_.setTorque(torque_1);
-    }
-
-    /// @brief Moves the second joint to a desired angle.
-    /// @param theta_des desired angle of the second joint (rad).
-    void move_j2(float theta_des) 
-    {
-        // Get position difference
-        const auto phi_0 = odrives_.at(0).odrive_user_data_.last_feedback.Pos_Estimate;
-        const auto phi_1 = odrives_.at(1).odrive_user_data_.last_feedback.Pos_Estimate; 
-        const auto joint_thetas = motors_to_joints({phi_0, phi_1}); // TODO: ONCE WE CALIBRATE CHANGE FUNCTION TO PHI TO THETA
-        const auto theta_1_dif = theta_des - joint_thetas.at(1);
-
-        // Send joints and get motor torque
-        const auto taus = theta_to_tau({0.0, theta_1_dif}, {0.0, 0.0});
-        const auto torques = tau_to_torque(taus);
-
-        // Send torque
-        const auto torque_0 = limit<float>(torques.at(0), motor_torque_limit);
-        const auto torque_1 = limit<float>(torques.at(1), motor_torque_limit);
-        odrives_.at(0).odrive_.setTorque(torque_0);
-        odrives_.at(1).odrive_.setTorque(torque_1);
-    }
-
-    /// @brief Creates class to move finger in a circle
-    void move_circle() {
-        // get current motor angles
-        const auto phi_0 = odrives_.at(0).odrive_user_data_.last_feedback.Pos_Estimate;
-        const auto phi_1 = odrives_.at(1).odrive_user_data_.last_feedback.Pos_Estimate; 
-
-        // Call the move function and print the output torques
-        std::vector<float> torques = finger.move(phi_0, phi_1);
-        if (std::isnan(torques.at(0)) || std::isnan(torques.at(1))) {
-            // IK fail, not possible
-            // CHANGE STATE TO ERROR
-            break;
-        }
-        odrives_.at(0).odrive_.setTorque(torques.at(0));
-        odrives_.at(1).odrive_.setTorque(torques.at(1));
-    }
 
 public:
 
@@ -190,9 +129,6 @@ public:
 
     /// \brief Address of second odrive
     ODriveManager<CAN3> &odrive1_;
-
-    /// FoldingFinger object to move in circle
-    FoldingFinger finger(2, {0.5, 0, 0.5}, 4, 1);
 
 };
 

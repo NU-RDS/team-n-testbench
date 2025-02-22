@@ -5,7 +5,7 @@
 #include "ODriveCAN.h"
 #include "odrive_utils/odrive_msgs.hpp"
 #include "odrive_utils/odrive_callbacks.hpp"
-#include "robot_description/finger.hpp"
+#include "utils/helpers.hpp"
 
 /// @brief ODrive Controller class for managing communication with an ODrive motor controller
 
@@ -88,29 +88,6 @@ public:
     return true;
   }
 
-  /// @brief Sets desired motor torque to move motor to motor angle
-  /// @param phi_des Desired motor angle
-  void set_position(float phi_des)
-  {
-    // Get motor angles
-    const auto phi = odrive_user_data_.last_feedback.Pos_Estimate;
-    
-    // add PID
-    const auto kp = 1e-1;
-    const auto phi_dif = phi_des - phi;
-    const auto desired_torque = kp * phi_dif;
-
-    // Ensure torque is not too large
-    if (desired_torque >= max_torque*0.8) {
-      odrive_.setTorque(max_torque * 0.8);
-    } else if (desired_torque <= - max_torque * 0.8) {
-      odrive_.setTorque(- max_torque * 0.8);
-    } else {
-      odrive.setTorque(desired_torque);
-    }
-    return;
-  }
-
 
   /// @brief Function to set the torque values based on the joint limits recorded from the startup_calibration.
   /// @param torque Requested torque in N/m
@@ -148,6 +125,30 @@ public:
   }
 
 
+  /// @brief Sets desired motor torque to move motor to motor angle
+  /// @param phi_des Desired motor angle
+  void set_position(float phi_des)
+  {
+    // Get motor angles
+    const auto phi = odrive_user_data_.last_feedback.Pos_Estimate;
+    
+    // add PID
+    const auto kp = 5e-2;
+    const auto phi_dif = phi_des - phi;
+    const auto desired_torque = kp * phi_dif;
+    const auto max_torque = 0.036;
+
+    // Ensure torque is not too large
+    if (desired_torque >= max_torque*0.8) {
+      odrive_.setTorque(max_torque * 0.8);
+    } else if (desired_torque <= - max_torque * 0.8) {
+      odrive_.setTorque(- max_torque * 0.8);
+    } else {
+      odrive_.setTorque(desired_torque);
+    }
+    return;
+  }
+
 public:
 
   /// @brief Address of canline for this odrive
@@ -158,6 +159,9 @@ public:
 
   /// \brief struct to store user data in
   ODriveUserData & odrive_user_data_;
+
+  /// \brief: Limits on motor torques
+  Limits<float> motor_limits_;
 
 };
 
