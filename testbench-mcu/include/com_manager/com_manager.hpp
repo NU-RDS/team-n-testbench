@@ -4,6 +4,12 @@
 #include <vector>
 #include "com_manager/odrive_manager.hpp"
 
+/// @brief Proportional gain
+const auto kp = 0.005;
+
+/// @brief Motor torque limit
+const auto motor_torque_limit = 0.036; // N-m
+
 /// @brief Basic Communication Manager class for handling multiple CAN buses
 class ComManager {
 public:
@@ -115,6 +121,47 @@ public:
         Serial.println("ODrive running!");
     }
 
+    /// @brief Moves the first joint to a desired angle.
+    /// @param theta_des desired angle of the first joint (rad).
+    void move_j1(float theta_des) 
+    {
+        // Get position difference
+        const auto phi_0 = odrives_.at(0).odrive_user_data_.last_feedback.Pos_Estimate;
+        const auto phi_1 = odrives_.at(1).odrive_user_data_.last_feedback.Pos_Estimate; 
+        const auto joint_thetas = motors_to_joints({phi_0, phi_1}); // TODO: ONCE WE CALIBRATE CHANGE FUNCTION TO PHI TO THETA
+        const auto theta_0_dif = theta_des - joint_thetas.at(0);
+
+        // Send joints and get motor torque
+        const auto tau_0 = kp * theta_0_dif;
+        const auto torques = tau_to_torque({tau_0, 0.0});
+
+        // Send torque
+        const auto torque_0 = limit<float>(torques.at(0), motor_torque_limit);
+        const auto torque_1 = limit<float>(torques.at(1), motor_torque_limit);
+        odrives_.at(0).odrv_.setTorque(torque_0);
+        odrives_.at(1).odrv_.setTorque(torque_1);
+    }
+
+    /// @brief Moves the second joint to a desired angle.
+    /// @param theta_des desired angle of the second joint (rad).
+    void move_j2(float theta_des) 
+    {
+        // Get position difference
+        const auto phi_0 = odrives_.at(0).odrive_user_data_.last_feedback.Pos_Estimate;
+        const auto phi_1 = odrives_.at(1).odrive_user_data_.last_feedback.Pos_Estimate; 
+        const auto joint_thetas = motors_to_joints({phi_0, phi_1}); // TODO: ONCE WE CALIBRATE CHANGE FUNCTION TO PHI TO THETA
+        const auto theta_1_dif = theta_des - joint_thetas.at(1);
+
+        // Send joints and get motor torque
+        const auto tau_1 = kp * theta_1_dif;
+        const auto torques = tau_to_torque({0.0, tau_1});
+
+        // Send torque
+        const auto torque_0 = limit<float>(torques.at(0), motor_torque_limit);
+        const auto torque_1 = limit<float>(torques.at(1), motor_torque_limit);
+        odrives_.at(0).odrv_.setTorque(torque_0);
+        odrives_.at(1).odrv_.setTorque(torque_1);
+    }
 
 public:
 

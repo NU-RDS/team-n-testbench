@@ -54,7 +54,7 @@ void setup() {
 void loop() {
 
     comms_manager.tick();
-    odrive0.odrive_.setTorque(0.011);
+    odrive0.odrive_.set_position(0.000);
 
     if (odrive0_user_data.received_feedback) {
         Get_Encoder_Estimates_msg_t feedback = odrive0_user_data.last_feedback;
