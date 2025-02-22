@@ -15,6 +15,16 @@ bool float_close_compare(float a, float b, float tol = 1e-6)
     return std::abs(a - b) < tol;
 }
 
+/// @brief Compare two {x, y, z} floats for equality under a tolerance
+/// @param a - The first {x, y, z}
+/// @param b - The second {x, y, z}
+/// @param tol - The acceptable tolerance, defaults to 1e-6
+/// @returns True if the difference of the floats is less than the tolerance, false otherwise
+bool point_close_compare(std::vector<float> a, std::vector<float> b, float tol = 1e-6)
+{
+    return std::hypot(b.at(0) - a.at(0), b.at(1) - a.at(1), b.at(2) - a.at(2)) < tol;
+}
+
 /// \brief Clamps an input value to a
 /// \tparam T - The type of the value to be limited
 /// \param input - The variable to limit.
