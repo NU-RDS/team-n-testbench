@@ -56,7 +56,7 @@ public:
             // IK fail
             return {nanf, nanf};
         }
-        const auto theta_dif = {desired_joint_thetas.at(0) - joint_thetas.at(0), desired_joint_thetas.at(1) - joint_thetas.at(1)};
+        std::vector<float> theta_dif = {desired_joint_thetas.at(0) - joint_thetas.at(0), desired_joint_thetas.at(1) - joint_thetas.at(1)};
         const auto taus = theta_to_tau(theta_dif, {0.0, 0.0});
         const auto torques = tau_to_torque(taus);
         return torques;
@@ -70,8 +70,8 @@ private:
     size_t max_repeats_ = 10; // maximum number of times to repeat cycle
     float path_radius_ = 0.02f; // diameter of circle is 4 cm
 
-    std::vector<float> origin_ = {0.0f, 0.0f};
-    std::vector<float> waypoints_; // Store waypoints as pairs of (x, y)
+    std::vector<float> origin_ = {0.0f, 0.0f, 0.0f}; 
+    std::vector<std::vector<float>> waypoints_; // Store waypoints as pairs of (x, y)
 
     
     void generate_waypoints() 
@@ -88,7 +88,7 @@ private:
 
             // Calculate x and y position for each waypoint
             const auto x = origin_.at(0)+ path_radius_ * cos(angle);
-            const auto z = origin_.at(10) + path_radius_ * sin(angle);
+            const auto z = origin_.at(2) + path_radius_ * sin(angle);
 
             // Store the (x, y, z) waypoint
             waypoints_.push_back({x, 0.0, z});
