@@ -9,6 +9,10 @@
 /// @brief Maximum torque values
 static const float max_torque = 0.036; // Hard maximum
 
+/// @brief PD gains
+const auto kp = 0.005;
+const auto kd = 0.002;
+
 /// @brief Link lengths in m
 static constexpr float link_1_length = 44.165e-03; // link lengths in meters
 static constexpr float link_2_length = 51.208e-03;
@@ -137,7 +141,7 @@ std::vector<float> inverse_kinematics(std::vector<float> pos)
         return {theta_0_2, theta_1_2};
     }
 
-    return {999.0, 999.0};
+    return {nanf, nanf};
 }
 
 
@@ -213,6 +217,15 @@ std::vector<float> torque_to_tau(std::vector<float> motor_torques)
     const auto tau_1 = transmission_2 * torque_0 + transmission_3 * torque_1;
 
     return {tau_0, tau_1};
+}
+
+/// @brief Determines desired tau to send to motors
+/// @param theta_dif, theta_dot_dif parameters for pd controller
+/// @returns desired tau
+std::vector<float> theta_to_tau(std::vector<float> theta_dif, std::vector<float> theta_dot_dif) {
+    const auto tau0 = kp * theta_dif.at(0) - kd * theta_dot_dif.at(0);
+    const auto tau1 = kp * theta_dif.at(1) - kd * theta_dot_dif.at(0);
+    return {tau0, tau1};
 }
 
 // Matrix spatial_jacobian(std::vector<float> joint_angles)
