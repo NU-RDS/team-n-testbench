@@ -137,8 +137,8 @@ public:
     void move_j1(float theta_des) 
     {
         // Get position difference
-        const auto phi_0 = odrives_.at(0).odrv_user_data_.last_feedback.Pos_Estimate;
-        const auto phi_1 = odrives_.at(1).odrv_user_data_.last_feedback.Pos_Estimate; 
+        const auto phi_0 = odrives_.at(0).odrive_user_data_.last_feedback.Pos_Estimate;
+        const auto phi_1 = odrives_.at(1).odrive_user_data_.last_feedback.Pos_Estimate; 
         const auto joint_thetas = motors_to_joints({phi_0, phi_1}); // TODO: ONCE WE CALIBRATE CHANGE FUNCTION TO PHI TO THETA
         const auto theta_0_dif = theta_des - joint_thetas.at(0);
 
@@ -158,8 +158,8 @@ public:
     void move_j2(float theta_des) 
     {
         // Get position difference
-        const auto phi_0 = odrives_.at(0).odrv_user_data_.last_feedback.Pos_Estimate;
-        const auto phi_1 = odrives_.at(1).odrv_user_data_.last_feedback.Pos_Estimate; 
+        const auto phi_0 = odrives_.at(0).odrive_user_data_.last_feedback.Pos_Estimate;
+        const auto phi_1 = odrives_.at(1).odrive_user_data_.last_feedback.Pos_Estimate; 
         const auto joint_thetas = motors_to_joints({phi_0, phi_1}); // TODO: ONCE WE CALIBRATE CHANGE FUNCTION TO PHI TO THETA
         const auto theta_1_dif = theta_des - joint_thetas.at(1);
 
