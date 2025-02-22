@@ -69,7 +69,7 @@ public:
     /// \brief Communication timeout on either of ODrives
     /// \return true if any are timed out
     /// \return false if none are timed out
-    bool commsTimeout() {
+    bool comms_timeout() {
         return odrive0_.odrive_user_data_.heartbeat_timeout or 
                odrive1_.odrive_user_data_.heartbeat_timeout;
 
