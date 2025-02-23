@@ -28,7 +28,7 @@ class PySerialChannel(CommunicationChannel):
         if len(data) > 0:
             print(f"[recieved:{len(data)}] {data.decode('utf8')}")
             # append the data to the history as a string
-            self.history += data.decode('utf8')
+            self.history += data.decode('utf8') + "\n"
             for callback in self.rx_callbacks:
                 callback(data)
 
@@ -39,7 +39,7 @@ class PySerialChannel(CommunicationChannel):
             print("Error: Serial port is not open.")
             return
         
-        self.history += message.serialize().decode('utf8')
+        self.history += message.serialize().decode('utf8') + "\n"
         decode_message = message.serialize().decode('utf8')
         print(f"[sent:{len(decode_message)}] {message.serialize().decode('utf8')}")
 

@@ -333,13 +333,15 @@ class LayoutUtility:
         container = QWidget()
         if orientation == Qt.Vertical:
             container_layout = QVBoxLayout()
+            # don't allow the horizontal scrollbar
+            scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         else:
             container_layout = QHBoxLayout()
+            # don't allow the vertical scrollbar
+            scroll_area.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         container.setLayout(container_layout)
         scroll_area.setWidget(container)
-        self._current_layout.addWidget(scroll_area)
-        self._layout_stack.append(container_layout)
-        self._current_layout = container_layout
+
 
         # Connect the scrollbar's valueChanged signal to store its current value.
         scroll_area.verticalScrollBar().valueChanged.connect(
@@ -359,6 +361,12 @@ class LayoutUtility:
             scroll_area.verticalScrollBar().setValue(scroll_area.verticalScrollBar().maximum())
         else:
             scroll_area.verticalScrollBar().setValue(self._scroll_amount[scroll_id])
+
+        scroll_area.verticalScrollBar().setValue(scroll_area.verticalScrollBar().maximum())
+
+        self._current_layout.addWidget(scroll_area)
+        self._layout_stack.append(container_layout)
+        self._current_layout = container_layout
 
         # Push this scroll_id onto our scroll stack.
         self._scroll_stack.append(scroll_id)
