@@ -160,6 +160,11 @@ class MotorControlCommand : public UserCommand {
     /// @return true if the command has completed.
     bool isDone() override;
 
+    std::uint8_t motorId() const { return _motorId; }
+    MotorControlType controlType() const { return _controlType; }
+    float controlValue() const { return _controlValue; }
+    bool simultaneous() const { return _simultaneous; }
+
    private:
     std::uint8_t _motorId;          ///< The motor identifier.
     MotorControlType _controlType;  ///< The control type.

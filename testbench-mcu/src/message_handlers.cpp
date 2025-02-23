@@ -54,8 +54,9 @@ void MessageHandlers::addHandlers() {
 /// @brief Handler for Heartbeat messages.
 void MessageHandlers::onHeartbeatMessage(const rdscom::Message &msg) {
     std::int8_t randVal = msg.getField<std::int8_t>("rand").value();
-    rdscom::Message response = createHeartbeatMessage(rdscom::MessageType::RESPONSE, randVal);
-    _com.sendMessage(response, true);
+    rdscom::Message response = rdscom::Message::createResponse(msg, msgs::heartbeatProto());
+    response.setField<std::int8_t>("rand", randVal);
+    _com.sendMessage(response);
 }
 
 /// @brief Handler for MotorControl messages.
@@ -63,18 +64,18 @@ void MessageHandlers::onMotorControlMessage(const rdscom::Message &msg) {
     auto result = MotorControlCommand::fromMessage(msg);
     if (!result) {
         std::cerr << "Error parsing MotorControl message\n";
+        rdscom::Message response = rdscom::Message::createResponse(msg, msgs::motorControlProto());
         return;
     }
+
     MotorControlCommand command = result.value();
     _commandBuffer.addCommand(std::make_shared<MotorControlCommand>(command));
-    rdscom::Message response = createMotorEventMessage(
-        rdscom::MessageType::RESPONSE,
-        msg.getField<std::uint8_t>("motor_id").value(),
-        true,
-        msg.getField<std::uint8_t>("control_mode").value(),
-        msg.getField<float>("control_value").value(),
-        0,
-        0
+    rdscom::Message response = createMotorControlMessageResponse(
+        msg,
+        command.motorId(),
+        static_cast<std::uint8_t>(command.controlType()),
+        command.controlValue(),
+        command.simultaneous()
     );
     _com.sendMessage(response, true);
 }
@@ -97,10 +98,10 @@ void MessageHandlers::onControlDoneMessage(const rdscom::Message &msg) {
 /// @brief Handler for StartSensorDatastream messages.
 void MessageHandlers::onStartSensorDatastreamMessage(const rdscom::Message &msg) {
     _isSensorDatastreamActive = true;
-    rdscom::Message response = createSensorDatastreamMessage(
-        rdscom::MessageType::RESPONSE,
+    rdscom::Message response = createStartSensorDatastreamMessageResponse(
+        msg,
         msg.getField<std::uint8_t>("sensor_id").value(),
-        0.0f
+        msg.getField<std::uint8_t>("frequency").value()
     );
     _com.sendMessage(response, true);
 }
@@ -113,20 +114,22 @@ void MessageHandlers::onSensorDatastreamMessage(const rdscom::Message &msg) {
 /// @brief Handler for StopSensorDatastream messages.
 void MessageHandlers::onStopSensorDatastreamMessage(const rdscom::Message &msg) {
     _isSensorDatastreamActive = false;
-    rdscom::Message response = createStopSensorDatastreamMessage(
-        rdscom::MessageType::RESPONSE,
+    rdscom::Message response = createStopSensorDatastreamMessageResponse(
+        msg,
         msg.getField<std::uint8_t>("sensor_id").value()
     );
+
     _com.sendMessage(response, true);
 }
 
 /// @brief Handler for ClearControlQueue messages.
 void MessageHandlers::onClearControlQueueMessage(const rdscom::Message &msg) {
     _commandBuffer.clear();
-    rdscom::Message response = createClearControlQueueMessage(
-        rdscom::MessageType::RESPONSE,
+    rdscom::Message response = createClearControlQueueMessageResponse(
+        msg,
         msg.getField<std::int8_t>("rand").value()
     );
+
     _com.sendMessage(response, true);
 }
 
@@ -138,8 +141,8 @@ void MessageHandlers::onErrorMessage(const rdscom::Message &msg) {
 /// @brief Handler for Stop messages.
 void MessageHandlers::onStopMessage(const rdscom::Message &msg) {
     _commandBuffer.clear();
-    rdscom::Message response = createStopMessage(
-        rdscom::MessageType::RESPONSE,
+    rdscom::Message response = createStopMessageResponse(
+        msg,
         msg.getField<std::int8_t>("rand").value()
     );
     _com.sendMessage(response, true);
