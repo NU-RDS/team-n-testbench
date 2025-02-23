@@ -229,36 +229,11 @@ std::vector<float> theta_to_tau(std::vector<float> theta_dif, std::vector<float>
     return {tau0, tau1};
 }
 
-// Matrix spatial_jacobian(std::vector<float> joint_angles)
-// {
-//     const auto theta_0 = joint_angles.at(0);
-//     const auto theta_1 = joint_angles.at(1);
-//     const auto theta_2 = joint_angles.at(2);
+std::vector<float> soft_limit_torques(std::vector<float> joint_thetas)
+{
+    static constexpr float discouraging_stiffness = 0.175f;
+    float joint_0_d_t = -discouraging_stiffness * joint_0_soft_limits.over_limits(joint_thetas.at(0));
+    float joint_1_d_t = -discouraging_stiffness * joint_1_soft_limits.over_limits(joint_thetas.at(1));
 
-//     Matrix J_s(2, 3);
-
-//     J_s(
-//         0,
-//         0) = -link_0_length * sin(theta_0) - link_1_length * sin(theta_0 + theta_1) - link_2_length * sin(theta_0 + theta_1 + theta_2);
-//     J_s(0, 1) = -link_1_length * sin(theta_0 + theta_1) - link_2_length * sin(
-//                                                                               theta_0 + theta_1 + theta_2);
-//     J_s(0, 2) = -link_2_length * sin(theta_0 + theta_1 + theta_2);
-//     J_s(
-//         1,
-//         0) = -link_0_length * cos(theta_0) - link_1_length * cos(theta_0 + theta_1) - link_2_length * cos(theta_0 + theta_1 + theta_2);
-//     J_s(1, 1) = -link_1_length * cos(theta_0 + theta_1) - link_2_length * cos(
-//                                                                               theta_0 + theta_1 + theta_2);
-//     J_s(1, 2) = -link_2_length * cos(theta_0 + theta_1 + theta_2);
-
-//     return J_s;
-// }
-
-// std::vector<float> soft_limit_torques(std::vector<float> joint_thetas)
-// {
-//     static constexpr float discouraging_stiffness = 0.175f;
-//     float joint_0_d_t = -discouraging_stiffness * joint_0_soft_limits.over_limits(joint_thetas.at(0));
-//     float joint_1_d_t = -discouraging_stiffness * joint_1_soft_limits.over_limits(joint_thetas.at(1));
-//     // float joint_2_d_t = -discouraging_stiffness * joint_2_soft_limits.over_limits(joint_thetas.at(2));
-
-//     return {joint_0_d_t, joint_1_d_t, 0.0f};
-// }
+    return {joint_0_d_t, joint_1_d_t};
+}
