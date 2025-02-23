@@ -5,6 +5,7 @@
 #include <Arduino.h>
 #include "com_manager/com_manager.hpp"
 #include "utils/led.hpp"
+#include <functional>
 
 /// \brief The state of the system
 enum State : uint8_t
@@ -55,7 +56,7 @@ public:
     /// \brief Update the LED strip based on the current state and odrive timeouts
     void update_led()
     {
-
+        // Serial.println("Update LED");
         switch (current_state)
         {
             case State::INIT:
@@ -95,6 +96,7 @@ public:
     }
 
     bool check_errors() {
+        // Serial.println("In check errors");
         return odrive0_heartbeat_timeout_ or
                odrive1_heartbeat_timeout_ or
                estop_enabled_ or
@@ -105,16 +107,24 @@ public:
 
     }
 
+    void set_active_callback(std::function<void()> callback) {
+        active_state_callback_ = callback;
+    } 
+
     void execute_state() {
+
+        // Serial.println("execute()");
 
         switch (current_state)
         {
         case State::INIT:
             // Do Nothing
+            Serial.println("INIT State");
             break;
         
         case State::READY:
             // Do Nothing
+            Serial.println("READY State");
             break;
 
         case State::ACTIVE:
@@ -123,6 +133,7 @@ public:
 
         case State::ERROR:
             // Do Nothing
+            Serial.println("ERROR State");
             break;
 
         }
@@ -142,11 +153,11 @@ public:
             break;
         case State::ERROR:
             request_disable();
-            // Check for communications with the ODrives
-            if (comms_manager_.comms_timeout())
-            {
-                reboot();
-            }
+            // // Check for communications with the ODrives
+            // if (comms_manager_.comms_timeout())
+            // {
+            //     reboot();
+            // }
             break;
         }
 
@@ -172,22 +183,21 @@ public:
 
     void change_state() {
 
-    // Check for errors. If any error are found, change state to ERROR and return
-    if (check_errors())
-    {
-        if (current_state == State::ERROR)
-        {
+        // Check for errors. If any error are found, change state to ERROR and return
+        // Serial.println("change_state()");
+        if (check_errors()) {
+            if (current_state == State::ERROR)
+            {
+                return;
+            }
+            exit_state(current_state);
+            current_state = State::ERROR;
+            enter_state(current_state);
+            Serial.println("Switching to ERROR");
             return;
         }
-        exit_state(current_state);
-        current_state = State::ERROR;
-        enter_state(current_state);
-        Serial.println("Switching to ERROR");
-        return;
-    }
 
-        switch (current_state)
-        {
+    switch (current_state) {
         case State::INIT:
             // Check for the any critical errors,
             // then transition to READY if not switch to ERROR state
@@ -236,8 +246,8 @@ public:
                 Serial.println("Switching to ERROR");
             }
             
-            // Transition to ACTIVE if the deadman switch is released
-            if (not deadman_switch_pressed_)
+            // Transition to READY if the deadman switch is released
+            if (not deadman_switch_pressed_ or active_state_execution_status_)
             {
                 exit_state(current_state);
                 current_state = State::READY;
@@ -248,7 +258,7 @@ public:
             break;
 
         case State::ERROR:
-            // 
+            // Transition to ERROR if any critical errors are found   
             if (not comms_manager_.comms_timeout())
             {
                 exit_state(current_state);
@@ -262,21 +272,20 @@ public:
 
     }
 
-/// \brief Check the deadman switch state
-void check_deadman()
-{
-    comms_manager_.tick();
-    delay(100);
-
-    if (digitalRead(DEADMAN_SWITCH) == LOW)
+    /// \brief Check the deadman switch state
+    void check_deadman()
     {
-        deadman_switch_pressed_ = false;
+        comms_manager_.tick();
+        delay(100);
+
+        if (digitalRead(DEADMAN_SWITCH) == LOW)
+        {
+            deadman_switch_pressed_ = false;
+            return;
+        }
+        deadman_switch_pressed_ = true;
         return;
     }
-    deadman_switch_pressed_ = true;
-    return;
-}
-
 
 
 public:
@@ -286,7 +295,10 @@ public:
     bool estop_enabled_ = false;
     bool deadman_switch_pressed_ = false;
     State current_state = State::INIT;
+    std::function<void()> active_state_callback_;
+    bool active_state_execution_status_ = false;
 
 };
+
 
 #endif // __STATE_MANAGER_H__

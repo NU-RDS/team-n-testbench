@@ -31,7 +31,13 @@ ComManager comms_manager{canbus0,
 
 StateManager state_manager{comms_manager};                         
 
-VirtualTimerGroup timer_group_ms{}, time_group_us{};
+VirtualTimerGroup timer_group_ms{};
+VirtualTimerGroup timer_group_us{};
+
+void test() {
+    odrive0.set_position(0.1);
+    odrive1.set_position(0.1);
+}
 
 void setup() {
     
@@ -53,18 +59,22 @@ void setup() {
     }
 
     // Setup deadman switch
+    ledSetup();
     pinMode(DEADMAN_SWITCH, INPUT);
 
     // Interrupt setup
     attachInterrupt(digitalPinToInterrupt(DEADMAN_SWITCH), []() { state_manager.check_deadman(); }, CHANGE);
 
+    state_manager.set_active_callback(test);
+
+    state_manager.current_state = State::INIT;
+
+    timer_group_us.AddTimer(500, []() { state_manager.execute_state(); });
     timer_group_ms.AddTimer(10, []() { state_manager.update_led(); });
     timer_group_ms.AddTimer(10, []() { state_manager.change_state(); });
 
-    time_group_us.AddTimer(500, []() { state_manager.execute_state(); });
-
-
-    Serial.println("Setup complete");
+    Serial.println("Timers registered.");
+    Serial.println("Exiting Setup()");
 
 }
 
@@ -72,20 +82,9 @@ void loop() {
 
     comms_manager.tick();
     timer_group_ms.Tick(millis());
-    time_group_us.Tick(micros());
+    timer_group_us.Tick(millis());
 
+    // Serial.println("In loop");
 
-    odrive0.set_position(0.1);
-    odrive1.set_position(0.1);
-
-    if (odrive0_user_data.received_feedback) {
-        Get_Encoder_Estimates_msg_t feedback = odrive0_user_data.last_feedback;
-        odrive0_user_data.received_feedback = false;
-        Serial.println("odrv0-pos:");
-        Serial.println(feedback.Pos_Estimate);
-        Serial.println("odrv0-vel:");
-        Serial.println(feedback.Vel_Estimate);
-
-      }
 
 }

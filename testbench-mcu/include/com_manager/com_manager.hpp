@@ -4,6 +4,8 @@
 #include <vector>
 #include "com_manager/odrive_manager.hpp"
 
+const unsigned long odrive_timeout = 1000; // 1 second timeout
+
 /// @brief Basic Communication Manager class for handling multiple CAN buses
 class ComManager {
 public:
@@ -43,14 +45,30 @@ public:
     /// \return true if successful
     /// \return false if unsuccessful
     bool initialize() {
-        find_odrive(odrive0_);
-        find_odrive(odrive1_);
+
+        bool odrive0_found = find_odrive(odrive0_);
+        bool odrive1_found = find_odrive(odrive1_);
+
+
+        if (!odrive0_found || !odrive1_found)
+        {
+            Serial.println("ERROR: Failed to find one or both ODrives. Initialization aborted.");
+            return false;
+        }
 
         odrive0_.startup_odrive_checks();
         odrive1_.startup_odrive_checks();
 
-        startup_odrive(odrive0_);
-        startup_odrive(odrive1_);
+        bool odrive0_started = startup_odrive(odrive0_);
+        bool odrive1_started = startup_odrive(odrive1_);
+
+        if (!odrive0_started || !odrive1_started)
+        {
+            Serial.println("ERROR: Failed to start one or both ODrives. Initialization aborted.");
+            return false; // Return failure if any ODrive fails to start
+        }
+
+        Serial.println("Initialization successful!");
 
         return true;
     }
@@ -77,23 +95,36 @@ public:
 
     /// \brief Receive hearbeats on odrives
     template <typename T>
-    void find_odrive(T odrive)
+    bool find_odrive(T odrive)
     {
         Serial.println("Waiting for ODrive" + String(odrive.odrive_user_data_.node_id) + "...");
+        
+        unsigned long start_time = millis();
+
         while (not odrive.odrive_user_data_.received_heartbeat)
         {
             tick();
             delay(100);
             Serial.println("Waiting for ODrive" + String(odrive.odrive_user_data_.node_id) + "...");
+
+            if (millis() - start_time > odrive_timeout)
+            {
+                Serial.println("ERROR: Timeout while waiting for ODrive" + String(odrive.odrive_user_data_.node_id) + " heartbeat.");
+                return false; // Exit the function if timeout occurs
+            }
+
         }
-        Serial.println("Found ODrive");
+        Serial.println("Found ODrive" + String(odrive.odrive_user_data_.node_id));
+        return true;
     }
 
     /// \brief Enable closed loop control on odrive
     template <typename T>
-    void startup_odrive(T odrive)
+    bool startup_odrive(T odrive)
     {
         Serial.println("Enabling closed loop control...");
+        unsigned long start_time = millis();
+
         while (odrive.odrive_user_data_.last_heartbeat.Axis_State != ODriveAxisState::AXIS_STATE_CLOSED_LOOP_CONTROL)
         {
             delay(1);
@@ -111,8 +142,15 @@ public:
                 delay(10);
                 ComManager::tick();
             }
+
+            if (millis() - start_time > odrive_timeout)
+            {
+                Serial.println("ERROR: Timeout while enabling closed loop control for ODrive" + String(odrive.odrive_user_data_.node_id));
+                return false; // Exit the function if timeout occurs
+            }
         }
-        Serial.println("ODrive running!");
+        Serial.println("ODrive" + String(odrive.odrive_user_data_.node_id) + " running!");
+        return true;
     }
 
 
