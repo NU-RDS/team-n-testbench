@@ -30,7 +30,7 @@ class MCUCom:
         self.timer_group = TimerGroup()
         self.tx_message_buffer = []
         self.on_send_callbacks = []  # listof func(message)
-        self.message_history = {} # message_number -> message
+        self.message_history = []
         self.message_event_callbacks = []  # listof func(message)
 
         # now add all of the prototypes
@@ -42,20 +42,18 @@ class MCUCom:
             self.comm_interface.add_callback(proto_id, MessageType.REQUEST, self.handle_message_event)
             self.comm_interface.add_callback(proto_id, MessageType.ERROR, self.handle_message_event)
 
-        self.timer_group.add_task(1000, self.send_hearbeat)
+        self.timer_group.add_task(200, self.send_hearbeat)
 
     def add_message_event_callback(self, callback):
         self.message_event_callbacks.append(callback)
 
     def handle_message_event(self, message: Message):
-        self.message_history[message.message_number()] = message
-
+        self.message_history.append(message)
         for callback in self.message_event_callbacks:
             callback(message)
 
     def get_message_history(self) -> list[Message]:
-        # sort by message number
-        return sorted(self.message_history.values(), key=lambda x: x.message_number())
+        return self.message_history
 
     def send_message(self, message: Message, ack_required: bool = False, on_failure = None):
         for callback in self.on_send_callbacks:
@@ -65,7 +63,6 @@ class MCUCom:
         self.comm_interface.send_message(message, ack_required, on_failure)
 
     def send_buffer_message(self, message: Message):
-        # print("Buffering message")
         self.tx_message_buffer.append(message)
 
     def send_buffer(self):
