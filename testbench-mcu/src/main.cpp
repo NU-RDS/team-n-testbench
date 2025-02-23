@@ -5,6 +5,7 @@
 
 #include "rdscom.hpp"
 #include "serial_com_channel.hpp"
+#include "message_handlers.hpp"
 
 #if defined(ARDUINO_TEENSY40) || defined(ARDUINO_TEENSY41)
 #define INTERNAL_LED_PIN LED_BUILTIN
@@ -23,19 +24,10 @@ SerialCommunicationChannel channel;
 // Create the communication interface using our serial channel.
 rdscom::CommunicationInterface com{channel, options};
 
-// Define an echo prototype with identifier 1. (This must match what the sender uses.)
-rdscom::DataPrototype echoProto{1};
+UserCommandBuffer g_commandBuffer;
 
-// Callback that echoes the received message.
-void onEchoMessage(const rdscom::Message &msg) {
-    // send back a response with the same data
-    // toggle back and forth
-    g_internalLEDState = (g_internalLEDState == HIGH) ? LOW : HIGH;
-    digitalWrite(INTERNAL_LED_PIN, g_internalLEDState);
-    rdscom::DataBuffer buf = msg.data();
-    rdscom::Message response = rdscom::Message::createResponse(msg, buf);
-    com.sendMessage(response);
-}
+msgs::MessageHandlers g_messageHandlers{com, g_commandBuffer};
+
 
 void setup() {
     // Initialize the Serial port.
@@ -44,20 +36,8 @@ void setup() {
         ;  // wait for serial port to connect. (Needed for some boards.)
     }
 
-    echoProto.addField("dummy", rdscom::DataFieldType::UINT8);
-
-    // Register the echo prototype with the communication interface.
-    com.addPrototype(echoProto);
-
-    // Register callbacks for the prototype 1 for all message types.
-    com.addCallback(1, rdscom::MessageType::REQUEST, onEchoMessage);
-    com.addCallback(1, rdscom::MessageType::ERROR, onEchoMessage);
-
-    // Optional: Print a startup message.
-    Serial.println("Echo server started.");
-
-    pinMode(INTERNAL_LED_PIN, OUTPUT);
-    digitalWrite(INTERNAL_LED_PIN, g_internalLEDState);
+    g_messageHandlers.registerPrototypes();
+    g_messageHandlers.addHandlers();
 }
 
 void loop() {

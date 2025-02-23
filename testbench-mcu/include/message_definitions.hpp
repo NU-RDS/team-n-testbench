@@ -2,6 +2,7 @@
 #define MESSAGE_DEFINITIONS_HPP
 
 #include "rdscom.hpp"
+#include <map>
 
 namespace msgs {
 
@@ -61,7 +62,7 @@ inline rdscom::DataPrototype startSensorDataStreamProto() {
 }
 
 // DataPrototype 6: SensorDatastream
-inline rdscom::DataPrototype sensorDatastreamProto() {
+inline rdscom::DataPrototype sensorDataStreamProto() {
     rdscom::DataPrototype proto(6);
     proto.addField("sensor_id", rdscom::DataFieldType::UINT8);
     proto.addField("data", rdscom::DataFieldType::FLOAT);
@@ -69,7 +70,7 @@ inline rdscom::DataPrototype sensorDatastreamProto() {
 }
 
 // DataPrototype 7: StopSensorDatastream
-inline rdscom::DataPrototype stopSensorDatastreamProto() {
+inline rdscom::DataPrototype stopSensorDataStreamProto() {
     rdscom::DataPrototype proto(7);
     proto.addField("sensor_id", rdscom::DataFieldType::UINT8);
     return proto;
@@ -83,7 +84,7 @@ inline rdscom::DataPrototype clearControlQueueProto() {
 }
 
 // DataPrototype 9: Error
-inline rdscom::DataPrototype errorMessageProto() {
+inline rdscom::DataPrototype errorProto() {
     rdscom::DataPrototype proto(9);
     proto.addField("error_code", rdscom::DataFieldType::UINT8);
     return proto;
@@ -127,7 +128,7 @@ inline rdscom::Message createMotorControlMessage(rdscom::MessageType msgType,
     msg.setField<std::uint8_t>("motor_id", motor_id);
     msg.setField<std::uint8_t>("control_mode", control_mode);
     msg.setField<float>("control_value", control_value);
-    msg.setField<bool>("simutaneous", simultaneous);
+    msg.setField<std::uint8_t>("simutaneous", simultaneous == true ? 1 : 0);
     return msg;
 }
 
@@ -140,7 +141,7 @@ inline rdscom::Message createMotorEventMessage(rdscom::MessageType msgType,
                                                std::uint8_t executed_with_count) {
     rdscom::Message msg(msgType, motorEventProto());
     msg.setField<std::uint8_t>("motor_id", motor_id);
-    msg.setField<bool>("success", success);
+    msg.setField<std::uint8_t>("success", success == true ? 1 : 0);
     msg.setField<std::uint8_t>("event_type", event_type);
     msg.setField<float>("event_value", event_value);
     msg.setField<std::uint8_t>("num_in_queue", num_in_queue);
@@ -159,7 +160,7 @@ inline rdscom::Message createControlDoneMessage(rdscom::MessageType msgType,
                                                 std::uint32_t time,
                                                 std::uint8_t executed) {
     rdscom::Message msg(msgType, controlDoneProto());
-    msg.setField<bool>("success", success);
+    msg.setField<std::uint8_t>("success", success == true ? 1 : 0);
     msg.setField<std::uint32_t>("time", time);
     msg.setField<std::uint8_t>("executed", executed);
     return msg;
@@ -177,7 +178,7 @@ inline rdscom::Message createStartSensorDatastreamMessage(rdscom::MessageType ms
 inline rdscom::Message createSensorDatastreamMessage(rdscom::MessageType msgType,
                                                      std::uint8_t sensor_id,
                                                      float data) {
-    rdscom::Message msg(msgType, sensorDatastreamProto());
+    rdscom::Message msg(msgType, sensorDataStreamProto());
     msg.setField<std::uint8_t>("sensor_id", sensor_id);
     msg.setField<float>("data", data);
     return msg;
@@ -185,7 +186,7 @@ inline rdscom::Message createSensorDatastreamMessage(rdscom::MessageType msgType
 
 inline rdscom::Message createStopSensorDatastreamMessage(rdscom::MessageType msgType,
                                                          std::uint8_t sensor_id) {
-    rdscom::Message msg(msgType, stopSensorDatastreamProto());
+    rdscom::Message msg(msgType, stopSensorDataStreamProto());
     msg.setField<std::uint8_t>("sensor_id", sensor_id);
     return msg;
 }
@@ -197,7 +198,7 @@ inline rdscom::Message createClearControlQueueMessage(rdscom::MessageType msgTyp
 }
 
 inline rdscom::Message createErrorMessage(rdscom::MessageType msgType, std::uint8_t error_code) {
-    rdscom::Message msg(msgType, errorMessageProto());
+    rdscom::Message msg(msgType, errorProto());
     msg.setField<std::uint8_t>("error_code", error_code);
     return msg;
 }
