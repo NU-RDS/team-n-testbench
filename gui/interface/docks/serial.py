@@ -8,9 +8,8 @@ from app_context import ApplicationContext
 class SerialDock(ImmediateInspectorDock):
     def __init__(self, parent=None):
         super().__init__(parent)
-        
-        ApplicationContext.mcu_com.channel.add_receive_callback(lambda _: self.redraw())
-        ApplicationContext.mcu_com.channel.add_transmit_callback(lambda _: self.redraw())
+        self.timer_group.add_task(2000, self.redraw)
+
 
     def draw_serial(self):
         # draw the console UI

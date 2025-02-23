@@ -10,7 +10,7 @@ class MessageHistoryDock(ImmediateInspectorDock):
     def __init__(self, parent=None):
         super().__init__(parent)
         # ApplicationContext.mcu_com.add_message_event_callback(self.redraw)
-        self.timer_group.add_task(200, self.redraw)
+        self.timer_group.add_task(2000, self.redraw)
 
     def draw_label(self, label, value):
         self.builder.begin_horizontal()
@@ -41,10 +41,14 @@ class MessageHistoryDock(ImmediateInspectorDock):
     def draw_inspector(self):
         self.builder.start()
         self.builder.begin_scroll()
-        for message in ApplicationContext.mcu_com.get_message_history():
+        message_history = ApplicationContext.mcu_com.get_message_history()
+
+        # only show the last 10 messages (or less)
+        draw_amount = min(len(message_history), 10)
+        for message in message_history[-draw_amount:]:
             self.draw_message(message)
 
-        self.builder.flexible_space()
+        # self.builder.flexible_space()
         self.builder.end_scroll()
 
     def redraw(self):
