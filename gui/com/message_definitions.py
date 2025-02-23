@@ -69,7 +69,7 @@ class MessageDefinitions:
         Fields:
         - "rand": INT8
         """
-        proto = DataPrototype(0)
+        proto = DataPrototype(MessageDefinitions.heartbeat_id())
         proto.add_field("rand", DataFieldType.INT8)
         return proto
 
@@ -84,11 +84,11 @@ class MessageDefinitions:
         - "control_value": FLOAT
         - "simultaneous": BOOL
         """
-        proto = DataPrototype(1)
+        proto = DataPrototype(MessageDefinitions.motor_control_id())
         proto.add_field("motor_id", DataFieldType.UINT8)
         proto.add_field("control_mode", DataFieldType.UINT8)
         proto.add_field("control_value", DataFieldType.FLOAT)
-        proto.add_field("simultaneous", DataFieldType.BOOL)
+        proto.add_field("simultaneous", DataFieldType.UINT8)
         return proto
 
     @staticmethod
@@ -104,9 +104,9 @@ class MessageDefinitions:
         - "num_in_queue": UINT8
         - "executed_with_count": UINT8
         """
-        proto = DataPrototype(2)
+        proto = DataPrototype(MessageDefinitions.motor_event_id())
         proto.add_field("motor_id", DataFieldType.UINT8)
-        proto.add_field("success", DataFieldType.BOOL)
+        proto.add_field("success", DataFieldType.UINT8)
         proto.add_field("event_type", DataFieldType.UINT8)
         proto.add_field("event_value", DataFieldType.FLOAT)
         proto.add_field("num_in_queue", DataFieldType.UINT8)
@@ -121,7 +121,7 @@ class MessageDefinitions:
         Fields:
         - "rand": INT8
         """
-        proto = DataPrototype(3)
+        proto = DataPrototype(MessageDefinitions.control_go_id())
         proto.add_field("rand", DataFieldType.INT8)
         return proto
 
@@ -135,8 +135,8 @@ class MessageDefinitions:
         - "time": UINT32
         - "executed": UINT8
         """
-        proto = DataPrototype(4)
-        proto.add_field("success", DataFieldType.BOOL)
+        proto = DataPrototype(MessageDefinitions.control_done_id())
+        proto.add_field("success", DataFieldType.UINT8)
         proto.add_field("time", DataFieldType.UINT32)
         proto.add_field("executed", DataFieldType.UINT8)
         return proto
@@ -150,7 +150,7 @@ class MessageDefinitions:
         - "sensor_id": UINT8
         - "frequency": UINT8
         """
-        proto = DataPrototype(5)
+        proto = DataPrototype(MessageDefinitions.start_sensor_datastream_id())
         proto.add_field("sensor_id", DataFieldType.UINT8)
         proto.add_field("frequency", DataFieldType.UINT8)
         return proto
@@ -164,7 +164,7 @@ class MessageDefinitions:
         - "sensor_id": UINT8
         - "data": FLOAT
         """
-        proto = DataPrototype(6)
+        proto = DataPrototype(MessageDefinitions.sensor_datastream_id())
         proto.add_field("sensor_id", DataFieldType.UINT8)
         proto.add_field("data", DataFieldType.FLOAT)
         return proto
@@ -177,7 +177,7 @@ class MessageDefinitions:
         Fields:
         - "sensor_id": UINT8
         """
-        proto = DataPrototype(7)
+        proto = DataPrototype(MessageDefinitions.stop_sensor_datastream_id())
         proto.add_field("sensor_id", DataFieldType.UINT8)
         return proto
 
@@ -189,7 +189,7 @@ class MessageDefinitions:
         Fields:
         - "rand": INT8
         """
-        proto = DataPrototype(8)
+        proto = DataPrototype(MessageDefinitions.clear_control_queue_id())
         proto.add_field("rand", DataFieldType.INT8)
         return proto
 
@@ -201,7 +201,7 @@ class MessageDefinitions:
         Fields:
         - "error_code": UINT8
         """
-        proto = DataPrototype(9)
+        proto = DataPrototype(MessageDefinitions.error_id())
         proto.add_field("error_code", DataFieldType.UINT8)
         return proto
 
@@ -213,7 +213,7 @@ class MessageDefinitions:
         Fields:
         - "rand": INT8
         """
-        proto = DataPrototype(10)
+        proto = DataPrototype(MessageDefinitions.stop_id())
         proto.add_field("rand", DataFieldType.INT8)
         return proto
 

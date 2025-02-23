@@ -77,7 +77,9 @@ class LayoutUtility:
         self._slider_labels = {} # Map: unique widget ID -> QLabel displaying slider value
         self._dropdown_state = {} # Map: unique widget ID -> int
         self._scroll_flags = {}    # maps scroll id -> bool (True means "keep at bottom")
-        self._scroll_widgets = {}  # maps scroll id -> QScrollArea
+        self._scroll_amount = {}  # maps scroll id -> QScrollArea
+        self._scroll_widget = {}  # maps scroll id -> QWidget
+        self._scroll_stack = []  # stack of scroll widgets ids
 
         self._key_counter = {}
 
@@ -260,6 +262,8 @@ class LayoutUtility:
         frame_id = self._get_key("box")
         computed_color = box_color if box_color else self._compute_box_color()
         frame.setObjectName(frame_id)
+        # make the height the minimum necessary to contain the layout
+        frame.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
         frame.setStyleSheet(f"QFrame#{frame_id} {{ border: 1px solid {computed_color}; padding: 5px; }}")
         layout = layout_class()
         layout.setContentsMargins(indent, 0, 0, 0)
@@ -318,7 +322,8 @@ class LayoutUtility:
     # --------------------------------------------------------------------------
     # SCROLLABLE REGION
     # --------------------------------------------------------------------------
-    def begin_scroll(self, orientation=Qt.Vertical, scroll_id=None, keep_bottom=False):
+    def begin_scroll(self, orientation=Qt.Vertical, keep_bottom=False):
+        scroll_id = self._get_key("scroll")
         scroll_area = QScrollArea()
         scroll_area.setWidgetResizable(True)
         container = QWidget()
@@ -326,33 +331,48 @@ class LayoutUtility:
             container_layout = QVBoxLayout()
         else:
             container_layout = QHBoxLayout()
+
+        scroll = scroll_area.verticalScrollBar()
+        scroll.valueChanged.connect(lambda value, sid=scroll_id: self._on_scroll_value_changed(value, sid))
+        
         container.setLayout(container_layout)
         scroll_area.setWidget(container)
         self._current_layout.addWidget(scroll_area)
         self._layout_stack.append(container_layout)
         self._current_layout = container_layout
         # If a scroll_id is provided, store the flag and widget.
-        if scroll_id is not None:
+        if scroll_id not in self._scroll_flags.keys():
             self._scroll_flags[scroll_id] = keep_bottom
-            self._scroll_widgets[scroll_id] = scroll_area
+            self._scroll_amount[scroll_id] = 0
+        else:
+            scroll.setValue(self._scroll_amount.get(scroll_id, 0))
+
+        self._scroll_widget[scroll_id] = scroll_area
+        self._scroll_stack.append(scroll_id)
+
         return scroll_id
 
-    def end_scroll(self, scroll_id=None):
+    def end_scroll(self):
         if len(self._layout_stack) > 1:
             self._layout_stack.pop()
             self._current_layout = self._layout_stack[-1]
-        # If a scroll_id was provided and its flag is set, force the scroll to bottom.
-        if scroll_id is not None and self._scroll_flags.get(scroll_id, False):
-            scroll_area = self._scroll_widgets.get(scroll_id)
-            if scroll_area is not None:
-                vsb = scroll_area.verticalScrollBar()
-                vsb.setValue(vsb.maximum())
 
-    def scroll_to_bottom(self, scroll_id):
-        scroll_area = self._scroll_widgets.get(scroll_id)
-        if scroll_area is not None:
-            vsb = scroll_area.verticalScrollBar()
-            vsb.setValue(vsb.maximum())
+        if len(self._scroll_stack) > 0:
+            scroll_area = self._scroll_stack.pop()
+            keep_bottom = self._scroll_flags.get(scroll_area, False)
+            if keep_bottom:
+                scroll = self._scroll_widget[scroll_area].verticalScrollBar()
+                scroll.setValue(scroll.maximum())
+            else:
+                scroll = self._scroll_widget[scroll_area].verticalScrollBar()
+                scroll.setValue(self._scroll_amount[scroll_area])
+
+
+    def _on_scroll_value_changed(self, value, scroll_id):
+        # store the value of the scroll bar
+        print(f"scroll value changed: {value}")
+        self._scroll_amount[scroll_id] = value
+
 
     # --------------------------------------------------------------------------
     # FADE GROUP

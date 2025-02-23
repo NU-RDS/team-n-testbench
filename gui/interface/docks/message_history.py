@@ -2,6 +2,7 @@ from interface.dock import dock, ImmediateInspectorDock
 from rdscom.rdscom import (Message, CommunicationChannel, MessageType)
 from app_context import ApplicationContext
 from interface.imqt import FontStyle, LayoutAlignment
+from com.message_definitions import MessageDefinitions
 
 @dock("Message History")
 class MessageHistoryDock(ImmediateInspectorDock):
@@ -18,11 +19,10 @@ class MessageHistoryDock(ImmediateInspectorDock):
 
     def draw_message(self, message : Message):
         type_str = MessageType.to_string(message.type())
+        payload_type_str = MessageDefinitions.get_human_name(message.data().type().identifier())
 
-        show = self.builder.begin_foldout_header_group(f"Message {message.message_number()} - {type_str}")
+        show = self.builder.begin_foldout_header_group(f"{payload_type_str} {type_str} - {message.message_number()}", indent=10)
         if show:
-            self.builder.begin_vertical(boxed=True, alignment=LayoutAlignment.LEFT)
-            
             self.builder.label("Meta Data", font_style=FontStyle.BOLD)
             self.builder.begin_horizontal()
             self.builder.label("Message Type", message.type())
@@ -34,8 +34,6 @@ class MessageHistoryDock(ImmediateInspectorDock):
                 value = message.data().get_field(field_name).value()
                 self.draw_label(field_name, value)
 
-            self.builder.end_vertical()
-
         self.builder.end_foldout_header_group()
         
     def draw_inspector(self):
@@ -43,6 +41,8 @@ class MessageHistoryDock(ImmediateInspectorDock):
         self.builder.begin_scroll(keep_bottom=True)
         for message in ApplicationContext.mcu_com.get_message_history():
             self.draw_message(message)
+
+        self.builder.flexible_space()
         self.builder.end_scroll()
 
     def redraw(self, message : Message):
