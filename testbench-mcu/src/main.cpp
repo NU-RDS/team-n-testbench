@@ -3,6 +3,7 @@
 #include <Arduino.h>
 #include <HardwareSerial.h>
 
+// #define RDSCOM_DEBUG_ENABLED 1
 #include "rdscom.hpp"
 #include "serial_com_channel.hpp"
 #include "message_handlers.hpp"
@@ -19,14 +20,14 @@ uint8_t g_internalLEDState = HIGH;
 rdscom::CommunicationInterfaceOptions options{3, 2000, millis};
 
 // Instantiate a SerialCommunicationChannel using the hardware Serial port.
-SerialCommunicationChannel channel;
+SerialCommunicationChannel g_channel;
 
 // Create the communication interface using our serial channel.
-rdscom::CommunicationInterface com{channel, options};
+rdscom::CommunicationInterface g_com{g_channel, options};
 
 UserCommandBuffer g_commandBuffer;
 
-msgs::MessageHandlers g_messageHandlers{com, g_commandBuffer};
+msgs::MessageHandlers g_messageHandlers{g_com, g_commandBuffer};
 
 
 void setup() {
@@ -42,5 +43,5 @@ void setup() {
 
 void loop() {
     // Let the CommunicationInterface process any incoming messages and handle callbacks.
-    com.tick();
+    g_com.tick();
 }

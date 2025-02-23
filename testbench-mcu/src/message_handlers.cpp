@@ -27,25 +27,25 @@ void MessageHandlers::registerPrototypes() {
 
 /// @brief Registers all message handlers with the communication interface.
 void MessageHandlers::addHandlers() {
-    _com.addCallback(heartbeatId(), rdscom::MessageType::RESPONSE,
+    _com.addCallback(heartbeatId(), rdscom::MessageType::REQUEST,
         [this](const rdscom::Message &msg) { this->onHeartbeatMessage(msg); });
     _com.addCallback(motorControlId(), rdscom::MessageType::REQUEST,
         [this](const rdscom::Message &msg) { this->onMotorControlMessage(msg); });
-    _com.addCallback(motorEventId(), rdscom::MessageType::RESPONSE,
+    _com.addCallback(motorEventId(), rdscom::MessageType::REQUEST,
         [this](const rdscom::Message &msg) { this->onMotorEventMessage(msg); });
     _com.addCallback(controlGoId(), rdscom::MessageType::REQUEST,
         [this](const rdscom::Message &msg) { this->onControlGoMessage(msg); });
-    _com.addCallback(controlDoneId(), rdscom::MessageType::RESPONSE,
+    _com.addCallback(controlDoneId(), rdscom::MessageType::REQUEST,
         [this](const rdscom::Message &msg) { this->onControlDoneMessage(msg); });
     _com.addCallback(startSensorDatastreamId(), rdscom::MessageType::REQUEST,
         [this](const rdscom::Message &msg) { this->onStartSensorDatastreamMessage(msg); });
-    _com.addCallback(sensorDatastreamId(), rdscom::MessageType::RESPONSE,
+    _com.addCallback(sensorDatastreamId(), rdscom::MessageType::REQUEST,
         [this](const rdscom::Message &msg) { this->onSensorDatastreamMessage(msg); });
     _com.addCallback(stopSensorDatastreamId(), rdscom::MessageType::REQUEST,
         [this](const rdscom::Message &msg) { this->onStopSensorDatastreamMessage(msg); });
     _com.addCallback(clearControlQueueId(), rdscom::MessageType::REQUEST,
         [this](const rdscom::Message &msg) { this->onClearControlQueueMessage(msg); });
-    _com.addCallback(errorId(), rdscom::MessageType::RESPONSE,
+    _com.addCallback(errorId(), rdscom::MessageType::REQUEST,
         [this](const rdscom::Message &msg) { this->onErrorMessage(msg); });
     _com.addCallback(stopId(), rdscom::MessageType::REQUEST,
         [this](const rdscom::Message &msg) { this->onStopMessage(msg); });

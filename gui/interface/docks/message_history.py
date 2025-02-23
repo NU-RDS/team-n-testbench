@@ -1,5 +1,5 @@
 from interface.dock import dock, ImmediateInspectorDock
-from rdscom.rdscom import (Message, CommunicationChannel)
+from rdscom.rdscom import (Message, CommunicationChannel, MessageType)
 from app_context import ApplicationContext
 from interface.imqt import FontStyle, LayoutAlignment
 
@@ -17,7 +17,9 @@ class MessageHistoryDock(ImmediateInspectorDock):
         self.builder.end_horizontal()
 
     def draw_message(self, message : Message):
-        show = self.builder.begin_foldout_header_group(f"Message {message.message_number()}")
+        type_str = MessageType.to_string(message.type())
+
+        show = self.builder.begin_foldout_header_group(f"Message {message.message_number()} - {type_str}")
         if show:
             self.builder.begin_vertical(boxed=True, alignment=LayoutAlignment.LEFT)
             
@@ -29,10 +31,8 @@ class MessageHistoryDock(ImmediateInspectorDock):
 
             fields = message.data().type().field_names()
             for field_name in fields:
-                self.builder.begin_vertical(boxed=True)
                 value = message.data().get_field(field_name).value()
                 self.draw_label(field_name, value)
-                self.builder.end_vertical()
 
             self.builder.end_vertical()
 
