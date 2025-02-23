@@ -26,16 +26,23 @@ class MessageHistoryDock(ImmediateInspectorDock):
 
         show = self.builder.begin_foldout_header_group(f"{payload_type_str} {type_str} - {message.message_number()}", indent=10)
         if show:
+            self.builder.begin_vertical()
             self.builder.label("Meta Data", font_style=FontStyle.BOLD)
-            self.builder.begin_horizontal()
-            self.builder.label("Message Type", message.type())
-            self.builder.label("Message ID", message.message_number())
+            self.builder.begin_horizontal(indent=10)
+            self.draw_label("Message Type:", type_str)
+            self.draw_label("Message ID:", str(message.message_number()))
             self.builder.end_horizontal()
+            self.builder.end_vertical()
 
+            self.builder.begin_vertical()
+            self.builder.label("Payload", font_style=FontStyle.BOLD)
+            self.builder.begin_vertical(indent=10)
             fields = message.data().type().field_names()
             for field_name in fields:
                 value = message.data().get_field(field_name).value()
                 self.draw_label(field_name, value)
+            self.builder.end_vertical()
+            self.builder.end_vertical()
 
         self.builder.end_foldout_header_group()
         

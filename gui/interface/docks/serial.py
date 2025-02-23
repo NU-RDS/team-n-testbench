@@ -25,13 +25,14 @@ class SerialDock(ImmediateInspectorDock):
             "padding: 10px;",                          # Some internal padding.
             "border: 1px solid #333;",                 # A dark border.
             "white-space: pre-wrap;"                   # Preserve line breaks.
-            "word-wrap: break-word;"                  # Break long words.
         ]
         # and we draw the label with a slightly darker background color, make it transparent
         label = self.builder.label(history, bg_color="rgba(0, 0, 0, 0.1)", extra_styles=styles)
         label.setAlignment(Qt.AlignBottom | Qt.AlignLeft)
         # only allow the label to grow in the vertical direction
         label.setSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Expanding)
+        # set the word wrap policy
+        label.setWordWrap(True)
         self.builder.end_scroll()
 
     def redraw(self):

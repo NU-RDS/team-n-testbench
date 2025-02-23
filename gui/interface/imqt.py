@@ -351,7 +351,7 @@ class LayoutUtility:
         # Persist this scroll widget.
         self._scroll_widget[scroll_id] = scroll_area
         # If we haven't stored a scroll amount before, initialize it.
-        if scroll_id not in self._scroll_amount:
+        if scroll_id not in self._scroll_amount.keys():
             self._scroll_amount[scroll_id] = 0
         # Store the keep_bottom flag.
         self._scroll_flags[scroll_id] = keep_bottom

@@ -42,7 +42,7 @@ class MCUCom:
             self.comm_interface.add_callback(proto_id, MessageType.REQUEST, self.handle_message_event)
             self.comm_interface.add_callback(proto_id, MessageType.ERROR, self.handle_message_event)
 
-        self.timer_group.add_task(200, self.send_hearbeat)
+        self.timer_group.add_task(2000, self.send_hearbeat)
 
     def add_message_event_callback(self, callback):
         self.message_event_callbacks.append(callback)
