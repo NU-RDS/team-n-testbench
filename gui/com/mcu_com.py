@@ -57,12 +57,12 @@ class MCUCom:
         # sort by message number
         return sorted(self.message_history.values(), key=lambda x: x.message_number())
 
-    def send_message(self, message: Message):
+    def send_message(self, message: Message, ack_required: bool = False, on_failure = None):
         for callback in self.on_send_callbacks:
             callback(message)
 
         self.handle_message_event(message)
-        self.comm_interface.send_message(message)
+        self.comm_interface.send_message(message, ack_required, on_failure)
 
     def send_buffer_message(self, message: Message):
         # print("Buffering message")
@@ -77,10 +77,13 @@ class MCUCom:
     def get_buffered_messages(self):
         return self.tx_message_buffer
     
+    def on_heartbeat_failure(self):
+        print("Heartbeat failure")
+    
     def send_hearbeat(self):
         # print("Sending heartbeat")
         heartbeat = MessageDefinitions.create_heartbeat_message(MessageType.REQUEST, random.randint(0, 100))
-        self.send_message(heartbeat)
+        self.send_message(heartbeat, ack_required=True, on_failure=self.on_heartbeat_failure)
 
     def tick(self):
         self.comm_interface.tick()
