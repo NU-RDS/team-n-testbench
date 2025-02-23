@@ -44,6 +44,12 @@ public:
         generate_waypoints();
     }
 
+    /// @brief Change the state of the system to generate various waypoints
+    /// @param state State to switch to
+    void set_state(FingerMotion state) {
+        finger_motion_ = state;
+    }
+
     /// @brief Calculates the motor torques based on current waypoint and position
     /// @param phi0, phi1 Current motor angles
     /// @return Returns motor torque values
@@ -60,6 +66,7 @@ public:
             if (curr_waypoint_ >= num_waypoints_ - 1) {
                 if (curr_repeat_ >= max_repeats_ - 1) {
                     return {0.0, 0.0}; // no applied torque 
+                    // CHANGE STATE TO READY HERE
                 }
                 
                 curr_waypoint_ = 0;
@@ -70,46 +77,15 @@ public:
 
         // calcuate desired torque
         const auto desired_joint_thetas = inverse_kinematics(desired_ee);
-        if (std::isnan(desired_joint_thetas.at(0)) || std::isnan(desired_joint_thetas.at(1))) {
+        if (std::isnan(desired_joint_thetas.at(0)) or std::isnan(desired_joint_thetas.at(1))) {
             // IK fail
+            // CHANGE STATE TO ERROR HERE
             return {nanf, nanf};
         }
         std::vector<float> theta_dif = {desired_joint_thetas.at(0) - joint_thetas.at(0), desired_joint_thetas.at(1) - joint_thetas.at(1)};
         const auto taus = theta_to_tau(theta_dif, {0.0, 0.0});
         const auto torques = tau_to_torque(taus);
         return torques;
-    }
-
-    void generate_waypoints() 
-    {
-        waypoints_.clear(); // clear prev waypoints
-
-        switch (finger_motion_)
-        {
-        case FingerMotion::CIRCULAR:
-
-            // Angle between waypoints (in radians)
-            const auto angle_step = 2 * M_PI / num_waypoints_;
-
-            // Loop to generate each waypoint based on radius and angle
-            for (size_t i = 0; i < num_waypoints_; ++i)
-            {
-                const auto angle = i * angle_step;
-
-                // Calculate x and y position for each waypoint
-                const auto x = origin_.at(0)+ path_radius_ * cos(angle);
-                const auto z = origin_.at(2) + path_radius_ * sin(angle);
-
-                // Store the (x, y, z) waypoint
-                waypoints_.push_back({x, 0.0, z});
-            }   
-            break;
-        
-        default:
-            break;
-        }
-        
-
     }
     
     /// @brief Moves the first joint to a desired angle.
@@ -188,4 +164,34 @@ public:
     std::vector<std::vector<float>> waypoints_; // Store waypoints as pairs of (x, y)
 
     FingerMotion finger_motion_ = FingerMotion::CALIBRATION;
+
+    void generate_waypoints() 
+    {
+        waypoints_.clear(); // clear prev waypoints
+
+        switch (finger_motion_)
+        {
+        case FingerMotion::CIRCULAR:
+
+            // Angle between waypoints (in radians)
+            const auto angle_step = 2 * M_PI / num_waypoints_;
+
+            // Loop to generate each waypoint based on radius and angle
+            for (size_t i = 0; i < num_waypoints_; ++i)
+            {
+                const auto angle = i * angle_step;
+
+                // Calculate x and y position for each waypoint
+                const auto x = origin_.at(0)+ path_radius_ * cos(angle);
+                const auto z = origin_.at(2) + path_radius_ * sin(angle);
+
+                // Store the (x, y, z) waypoint
+                waypoints_.push_back({x, 0.0, z});
+            }   
+            break;
+        
+        default:
+            break;
+        }
+    }
 };

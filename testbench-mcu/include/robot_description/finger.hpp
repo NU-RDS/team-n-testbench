@@ -76,7 +76,8 @@ std::vector<float> forward_kinematics(std::vector<float> joint_angles)
     const auto theta_0 = joint_angles.at(0);
     const auto theta_1 = joint_angles.at(1);
 
-    const float xe = link_1_length * cos(theta_0) + link_1_length * cos(theta_0 + theta_1);
+    const float xe = link_1_length * cos(theta_0) + 
+                     link_2_length * cos(theta_0 + theta_1);
     const float ye = 0.0;
 
     // TODO: check last line
@@ -89,14 +90,14 @@ std::vector<float> forward_kinematics(std::vector<float> joint_angles)
 /// @brief Performs inverse kinematics for 2R finger.
 /// @param pos {x, y, z} in meters of the end effector.
 /// @returns {theta_1, theta_2} of the joints in radians required to move to the location.
-std::vector<float> inverse_kinematics(std::vector<float> pos)
+std::vector<float> inverse_kinematics(std::vector<float, float, float> pos)
 {
     // Check joint space of robot
     const auto radius2 = pos.at(0) * pos.at(0) + pos.at(2) * pos.at(2); // radius squared
     const auto radius = std::sqrt(radius2); // radius of finger
     if ((radius > link_1_length + link_2_length) || (radius < link_1_length - link_2_length)) {
         // invalid ik - outside of joint space
-        return {999.0, 999.0}; // invalid result
+        return {nanf, nanf}; // invalid result
     }
 
     // Calculate relevant angles
