@@ -322,11 +322,13 @@ class LayoutUtility:
     # --------------------------------------------------------------------------
     # SCROLLABLE REGION (with persistent scroll state)
     # --------------------------------------------------------------------------
-    def begin_scroll(self, orientation=Qt.Vertical, scroll_id=None, keep_bottom=False):
+    def begin_scroll(self, orientation=Qt.Vertical, scroll_id=None, keep_bottom=False, policy=None):
         # If no scroll_id is provided, generate one.
         if scroll_id is None:
             scroll_id = self._get_key("scroll")
         scroll_area = QScrollArea()
+        if policy is not None:
+            scroll_area.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
         scroll_area.setWidgetResizable(True)
         container = QWidget()
         if orientation == Qt.Vertical:

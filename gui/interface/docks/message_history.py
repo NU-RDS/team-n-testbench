@@ -4,13 +4,14 @@ from app_context import ApplicationContext
 from interface.imqt import FontStyle, LayoutAlignment
 from com.message_definitions import MessageDefinitions
 from util.timer import TimerGroup, TimedTask
+from PyQt5.QtCore import Qt
 
 @dock("Message History")
 class MessageHistoryDock(ImmediateInspectorDock):
     def __init__(self, parent=None):
         super().__init__(parent)
         # ApplicationContext.mcu_com.add_message_event_callback(self.redraw)
-        self.timer_group.add_task(2000, self.redraw)
+        self.timer_group.add_task(200, self.redraw)
 
     def draw_label(self, label, value):
         self.builder.begin_horizontal()
@@ -40,10 +41,11 @@ class MessageHistoryDock(ImmediateInspectorDock):
         
     def draw_inspector(self):
         self.builder.start()
-        self.builder.begin_scroll()
+        self.builder.begin_scroll(policy=Qt.ScrollBarAlwaysOn)
         message_history = ApplicationContext.mcu_com.get_message_history()
         # draw in reverse order
-        for message in reversed(message_history):
+        max_messages = min(20, len(message_history))
+        for message in reversed(message_history[-max_messages:]):
             self.draw_message(message)
 
         # self.builder.flexible_space()
