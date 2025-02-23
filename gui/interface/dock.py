@@ -25,7 +25,6 @@ class BaseDockWidget(QDockWidget):
         main_window.addDockWidget(area, self)
         self.show()
 
-
 class ImmediateInspectorDock(BaseDockWidget):
     def __init__(self, parent=None):
         super().__init__("Immediate Inspector", parent)

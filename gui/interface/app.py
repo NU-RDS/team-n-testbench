@@ -42,6 +42,9 @@ class MainWindow(QMainWindow):
         instance.setObjectName(f"{instance_name}")
         self.open_docks[instance_name] = instance
 
+    def is_open(self, dock_name):
+        return dock_name in self.open_docks.keys()
+
     def closeEvent(self, event):
         """Save workspace on close."""
         self.save_workspace()

@@ -16,7 +16,6 @@ import time
 import random
 import sys
 
-
 class MCUCom:
     def __init__(self, port: str, baudrate: int = 115200):
         self.channel = PySerialChannel(port, baudrate)
@@ -31,28 +30,38 @@ class MCUCom:
         self.timer_group = TimerGroup()
         self.tx_message_buffer = []
         self.on_send_callbacks = []  # listof func(message)
-        self.on_receive_callbacks = []  # listof func(message)
+        self.message_history = {} # message_number -> message
+        self.message_event_callbacks = []  # listof func(message)
 
         # now add all of the prototypes
         for proto in MessageDefinitions.all_protos():
             self.comm_interface.add_prototype(proto)
 
-        self.timer_group.add_task(100, self.send_hearbeat)
+        for proto_id in MessageDefinitions.all_proto_ids():
+            self.comm_interface.add_callback(proto_id, MessageType.RESPONSE, self.handle_message_event)
+            self.comm_interface.add_callback(proto_id, MessageType.REQUEST, self.handle_message_event)
+            self.comm_interface.add_callback(proto_id, MessageType.ERROR, self.handle_message_event)
 
-    def add_send_callback(self, callback):
-        self.on_send_callbacks.append(callback)
+        self.timer_group.add_task(1000, self.send_hearbeat)
 
-    def add_receive_callback(self, callback):
-        self.on_receive_callbacks.append(callback)
+    def add_message_event_callback(self, callback):
+        self.message_event_callbacks.append(callback)
 
-        for id in MessageDefinitions.all_proto_ids():
-            self.comm_interface.add_callback(id, MessageType.REQUEST, callback)
-            self.comm_interface.add_callback(id, MessageType.RESPONSE, callback)
-            self.comm_interface.add_callback(id, MessageType.ERROR, callback)
+    def handle_message_event(self, message: Message):
+        self.message_history[message.message_number()] = message
+
+        for callback in self.message_event_callbacks:
+            callback(message)
+
+    def get_message_history(self) -> list[Message]:
+        # sort by message number
+        return sorted(self.message_history.values(), key=lambda x: x.message_number())
 
     def send_message(self, message: Message):
         for callback in self.on_send_callbacks:
             callback(message)
+
+        self.handle_message_event(message)
         self.comm_interface.send_message(message)
 
     def send_buffer_message(self, message: Message):
@@ -69,7 +78,7 @@ class MCUCom:
         return self.tx_message_buffer
     
     def send_hearbeat(self):
-        print("Sending heartbeat")
+        # print("Sending heartbeat")
         heartbeat = MessageDefinitions.create_heartbeat_message(MessageType.REQUEST, random.randint(0, 100))
         self.send_message(heartbeat)
 
