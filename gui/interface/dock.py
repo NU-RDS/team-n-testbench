@@ -6,6 +6,7 @@ import pkgutil
 import importlib
 import interface.docks
 from interface.imqt import LayoutUtility
+from util.timer import TimerGroup, TimedTask
 
 class BaseDockWidget(QDockWidget):
     def __init__(self, title, parent=None):
@@ -17,6 +18,9 @@ class BaseDockWidget(QDockWidget):
             | QDockWidget.DockWidgetFloatable
             | QDockWidget.DockWidgetClosable
         )
+
+        self.timer_group = TimerGroup()
+
     def show_dock(self, main_window, area=Qt.RightDockWidgetArea):
         """
         Instantiate the dock widget, add it to the provided main_window,

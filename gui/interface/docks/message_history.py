@@ -3,12 +3,14 @@ from rdscom.rdscom import (Message, CommunicationChannel, MessageType)
 from app_context import ApplicationContext
 from interface.imqt import FontStyle, LayoutAlignment
 from com.message_definitions import MessageDefinitions
+from util.timer import TimerGroup, TimedTask
 
 @dock("Message History")
 class MessageHistoryDock(ImmediateInspectorDock):
     def __init__(self, parent=None):
         super().__init__(parent)
-        ApplicationContext.mcu_com.add_message_event_callback(self.redraw)
+        # ApplicationContext.mcu_com.add_message_event_callback(self.redraw)
+        self.timer_group.add_task(200, self.redraw)
 
     def draw_label(self, label, value):
         self.builder.begin_horizontal()
@@ -38,14 +40,14 @@ class MessageHistoryDock(ImmediateInspectorDock):
         
     def draw_inspector(self):
         self.builder.start()
-        self.builder.begin_scroll(keep_bottom=True)
+        self.builder.begin_scroll()
         for message in ApplicationContext.mcu_com.get_message_history():
             self.draw_message(message)
 
         self.builder.flexible_space()
         self.builder.end_scroll()
 
-    def redraw(self, message : Message):
+    def redraw(self):
         self.set_dirty()
         self.show()
         

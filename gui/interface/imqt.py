@@ -320,10 +320,12 @@ class LayoutUtility:
             self._current_layout = self._layout_stack[-1]
 
     # --------------------------------------------------------------------------
-    # SCROLLABLE REGION
+    # SCROLLABLE REGION (with persistent scroll state)
     # --------------------------------------------------------------------------
-    def begin_scroll(self, orientation=Qt.Vertical, keep_bottom=False):
-        scroll_id = self._get_key("scroll")
+    def begin_scroll(self, orientation=Qt.Vertical, scroll_id=None, keep_bottom=False):
+        # If no scroll_id is provided, generate one.
+        if scroll_id is None:
+            scroll_id = self._get_key("scroll")
         scroll_area = QScrollArea()
         scroll_area.setWidgetResizable(True)
         container = QWidget()
@@ -331,49 +333,59 @@ class LayoutUtility:
             container_layout = QVBoxLayout()
         else:
             container_layout = QHBoxLayout()
-
-        scroll = scroll_area.verticalScrollBar()
-        scroll.valueChanged.connect(lambda value, sid=scroll_id: self._on_scroll_value_changed(value, sid))
-        
         container.setLayout(container_layout)
         scroll_area.setWidget(container)
         self._current_layout.addWidget(scroll_area)
         self._layout_stack.append(container_layout)
         self._current_layout = container_layout
-        # If a scroll_id is provided, store the flag and widget.
-        if scroll_id not in self._scroll_flags.keys():
-            self._scroll_flags[scroll_id] = keep_bottom
-            self._scroll_amount[scroll_id] = 0
 
+        # Connect the scrollbar's valueChanged signal to store its current value.
+        scroll_area.verticalScrollBar().valueChanged.connect(
+            lambda value, sid=scroll_id: self._on_scroll_value_changed(value, sid)
+        )
+
+        # Persist this scroll widget.
         self._scroll_widget[scroll_id] = scroll_area
-        self._scroll_stack.append(scroll_id)
+        # If we haven't stored a scroll amount before, initialize it.
+        if scroll_id not in self._scroll_amount:
+            self._scroll_amount[scroll_id] = 0
+        # Store the keep_bottom flag.
+        self._scroll_flags[scroll_id] = keep_bottom
 
+        # Set the scrollbar's initial position:
+        if keep_bottom:
+            scroll_area.verticalScrollBar().setValue(scroll_area.verticalScrollBar().maximum())
+        else:
+            scroll_area.verticalScrollBar().setValue(self._scroll_amount[scroll_id])
+
+        # Push this scroll_id onto our scroll stack.
+        self._scroll_stack.append(scroll_id)
         return scroll_id
 
-    def end_scroll(self):
+    def end_scroll(self, scroll_id=None):
         if len(self._layout_stack) > 1:
             self._layout_stack.pop()
             self._current_layout = self._layout_stack[-1]
 
-        if len(self._scroll_stack) > 0:
+        # If no scroll_id is provided, pop one from our scroll stack.
+        if scroll_id is None and self._scroll_stack:
             scroll_id = self._scroll_stack.pop()
+
+        if scroll_id in self._scroll_widget:
             scroll_area = self._scroll_widget[scroll_id]
-            scroll = scroll_area.verticalScrollBar()
-            keep_bottom = self._scroll_flags.get(scroll_area, False)
-            target_value = scroll.maximum() if keep_bottom else self._scroll_amount[scroll_id]
-            scroll.setValue(target_value
-                            if target_value < scroll.maximum()
-                            else scroll.maximum())
+            scroll_bar = scroll_area.verticalScrollBar()
+            if self._scroll_flags.get(scroll_id, False):
+                target_value = scroll_bar.maximum()
+            else:
+                target_value = self._scroll_amount.get(scroll_id, 0)
+            scroll_bar.setValue(target_value)
             self._scroll_amount[scroll_id] = target_value
-
-            print(f"Setting scroll {scroll_id} to {self._scroll_amount[scroll_id]}")
-
+            print(f"Setting scroll {scroll_id} to {target_value}")
 
     def _on_scroll_value_changed(self, value, scroll_id):
-        # store the value of the scroll bar
+        # Store the current scroll value.
         print(f"Scroll {scroll_id} value changed to {value}")
         self._scroll_amount[scroll_id] = value
-
 
     # --------------------------------------------------------------------------
     # FADE GROUP

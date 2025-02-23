@@ -41,7 +41,7 @@ class ConsoleDock(ImmediateInspectorDock):
             "font-size: 12px;",                        # Reasonable font size.
             "padding: 10px;",                          # Some internal padding.
             "border: 1px solid #333;",                 # A dark border.
-            "white-space: pre-wrap;"                   # Preserve line breaks.
+            "white-space: pre-wrap;"                   # Preserve line breaks
         ]
         # and we draw the label with a slightly darker background color, make it transparent
         label = self.builder.label(console_text, bg_color="rgba(0, 0, 0, 0.1)", extra_styles=styles)

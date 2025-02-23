@@ -22,6 +22,10 @@ class MainWindow(QMainWindow):
         # Load the workspace (docks + main window state)
         self.load_workspace()
 
+    def tick(self):
+        for dock in self.open_docks.values():
+            dock.timer_group.tick()
+
     def setup_menus(self):
         menubar = self.menuBar()
         viewMenu = menubar.addMenu("View")
@@ -118,4 +122,5 @@ class AppInterface:
 
     def tick(self):
         self.app.processEvents()
+        self.main_win.tick()
 
