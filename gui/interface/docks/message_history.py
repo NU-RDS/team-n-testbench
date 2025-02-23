@@ -42,10 +42,8 @@ class MessageHistoryDock(ImmediateInspectorDock):
         self.builder.start()
         self.builder.begin_scroll()
         message_history = ApplicationContext.mcu_com.get_message_history()
-
-        # only show the last 10 messages (or less)
-        draw_amount = min(len(message_history), 10)
-        for message in message_history[-draw_amount:]:
+        # draw in reverse order
+        for message in reversed(message_history):
             self.draw_message(message)
 
         # self.builder.flexible_space()
