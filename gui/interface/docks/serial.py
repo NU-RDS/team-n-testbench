@@ -8,25 +8,15 @@ from app_context import ApplicationContext
 class SerialDock(ImmediateInspectorDock):
     def __init__(self, parent=None):
         super().__init__(parent)
-
-    def process_command(self):
-        """Called when the user presses Enter in the input field."""
-        command = self.command_input_field.text().strip()
-        print(f"Processing command: {command}")
-        if command:
-            # For demonstration, simply echo the command
-            self.add_line(f"> {command}")
-            # Here you could also call a command interpreter
-        self.command_input_field.clear()
-        self.set_dirty()
-        self.show()
+        
+        ApplicationContext.mcu_com.channel.add_receive_callback(lambda _: self.redraw())
+        ApplicationContext.mcu_com.channel.add_transmit_callback(lambda _: self.redraw())
 
     def draw_serial(self):
+        print("Drawing serial")
         # draw the console UI
         # so we combine all of the lien into a single string with \n as separator
-        history_raw = ApplicationContext.mcu_com.channel.get_history()
-        # turn this into a string
-        history = history_raw.decode("utf-8")
+        history = ApplicationContext.mcu_com.channel.get_history()
 
         # Begin scrollable region for console output.
         self.builder.begin_scroll()
@@ -41,6 +31,10 @@ class SerialDock(ImmediateInspectorDock):
         label = self.builder.label(history, bg_color="rgba(0, 0, 0, 0.1)", extra_styles=styles)
         label.setAlignment(Qt.AlignBottom | Qt.AlignLeft)
         self.builder.end_scroll()
+
+    def redraw(self):
+        self.set_dirty()
+        self.show()
 
     def draw_inspector(self):
         self.builder.start()    
