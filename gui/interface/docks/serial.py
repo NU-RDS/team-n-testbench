@@ -12,13 +12,15 @@ class SerialDock(ImmediateInspectorDock):
         ApplicationContext.mcu_com.channel.add_receive_callback(lambda _: self.redraw())
         ApplicationContext.mcu_com.channel.add_transmit_callback(lambda _: self.redraw())
 
+        self.scroll_id = None
+
     def draw_serial(self):
         # draw the console UI
         # so we combine all of the lien into a single string with \n as separator
         history = ApplicationContext.mcu_com.channel.get_history()
 
         # Begin scrollable region for console output.
-        self.builder.begin_scroll(keep_bottom=True)
+        self.scroll_id = self.builder.begin_scroll(keep_bottom=True)
         styles = [
             "font-family: 'Courier New', monospace;",  # Monospaced font.
             "font-size: 12px;",                        # Reasonable font size.
@@ -40,8 +42,15 @@ class SerialDock(ImmediateInspectorDock):
         # Draw the console output.
         self.draw_serial()
 
-        # Add a "Clear" button to clear the console.
+        self.builder.begin_horizontal()
         if self.builder.button("Clear"):
             ApplicationContext.mcu_com.channel.clear_history()
             self.set_dirty()
             self.show()
+
+        if self.builder.button("See Bottom"):
+            self.builder.scroll_to_bottom(self.scroll_id)
+            self.set_dirty()
+            self.show()
+        
+        self.builder.end_horizontal()

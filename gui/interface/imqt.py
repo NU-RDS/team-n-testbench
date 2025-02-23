@@ -335,7 +335,7 @@ class LayoutUtility:
         if scroll_id is not None:
             self._scroll_flags[scroll_id] = keep_bottom
             self._scroll_widgets[scroll_id] = scroll_area
-        return scroll_area
+        return scroll_id
 
     def end_scroll(self, scroll_id=None):
         if len(self._layout_stack) > 1:
@@ -348,6 +348,11 @@ class LayoutUtility:
                 vsb = scroll_area.verticalScrollBar()
                 vsb.setValue(vsb.maximum())
 
+    def scroll_to_bottom(self, scroll_id):
+        scroll_area = self._scroll_widgets.get(scroll_id)
+        if scroll_area is not None:
+            vsb = scroll_area.verticalScrollBar()
+            vsb.setValue(vsb.maximum())
 
     # --------------------------------------------------------------------------
     # FADE GROUP
