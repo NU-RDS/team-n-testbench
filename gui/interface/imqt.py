@@ -344,8 +344,6 @@ class LayoutUtility:
         if scroll_id not in self._scroll_flags.keys():
             self._scroll_flags[scroll_id] = keep_bottom
             self._scroll_amount[scroll_id] = 0
-        else:
-            scroll.setValue(self._scroll_amount.get(scroll_id, 0))
 
         self._scroll_widget[scroll_id] = scroll_area
         self._scroll_stack.append(scroll_id)
@@ -358,19 +356,22 @@ class LayoutUtility:
             self._current_layout = self._layout_stack[-1]
 
         if len(self._scroll_stack) > 0:
-            scroll_area = self._scroll_stack.pop()
+            scroll_id = self._scroll_stack.pop()
+            scroll_area = self._scroll_widget[scroll_id]
+            scroll = scroll_area.verticalScrollBar()
             keep_bottom = self._scroll_flags.get(scroll_area, False)
-            if keep_bottom:
-                scroll = self._scroll_widget[scroll_area].verticalScrollBar()
-                scroll.setValue(scroll.maximum())
-            else:
-                scroll = self._scroll_widget[scroll_area].verticalScrollBar()
-                scroll.setValue(self._scroll_amount[scroll_area])
+            target_value = scroll.maximum() if keep_bottom else self._scroll_amount[scroll_id]
+            scroll.setValue(target_value
+                            if target_value < scroll.maximum()
+                            else scroll.maximum())
+            self._scroll_amount[scroll_id] = target_value
+
+            print(f"Setting scroll {scroll_id} to {self._scroll_amount[scroll_id]}")
 
 
     def _on_scroll_value_changed(self, value, scroll_id):
         # store the value of the scroll bar
-        print(f"scroll value changed: {value}")
+        print(f"Scroll {scroll_id} value changed to {value}")
         self._scroll_amount[scroll_id] = value
 
 
