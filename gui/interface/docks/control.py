@@ -84,13 +84,11 @@ class ControlDock(ImmediateInspectorDock):
             self.builder.end_vertical()
         self.builder.end_horizontal()
 
-    def draw_command_bufer(self):
-        self.builder.label("Command Buffer", font_style=FontStyle.BOLD)
-
+    def calculate_command_groups(self, commands : Message):
         # group the commands
         command_groups = [] # lists of lists of commands
         current_group = []
-        for command in ApplicationContext.mcu_com.get_buffered_messages():
+        for command in commands:
             is_simultaneous = command.get_field("simultaneous").value()
             # if it is simultaneous, add it to the current group
             if is_simultaneous:
@@ -105,7 +103,13 @@ class ControlDock(ImmediateInspectorDock):
         if len(current_group) > 0:
             command_groups.append(current_group)
 
+        return command_groups
+
+    def draw_command_bufer(self):
+        commands = ApplicationContext.mcu_com.get_buffered_messages()
+        command_groups = self.calculate_command_groups(commands)
         # draw the groups
+        self.builder.begin_scroll()
         for idx, group in enumerate(command_groups):
             group_title = f"Command Group {idx}"
             show = self.builder.begin_foldout_header_group(group_title)
@@ -115,16 +119,22 @@ class ControlDock(ImmediateInspectorDock):
                     motor_id = command.get_field("motor_id").value()
                     control_mode = command.get_field("control_mode").value()
                     control_value = command.get_field("control_value").value()
-
                     self.builder.label(f"Motor ID: {motor_id}")
                     self.builder.label(f"Mode: {ControlModes.to_string(control_mode)} ({control_mode})")
                     self.builder.label(f"Value: {control_value}")
                     self.builder.end_horizontal()
             self.builder.end_foldout_header_group()
 
+        self.builder.flexible_space()
+        self.builder.end_scroll()
+
+
 
         self.builder.begin_vertical()
         if self.builder.button("Send Command"):
+            # add an execute command
+            request = MessageDefinitions.create_control_go_message(MessageType.REQUEST, 0)
+            ApplicationContext.mcu_com.send_buffer_message(request)
             ApplicationContext.mcu_com.send_buffer()
             self.set_dirty()
             self.show()
@@ -138,9 +148,7 @@ class ControlDock(ImmediateInspectorDock):
         self.draw_command_creator()
 
         self.builder.begin_vertical(boxed=True)
-        self.builder.begin_scroll()
         self.draw_command_bufer()
-        self.builder.end_scroll()
         self.builder.end_vertical()
 
         self.builder.end_horizontal()

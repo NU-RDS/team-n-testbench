@@ -42,7 +42,7 @@ class MCUCom:
             self.comm_interface.add_callback(proto_id, MessageType.REQUEST, self.handle_message_event)
             self.comm_interface.add_callback(proto_id, MessageType.ERROR, self.handle_message_event)
 
-        self.timer_group.add_task(2000, self.send_hearbeat)
+        self.timer_group.add_task(50000, self.send_hearbeat)
 
     def add_message_event_callback(self, callback):
         self.message_event_callbacks.append(callback)
@@ -55,19 +55,39 @@ class MCUCom:
     def get_message_history(self) -> list[Message]:
         return self.message_history
 
-    def send_message(self, message: Message, ack_required: bool = False, on_failure = None):
+    def send_message(self, message: Message, ack_required: bool = False, on_failure = None, on_success = None):
         for callback in self.on_send_callbacks:
             callback(message)
 
         self.handle_message_event(message)
-        self.comm_interface.send_message(message, ack_required, on_failure)
+        self.comm_interface.send_message(message, ack_required, on_failure, on_success)
 
     def send_buffer_message(self, message: Message):
         self.tx_message_buffer.append(message)
 
     def send_buffer(self):
+
+        is_waiting = True
+        has_failed = False
+
+        def on_success():
+            nonlocal is_waiting
+            is_waiting = False
+
+        def on_failure():
+            nonlocal is_waiting
+            nonlocal has_failed
+            has_failed = True
+            is_waiting = False
+            print("Failed to send message")
+
         for message in self.tx_message_buffer:
-            self.send_message(message)
+            self.send_message(message, ack_required=True, on_failure=on_failure, on_success=on_success)
+            while is_waiting:
+                self.comm_interface.tick()
+
+            if has_failed:
+                break
 
         self.tx_message_buffer = []
 

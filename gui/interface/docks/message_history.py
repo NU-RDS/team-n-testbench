@@ -11,7 +11,7 @@ class MessageHistoryDock(ImmediateInspectorDock):
     def __init__(self, parent=None):
         super().__init__(parent)
         # ApplicationContext.mcu_com.add_message_event_callback(self.redraw)
-        self.timer_group.add_task(200, self.redraw)
+        self.timer_group.add_task(20, self.redraw)
 
     def draw_label(self, label, value):
         self.builder.begin_horizontal()
@@ -31,6 +31,7 @@ class MessageHistoryDock(ImmediateInspectorDock):
             self.builder.begin_horizontal(indent=10)
             self.draw_label("Message Type:", type_str)
             self.draw_label("Message ID:", str(message.message_number()))
+            self.draw_label("Payload Type:", message.data().type().identifier())
             self.builder.end_horizontal()
             self.builder.end_vertical()
 
@@ -55,7 +56,7 @@ class MessageHistoryDock(ImmediateInspectorDock):
         for message in reversed(message_history[-max_messages:]):
             self.draw_message(message)
 
-        # self.builder.flexible_space()
+        self.builder.flexible_space()
         self.builder.end_scroll()
 
     def redraw(self):

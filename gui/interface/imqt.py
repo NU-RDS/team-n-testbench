@@ -80,7 +80,6 @@ class LayoutUtility:
         self._scroll_amount = {}  # maps scroll id -> QScrollArea
         self._scroll_widget = {}  # maps scroll id -> QWidget
         self._scroll_stack = []  # stack of scroll widgets ids
-
         self._key_counter = {}
 
     def start(self):
@@ -356,14 +355,6 @@ class LayoutUtility:
         # Store the keep_bottom flag.
         self._scroll_flags[scroll_id] = keep_bottom
 
-        # Set the scrollbar's initial position:
-        if keep_bottom:
-            scroll_area.verticalScrollBar().setValue(scroll_area.verticalScrollBar().maximum())
-        else:
-            scroll_area.verticalScrollBar().setValue(self._scroll_amount[scroll_id])
-
-        scroll_area.verticalScrollBar().setValue(scroll_area.verticalScrollBar().maximum())
-
         self._current_layout.addWidget(scroll_area)
         self._layout_stack.append(container_layout)
         self._current_layout = container_layout
@@ -372,25 +363,19 @@ class LayoutUtility:
         self._scroll_stack.append(scroll_id)
         return scroll_id
 
-    def end_scroll(self, scroll_id=None):
+    def end_scroll(self):
         if len(self._layout_stack) > 1:
             self._layout_stack.pop()
             self._current_layout = self._layout_stack[-1]
 
-        # If no scroll_id is provided, pop one from our scroll stack.
-        if scroll_id is None and self._scroll_stack:
-            scroll_id = self._scroll_stack.pop()
-
-        if scroll_id in self._scroll_widget:
-            scroll_area = self._scroll_widget[scroll_id]
-            scroll_bar = scroll_area.verticalScrollBar()
-            if self._scroll_flags.get(scroll_id, False):
-                target_value = scroll_bar.maximum()
+    def _update_scroll_values(self):
+        for scroll_id in self._scroll_stack:
+            if self._scroll_flags[scroll_id]:
+                self._scroll_widget[scroll_id].verticalScrollBar().setValue(
+                    self._scroll_widget[scroll_id].verticalScrollBar().maximum()
+                )
             else:
-                target_value = self._scroll_amount.get(scroll_id, 0)
-            scroll_bar.setValue(target_value)
-            self._scroll_amount[scroll_id] = target_value
-            print(f"Setting scroll {scroll_id} to {target_value}")
+                self._scroll_widget[scroll_id].verticalScrollBar().setValue(self._scroll_amount[scroll_id])
 
     def _on_scroll_value_changed(self, value, scroll_id):
         # Store the current scroll value.
