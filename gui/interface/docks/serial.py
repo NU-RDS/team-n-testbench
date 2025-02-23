@@ -13,13 +13,12 @@ class SerialDock(ImmediateInspectorDock):
         ApplicationContext.mcu_com.channel.add_transmit_callback(lambda _: self.redraw())
 
     def draw_serial(self):
-        print("Drawing serial")
         # draw the console UI
         # so we combine all of the lien into a single string with \n as separator
         history = ApplicationContext.mcu_com.channel.get_history()
 
         # Begin scrollable region for console output.
-        self.builder.begin_scroll()
+        self.builder.begin_scroll(keep_bottom=True)
         styles = [
             "font-family: 'Courier New', monospace;",  # Monospaced font.
             "font-size: 12px;",                        # Reasonable font size.

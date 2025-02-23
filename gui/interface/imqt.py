@@ -76,6 +76,8 @@ class LayoutUtility:
         self._slider_state = {}  # Map: unique widget ID -> int
         self._slider_labels = {} # Map: unique widget ID -> QLabel displaying slider value
         self._dropdown_state = {} # Map: unique widget ID -> int
+        self._scroll_flags = {}    # maps scroll id -> bool (True means "keep at bottom")
+        self._scroll_widgets = {}  # maps scroll id -> QScrollArea
 
         self._key_counter = {}
 
@@ -316,7 +318,7 @@ class LayoutUtility:
     # --------------------------------------------------------------------------
     # SCROLLABLE REGION
     # --------------------------------------------------------------------------
-    def begin_scroll(self, orientation=Qt.Vertical):
+    def begin_scroll(self, orientation=Qt.Vertical, scroll_id=None, keep_bottom=False):
         scroll_area = QScrollArea()
         scroll_area.setWidgetResizable(True)
         container = QWidget()
@@ -329,11 +331,23 @@ class LayoutUtility:
         self._current_layout.addWidget(scroll_area)
         self._layout_stack.append(container_layout)
         self._current_layout = container_layout
+        # If a scroll_id is provided, store the flag and widget.
+        if scroll_id is not None:
+            self._scroll_flags[scroll_id] = keep_bottom
+            self._scroll_widgets[scroll_id] = scroll_area
+        return scroll_area
 
-    def end_scroll(self):
+    def end_scroll(self, scroll_id=None):
         if len(self._layout_stack) > 1:
             self._layout_stack.pop()
             self._current_layout = self._layout_stack[-1]
+        # If a scroll_id was provided and its flag is set, force the scroll to bottom.
+        if scroll_id is not None and self._scroll_flags.get(scroll_id, False):
+            scroll_area = self._scroll_widgets.get(scroll_id)
+            if scroll_area is not None:
+                vsb = scroll_area.verticalScrollBar()
+                vsb.setValue(vsb.maximum())
+
 
     # --------------------------------------------------------------------------
     # FADE GROUP

@@ -9,9 +9,11 @@ from rdscom.rdscom import (
     default_error_callback,
     CommunicationChannel,
 )
+from util.timer import TimerGroup, TimedTask
 from com.message_definitions import MessageDefinitions
 from com.serial_channel import PySerialChannel
 import time
+import random
 import sys
 
 
@@ -26,7 +28,7 @@ class MCUCom:
         self.comm_interface = CommunicationInterface(
             options=self.comm_options, channel=self.channel
         )
-
+        self.timer_group = TimerGroup()
         self.tx_message_buffer = []
         self.on_send_callbacks = []  # listof func(message)
         self.on_receive_callbacks = []  # listof func(message)
@@ -34,6 +36,8 @@ class MCUCom:
         # now add all of the prototypes
         for proto in MessageDefinitions.all_protos():
             self.comm_interface.add_prototype(proto)
+
+        self.timer_group.add_task(100, self.send_hearbeat)
 
     def add_send_callback(self, callback):
         self.on_send_callbacks.append(callback)
@@ -63,6 +67,16 @@ class MCUCom:
 
     def get_buffered_messages(self):
         return self.tx_message_buffer
+    
+    def send_hearbeat(self):
+        print("Sending heartbeat")
+        heartbeat = MessageDefinitions.create_heartbeat_message(MessageType.REQUEST, random.randint(0, 100))
+        self.send_message(heartbeat)
 
     def tick(self):
         self.comm_interface.tick()
+        self.timer_group.tick()
+
+        
+
+

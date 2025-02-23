@@ -54,5 +54,8 @@ class MessageHistoryDock(ImmediateInspectorDock):
 
 
     def update_message_history(self, message : Message):
+        print("Updating message history")
         self.message_history.append(message)
+        self.set_dirty()
+        self.update()
         

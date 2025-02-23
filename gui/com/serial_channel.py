@@ -26,12 +26,12 @@ class PySerialChannel(CommunicationChannel):
         # Read all available bytes.
         data = self.ser.read(self.ser.in_waiting or 1)
         if len(data) > 0:
-            print(f"[serial][len({len(data)})] {data.decode('utf8')}")
-
+            print(f"[recieved][len({len(data)})] {data.decode('utf8')}\n")
             # append the data to the history as a string
             self.history += data.decode('utf8')
             for callback in self.rx_callbacks:
                 callback(data)
+
         return bytearray(data)
 
     def send(self, message: Message) -> None:
@@ -40,6 +40,8 @@ class PySerialChannel(CommunicationChannel):
             return
         
         self.history += message.serialize().decode('utf8')
+        print(f"[sent][len({len(message.serialize())})] {message.serialize().decode('utf8')}\n")
+
         for callback in self.tx_callbacks:
             callback(message.serialize().decode('utf8'))
         serialized = message.serialize()
