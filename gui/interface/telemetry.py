@@ -19,6 +19,13 @@ class SensorDatastream:
         self.frequency = frequency
         self.snapshots : list[SensorDataSnapshot] = []
 
+    def add_snapshot(self, snapshot: SensorDataSnapshot):
+        # treat this as a circular buffer
+        self.snapshots.append(snapshot)
+        if len(self.snapshots) > 100:
+            # only store the last 50
+            self.snapshots = self.snapshots[-50:]
+
 class Telemetry:
     def __init__(self):
         self.sensor_datastreams : list[SensorDatastream] = []
@@ -65,7 +72,7 @@ class Telemetry:
             return
         
         datastream = in_list[0]
-        datastream.snapshots.append(SensorDataSnapshot(
+        datastream.add_snapshot(SensorDataSnapshot(
             time.time(),
             message.data().get_field("motor_pos").value(),
             message.data().get_field("motor_vel").value(),
