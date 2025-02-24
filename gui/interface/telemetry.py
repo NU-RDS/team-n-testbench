@@ -46,6 +46,8 @@ class Telemetry:
         disable_message = MessageDefinitions.create_stop_sensor_datastream_message(MessageType.REQUEST, joint_number)
         ApplicationContext.mcu_com.send_message(disable_message, ack_required=True, on_failure=self._on_disable_failure)
 
+        self.sensor_datastreams = [datastream for datastream in self.sensor_datastreams if datastream.joint_number != joint_number]
+
     def _on_disable_failure(self, message: Message):
         joint_number = message.data().get_field("joint_id").value()
         ApplicationContext.error_manager.report_error(f"Failed to disable sensor datastream for joint {joint_number}", ErrorSeverity.WARNING)
@@ -70,4 +72,10 @@ class Telemetry:
             message.data().get_field("motor_temp").value(),
             message.data().get_field("joint_angle").value()
         ))
+
+    def get_datastream(self, joint_number: int) -> SensorDatastream:
+        in_list = [datastream for datastream in self.sensor_datastreams if datastream.joint_number == joint_number]
+        if len(in_list) == 0:
+            return None
+        return in_list[0]
 
