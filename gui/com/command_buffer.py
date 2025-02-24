@@ -32,7 +32,7 @@ class CommandBuffer:
         # send a request to clear the buffer
         clear_buffer_message = MessageDefinitions.create_clear_buffer_message()
         on_success = lambda response_message : self._clear_buffer_on_success(clear_buffer_message, response_message)
-        on_failure = lambda response_message : self._clear_buffer_on_failure(clear_buffer_message)
+        on_failure = lambda : self._clear_buffer_on_failure(clear_buffer_message)
         
         channel.send_message(clear_buffer_message, ack_required=True, on_success=on_success, on_failure=on_failure)
 
@@ -57,7 +57,7 @@ class CommandBuffer:
         random_value = 0
         control_go_message = MessageDefinitions.create_control_go_message(MessageType.REQUEST, random_value)
         on_success = lambda response_message : self._execute_buffer_on_success(control_go_message, response_message)
-        on_failure = lambda response_message : self._execute_buffer_on_failure(control_go_message)
+        on_failure = lambda : self._execute_buffer_on_failure(control_go_message)
         channel.send_message(control_go_message, ack_required=True, on_success=on_success, on_failure=on_failure)
 
         for callback in self.callbacks_on_send:
@@ -81,7 +81,7 @@ class CommandBuffer:
         for message in self.buffer:
             # curry the message into the lambda function
             on_success_curry = lambda response_message : self._command_msg_on_success(message, response_message)
-            on_failure_curry = lambda response_message : self._command_msg_on_failure(message)
+            on_failure_curry = lambda : self._command_msg_on_failure(message)
 
             self._is_waiting = True
             channel.send_message(message, ack_required=True, on_success=on_success_curry, on_failure=on_failure_curry)
