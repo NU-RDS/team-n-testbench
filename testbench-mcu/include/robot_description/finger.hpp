@@ -11,7 +11,10 @@
 static constexpr float motor_torque_limit = 0.02f; // N*m
 
 /// @brief Zeroing torque limit in N-m
-static constexpr float zeroing_motor_torque_limit = 0.01f; // N*m
+float zeroing_motor_0_torque_limit = 0.002;
+float zeroing_motor_1_torque_limit = 0.002;
+bool motor0_zeroed{false}, motor1_zeroed{false};
+bool motor0_start{false}, motor1_start{false};
 
 /// @brief Software spring stiffness
 static constexpr float discouraging_stiffness = 0.01f; 
@@ -42,8 +45,8 @@ static constexpr float denom = 1 / (t1 * t3);
 static constexpr float it1 = t1 / denom;
 static constexpr float it2 = - t2 / denom;
 static constexpr float it3 = t3 / denom;
-// [ it3  it2 ]
-// [  0   it1 ]
+// [ it1  it2 ]
+// [  0   it3 ]
 
 
 
@@ -70,11 +73,11 @@ static constexpr Limits<float> joint_1_soft_limits = convert_angular_units(
     AngleUnits::RADIANS);
 
 /// @brief Joint 0 calibration offset angles (calculated on startup)
-static constexpr float joint_0_cali_offset = convert_angular_units(
+static float phi_0_cali_offset = convert_angular_units(
     0.0, AngleUnits::DEGREES,
     AngleUnits::RADIANS);
 /// @brief Joint 1 calibration offset angles (calculated on startup)
-static constexpr float joint_1_cali_offset = convert_angular_units(
+static float phi_1_cali_offset = convert_angular_units(
     0.0, AngleUnits::DEGREES,
     AngleUnits::RADIANS);
 

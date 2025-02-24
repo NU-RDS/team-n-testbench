@@ -252,19 +252,19 @@ std::vector<float> FingerManager::soft_limit_joints(std::vector<float> joint_the
 
 std::vector<float> FingerManager::phi_to_theta(std::vector<float> phi)
 {
-    const float phi_0 = phi.at(0);
-    const float phi_1 = phi.at(1);
-    const float theta_0 = phi_0 * t1 + joint_0_cali_offset;
-    const float theta_1 = phi_0 * t2 + phi_1 * t3 + joint_1_cali_offset;
+    const float phi_0 = phi.at(0) - phi_0_cali_offset;
+    const float phi_1 = phi.at(1) - phi_1_cali_offset;
+    const float theta_0 = phi_0 * t1 ;
+    const float theta_1 = phi_0 * t2 + phi_1 * t3;
     return {theta_0, theta_1};
 }
 
 std::vector<float> FingerManager::theta_to_phi(std::vector<float> joint_thetas)
 {
-    const float theta_0 = joint_thetas.at(0) - joint_0_cali_offset;
-    const float theta_1 = joint_thetas.at(1) - joint_1_cali_offset;
-    const float phi_0 = t1 * theta_0 + t2 * theta_1;
-    const float phi_1 = t3 * theta_1;
+    const float theta_0 = joint_thetas.at(0);
+    const float theta_1 = joint_thetas.at(1);
+    const float phi_0 = t1 * theta_0 + t2 * theta_1 + phi_0_cali_offset;
+    const float phi_1 = t3 * theta_1 + phi_1_cali_offset;
     return {phi_0, phi_1};
 }
 
@@ -309,43 +309,55 @@ bool FingerManager::move_js(std::vector<float> theta_des)
     const float torque_1 = limit<float>(torques.at(1), motor_torque_limit);
     Serial.println("Torque 0 - " + String(-torque_0*1000));
     Serial.println("Torque 1 - " + String(torque_1*1000));
-    odrive0_.odrive_.setTorque(torque_0);
-    odrive1_.odrive_.setTorque(torque_1);
+    odrive0_.odrive_.setTorque(-0.002); // last one was 0.0015
+    odrive1_.odrive_.setTorque(0.002);
     return false;
 }
 
 bool FingerManager::zero() 
 
 {
-    float prev_velocity_motor0 = 0.0f, current_velocity_motor0 = 0.0f;
-    float prev_velocity_motor1 = 0.0f, current_velocity_motor1 = 0.0f;
-    bool motor0_zeroed{false}, motor1_zeroed{false};
+    float velocity_motor0 = 0.0f;
+    float velocity_motor1 = 0.0f;
 
-    unsigned long start_time = millis();
-    const unsigned long zeroing_timeout = 10000;  // 10-second timeout to prevent infinite loops
-
-    while (((not motor0_zeroed) or (not motor1_zeroed)) and (millis() - start_time) < zeroing_timeout) {
+    if ((not motor0_zeroed) or (not motor1_zeroed)) {
 
         // Get the latest velocity readings
-        prev_velocity_motor0 = current_velocity_motor0;
-        prev_velocity_motor1 = current_velocity_motor1;
-        current_velocity_motor0 = odrive0_.odrive_user_data_.last_feedback.Vel_Estimate;
-        current_velocity_motor1 = odrive1_.odrive_user_data_.last_feedback.Vel_Estimate;
+        velocity_motor0 = odrive0_.odrive_user_data_.last_feedback.Vel_Estimate;
+        velocity_motor1 = odrive1_.odrive_user_data_.last_feedback.Vel_Estimate;
 
         // Check if velocity is close to zero for motor 0
-        if (!motor0_zeroed && float_close_compare(current_velocity_motor0, prev_velocity_motor0, 1e-4)) {
+        if (motor0_start and (std::abs(velocity_motor0) < 5e-2)) {
             motor0_zeroed = true;
-            odrive0_.set_torque(0.0f);  // Stop applying torque
+            odrive0_.odrive_.setTorque(0.0f);  // Stop applying torque
+            phi_0_cali_offset = odrive0_.odrive_user_data_.last_feedback.Pos_Estimate;
+            // Serial.println("PHI 0 DONNNEEEE");
+            
         } else if (!motor0_zeroed) {
-            odrive0_.set_torque(-zeroing_motor_torque_limit);
+            if (!motor0_start and (std::abs(velocity_motor0) >= 5e-2)) {
+                motor0_start = true;
+            } else {
+                zeroing_motor_0_torque_limit += 0.0001;
+                Serial.println(("Current torque: " + String(zeroing_motor_1_torque_limit)));
+            }
+            odrive0_.odrive_.setTorque(-zeroing_motor_0_torque_limit);
         }
 
         // Check if velocity is close to zero for motor 1
-        if (!motor1_zeroed && float_close_compare(current_velocity_motor1, prev_velocity_motor1, 1e-4)) {
+        if (motor1_start and (std::abs(velocity_motor1) < 5e-2)) {
             motor1_zeroed = true;
-            odrive1_.set_torque(0.0f);  // Stop applying torque
+            odrive1_.odrive_.setTorque(0.0f);  // Stop applying torque
+            Serial.println("PHI 1 DONEEEEE");
+            phi_1_cali_offset = odrive1_.odrive_user_data_.last_feedback.Pos_Estimate;
         } else if (!motor1_zeroed) {
-            odrive1_.set_torque(-zeroing_motor_torque_limit);
+            if (!motor1_start and (std::abs(velocity_motor1) >= 5e-2)) {
+                motor1_start = true;
+                Serial.println("MADE IT INNNNNNNNNNNNNNNN");
+            } else {
+                zeroing_motor_1_torque_limit += 0.0001;
+                Serial.println(("Current torque: " + String(zeroing_motor_1_torque_limit)));
+            }
+            odrive1_.odrive_.setTorque(zeroing_motor_1_torque_limit);
         }
 
         // Small delay to allow ODrive feedback updates
