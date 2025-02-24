@@ -87,7 +87,8 @@ class CommandBuffer:
             channel.send_message(message, ack_required=True, on_success=on_success_curry, on_failure=on_failure_curry)
             
             while self._is_waiting:
-                pass # wait for the message to be sent
+                channel.tick()
+                
 
             for callback in self.callbacks_on_send:
                 callback(message)
@@ -109,7 +110,6 @@ class CommandBuffer:
             print("Buffer is already being sent")
             return
         
-        self._is_sending_buffer = True
         thread = threading.Thread(target=self.send_command_buffer, args=(channel,))
         thread.start()
 

@@ -71,6 +71,9 @@ class MCUCom:
     def get_buffered_messages(self):
         return self.command_buffer.get_buffer()
     
+    def get_current_command_buffer(self):
+        return self.command_buffer.get_buffer()
+    
     def on_heartbeat_failure(self):
         print("Heartbeat failure")
     
