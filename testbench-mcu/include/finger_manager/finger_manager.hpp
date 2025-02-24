@@ -169,7 +169,8 @@ public:
 
     /// @brief Moves J0 and J1 to desired angles.
     /// @param theta_des desired angles for both joints (rad) 
-    void move_js(std::vector<float> theta_des);
+    /// @returns boolean to indicate whether angles are within tolerance
+    bool move_js(std::vector<float> theta_des);
 
     /**
      * @brief Calibrates the joints to motor angles
@@ -332,15 +333,25 @@ std::vector<float> FingerManager::theta_to_torque(std::vector<float> theta_dif, 
     return {torque_0, torque_1};
 }
 
-void FingerManager::move_js(std::vector<float> theta_des) 
+bool FingerManager::move_js(std::vector<float> theta_des) 
 {
     // Get position difference
     const float phi_0 = odrive0_.odrive_user_data_.last_feedback.Pos_Estimate;
     const float phi_1 = odrive1_.odrive_user_data_.last_feedback.Pos_Estimate; 
+    const float phi_dot_0 = odrive0_.odrive_user_data_.last_feedback.Vel_Estimate;
+    const float phi_dot_1 = odrive1_.odrive_user_data_.last_feedback.Vel_Estimate;
     std::vector<float> joint_thetas = phi_to_theta({phi_0, phi_1});
+    std::vector<float> joint_thetas_dot = phi_to_theta({phi_dot_0, phi_dot_1});
     joint_thetas = soft_limit_joints(joint_thetas);
+
+    // Check if within tolerance
+    if (float_close_compare(theta_des.at(0), joint_thetas.at(0), 1e-3) and float_close_compare(theta_des.at(1), joint_thetas.at(1), 1e-3)) {
+        return true;
+    }
+
     const float theta_0_dif = theta_des.at(0) - joint_thetas.at(0);
     const float theta_1_dif = theta_des.at(1) - joint_thetas.at(1);
+    // const float theta_0_dif_dot = 
 
     // Send joints and get motor torque
     const std::vector<float> torques = theta_to_torque({theta_0_dif, theta_1_dif}, {0.0, 0.0});
@@ -350,6 +361,7 @@ void FingerManager::move_js(std::vector<float> theta_des)
     const float torque_1 = limit<float>(torques.at(1), motor_torque_limit);
     odrive0_.odrive_.setTorque(torque_0);
     odrive1_.odrive_.setTorque(torque_1);
+    return false;
 }
 
 bool FingerManager::zero() 
