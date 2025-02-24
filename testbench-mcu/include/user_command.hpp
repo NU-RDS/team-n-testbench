@@ -3,6 +3,7 @@
 
 #include <Arduino.h>
 
+#include "finger_manager/finger_manager.hpp"
 #include <memory>
 #include <rdscom.hpp>
 #include <vector>
@@ -42,10 +43,14 @@ class UserCommand {
     /// @return true if the command has ended.
     bool hasEnded();
 
+    void setFingerManager(FingerManager &fingerManager);
+
    protected:
     bool _parralelizable;      ///< Whether the command is parallelizable.
     std::uint32_t _startTime;  ///< Time when the command started.
     std::uint32_t _endTime;    ///< Time when the command ended.
+
+    FingerManager *_fingerManager;  ///< Pointer to the finger manager.
 
     /// @brief Called during reset.
     virtual void onReset() = 0;
@@ -62,6 +67,7 @@ class UserCommand {
    private:
     bool _hasStarted;  ///< Flag indicating if the command has started.
     bool _hasEnded;    ///< Flag indicating if the command has ended.
+
 };
 
 /// @brief A buffer that manages user commands.
@@ -75,7 +81,7 @@ class UserCommandBuffer {
     };
 
     /// @brief Constructor.
-    UserCommandBuffer();
+    UserCommandBuffer(FingerManager &fingerManager) : _fingerManager(fingerManager), _currentSlice(CommandSlice::empty()), _numCompletedCommands(0), _isExecuting(false), _isCalibrating(false) {}
 
     /// @brief Adds a command to the buffer.
     /// @param command Shared pointer to a UserCommand.
@@ -145,6 +151,7 @@ class UserCommandBuffer {
     bool _isExecuting;                                    ///< Whether the buffer is executing commands.
     std::uint32_t _startTime;                             ///< Time when execution
     bool _isCalibrating;                                  ///< Whether the buffer is calibrating.
+    FingerManager &_fingerManager;                         ///< Finger manager.
 
     std::vector<std::function<void(ExecutionStats)>> _onExecutionCompleteCallbacks;  ///< Callbacks to call when execution is complete.
     std::vector<std::function<void()>> _onCalibrationCompleteCallbacks;              ///< Callbacks to call when calibration is complete.

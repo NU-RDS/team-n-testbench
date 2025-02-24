@@ -49,12 +49,13 @@ bool UserCommand::hasEnded() {
     return _hasEnded;
 }
 
+void UserCommand::setFingerManager(FingerManager &fingerManager) {
+    _fingerManager = &fingerManager;
+}
+
 /**------------------------------------------------------------------------
  *                           UserCommandBuffer Implementation
  *------------------------------------------------------------------------**/
-
-UserCommandBuffer::UserCommandBuffer() : _currentSlice(CommandSlice::empty()) {
-}
 
 void UserCommandBuffer::addCommand(std::shared_ptr<UserCommand> command) {
     _commands.push_back(command);
@@ -242,7 +243,21 @@ rdscom::Result<FingerControlCommand> FingerControlCommand::fromMessage(const rds
 }
 
 bool FingerControlCommand::isDone() {
-    return true;
+    FingerData fingerData = this->_fingerManager->get_finger_data();
+    float joint0 = fingerData.estimated_joint_angles[0];
+    float joint1 = fingerData.estimated_joint_angles[1];
+
+    switch (_controlType) {
+        case FingerControlType::POSITION:
+            return this->_fingerManager->move_js({joint0, joint1});
+        case FingerControlType::VELOCITY:
+            return false;
+        case FingerControlType::TORQUE:
+            return false;
+        default:
+            return false;
+    }
+
 }
 
 void FingerControlCommand::onReset() {

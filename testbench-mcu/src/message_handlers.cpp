@@ -6,8 +6,8 @@
 
 namespace msgs {
 
-MessageHandlers::MessageHandlers(rdscom::CommunicationInterface &com, UserCommandBuffer &commandBuffer)
-    : _com(com), _commandBuffer(commandBuffer), _sensorDatastreams() {
+MessageHandlers::MessageHandlers(rdscom::CommunicationInterface &com, UserCommandBuffer &commandBuffer, FingerManager &fingerManager)
+    : _com(com), _commandBuffer(commandBuffer), _sensorDatastreams(), _fingerManager(fingerManager) {
 }
 
 ///@brief Register all message prototypes
@@ -59,13 +59,15 @@ void MessageHandlers::addHandlers() {
 void MessageHandlers::tickDatastreams() {
     for (SensorDatastream &stream : _sensorDatastreams) {
         // Check if it's time to send a message
+        FingerData fingerData = _fingerManager.get_finger_data();
+
         if (stream.timeToSend()) {
             rdscom::Message msg = msgs::createSensorDatastreamMessageRequest(
                 stream.sensorID(),
-                random(0, 100) / 100.0f,
-                random(0, 100) / 100.0f,
-                random(0, 100) / 100.0f,
-                random(0, 100) / 100.0f
+                fingerData.motor_pos_estimates[stream.sensorID()],
+                fingerData.motor_vel_estimates[stream.sensorID()],
+                fingerData.motor_temp_estimates[stream.sensorID()],
+                fingerData.estimated_joint_angles[stream.sensorID()]
             );
             _com.sendMessage(msg);
         }

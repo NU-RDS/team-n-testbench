@@ -55,9 +55,9 @@ SerialCommunicationChannel g_channel;
 // Create the communication interface using our serial channel.
 rdscom::CommunicationInterface g_com{g_channel, options};
 
-UserCommandBuffer g_commandBuffer;
+UserCommandBuffer g_commandBuffer{g_finger_manager};
 
-msgs::MessageHandlers g_messageHandlers{g_com, g_commandBuffer};
+msgs::MessageHandlers g_messageHandlers{g_com, g_commandBuffer, g_finger_manager};
 
 std::uint64_t g_loop_counter = 0;
 

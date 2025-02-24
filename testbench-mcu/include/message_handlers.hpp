@@ -16,7 +16,7 @@ class MessageHandlers {
     /// @brief Constructs a MessageHandlers object.
     /// @param com Reference to the CommunicationInterface.
     /// @param commandBuffer Reference to the UserCommandBuffer for scheduling commands.
-    MessageHandlers(rdscom::CommunicationInterface &com, UserCommandBuffer &commandBuffer);
+    MessageHandlers(rdscom::CommunicationInterface &com, UserCommandBuffer &commandBuffer, FingerManager &fingerManager);
 
     ///@brief Register all message prototypes
     void registerPrototypes();
@@ -51,7 +51,7 @@ class MessageHandlers {
 
     rdscom::CommunicationInterface &_com;  ///< Reference to the communication interface.
     UserCommandBuffer &_commandBuffer;     ///< Reference to the command buffer.
-
+    FingerManager &_fingerManager;         ///< Reference to the finger manager.
     std::vector<SensorDatastream> _sensorDatastreams;  ///< Vector of active sensor datastreams.
 
     /// @brief Handler for Heartbeat messages.
@@ -96,7 +96,7 @@ class MessageHandlers {
 
     /// @brief Handler for Stop messages.
     /// @param msg The received Stop message.
-void onStopMessage(const rdscom::Message &msg);
+    void onStopMessage(const rdscom::Message &msg);
 
     /// @brief Handler for ZeroCommand messages.
     /// @param msg The received ZeroCommand message.
