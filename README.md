@@ -47,6 +47,12 @@ To run the GUI, simply run the following command:
 python gui.py
 ```
 
+You can specify the port that the GUI will connect to the MCU on by passing the `--port` argument. For example, to connect to the MCU on port `/dev/ttyACM0`, run the following command:
+
+```bash
+python gui.py --port /dev/ttyACM0
+```
+
 ### MCU
 For the MCU, you will need to install PlatformIO. To install PlatformIO, run the following command. Follow the instructions on the website to install the IDE extension for your preferred IDE.
 
