@@ -1,4 +1,5 @@
 #include "user_command.hpp"
+
 #include "message_definitions.hpp"
 
 /**------------------------------------------------------------------------
@@ -59,45 +60,46 @@ void UserCommandBuffer::addCommand(std::shared_ptr<UserCommand> command) {
     _commands.push_back(command);
 }
 
-void UserCommandBuffer::executeCurrentCommandSlice() {
-    // If the current slice is empty, find the next slice.
-    if (_currentSlice.size() == 0 && !CommandSlice::isEmpty(_currentSlice)) {
-        _currentSlice = findNextSlice(CommandSlice(0, 0));
+void UserCommandBuffer::tick() {
+    if (_isExecuting == false) {
+        return;
     }
 
-    // Start commands in the current slice.
+    if (CommandSlice::isEmpty(_currentSlice)) {
+        _currentSlice = findNextSlice(_currentSlice);
+    }
+
+    if (CommandSlice::isEmpty(_currentSlice)) {
+        _isExecuting = false;
+        return;
+    }
+
     for (std::size_t i = _currentSlice.start(); i < _currentSlice.end(); i++) {
         if (!_commands[i]->hasStarted()) {
             _commands[i]->start();
         }
-    }
 
-    // Update commands until all in the slice are done.
-    std::size_t completedCommands = 0;
-    while (completedCommands < _currentSlice.size()) {
-        for (std::size_t i = _currentSlice.start(); i < _currentSlice.end(); i++) {
-            if (!_commands[i]->isDone()) {
-                _commands[i]->update();
-            } else {
-                if (!_commands[i]->hasEnded()) {
-                    _commands[i]->end();
-                    completedCommands++;
-                }
-            }
+        if (!_commands[i]->isDone()) {
+            _commands[i]->update();
+        } else {
+            _commands[i]->end();
+            _numCompletedCommands++;
         }
     }
 
-    if (_currentSlice.end() == _commands.size()) {
-        _currentSlice = UserCommandBuffer::CommandSlice::empty();
-    } else {
-        _currentSlice = findNextSlice(_currentSlice);
+    if (_numCompletedCommands == _currentSlice.size()) {
+        _currentSlice = CommandSlice::empty();
+        _numCompletedCommands = 0;
     }
 }
 
-void UserCommandBuffer::executeAllCommandSlices() {
-    while (!UserCommandBuffer::CommandSlice::isEmpty(_currentSlice)) {
-        executeCurrentCommandSlice();
+void UserCommandBuffer::startExecution() {
+    if (_isExecuting) {
+        std::cerr << "Command buffer is already executing" << std::endl;
+        return;
     }
+
+    _isExecuting = true;
 }
 
 void UserCommandBuffer::clear() {
@@ -188,7 +190,7 @@ rdscom::Result<FingerControlCommand> FingerControlCommand::fromMessage(const rds
 }
 
 bool FingerControlCommand::isDone() {
-
+    return true;
 }
 
 void FingerControlCommand::onReset() {
@@ -196,12 +198,10 @@ void FingerControlCommand::onReset() {
 }
 
 void FingerControlCommand::onStart() {
-
 }
 
 void FingerControlCommand::onUpdate() {
     // Implement update behavior if needed.
-    
 }
 
 void FingerControlCommand::onEnd() {

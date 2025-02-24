@@ -75,17 +75,17 @@ class UserCommandBuffer {
     /// @param command Shared pointer to a UserCommand.
     void addCommand(std::shared_ptr<UserCommand> command);
 
-    /// @brief Executes the current slice of commands.
-    void executeCurrentCommandSlice();
-
-    /// @brief Executes all command slices.
-    void executeAllCommandSlices();
-
     /// @brief Clears the command buffer.
     void clear();
 
     /// @brief Resets all commands in the buffer.
     void reset();
+
+    /// @brief Continues executing the current slice of commands.
+    void tick();
+
+    /// @brief Executes the current slice of commands.
+    void startExecution();
 
    private:
     /// @brief Nested class representing a slice of commands.
@@ -124,6 +124,8 @@ class UserCommandBuffer {
 
     std::vector<std::shared_ptr<UserCommand>> _commands;  ///< All commands.
     CommandSlice _currentSlice;                           ///< The current command slice.
+    std::size_t _numCompletedCommands;                    ///< Number of completed commands.
+    bool _isExecuting;                                    ///< Whether the buffer is executing commands.
 
     /// @brief Finds the next slice of commands to execute.
     /// @param currentSlice The current command slice.

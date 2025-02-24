@@ -29,6 +29,8 @@ UserCommandBuffer g_commandBuffer;
 
 msgs::MessageHandlers g_messageHandlers{g_com, g_commandBuffer};
 
+std::uint64_t g_loop_counter = 0;
+
 
 void setup() {
     // Initialize the Serial port.
@@ -44,4 +46,5 @@ void setup() {
 void loop() {
     // Let the CommunicationInterface process any incoming messages and handle callbacks.
     g_com.tick();
+    g_commandBuffer.tick();
 }

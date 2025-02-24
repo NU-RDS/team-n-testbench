@@ -92,7 +92,7 @@ void MessageHandlers::onMotorEventMessage(const rdscom::Message &msg) {
 
 /// @brief Handler for ControlGo messages.
 void MessageHandlers::onControlGoMessage(const rdscom::Message &msg) {
-    _commandBuffer.executeCurrentCommandSlice();
+    _commandBuffer.startExecution();
 
     rdscom::Message response = msgs::createControlGoMessageResponse(
         msg,
