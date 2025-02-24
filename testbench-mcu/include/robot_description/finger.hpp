@@ -86,7 +86,7 @@ static constexpr Limits<float> joint_1_vel_limits{-10.0, 10.0};
 /// @brief Performs forward kinematics for the finger.
 /// @param joint_angles {theta_0, theta_1} in radians for the joints.
 /// @returns {x, y, z} of the end effector.
-std::vector<float> forward_kinematics(std::vector<float> joint_angles)
+static std::vector<float> forward_kinematics(std::vector<float> joint_angles)
 {
     const float theta_0 = joint_angles.at(0);
     const float theta_1 = joint_angles.at(1);
@@ -102,7 +102,7 @@ std::vector<float> forward_kinematics(std::vector<float> joint_angles)
 /// @brief Performs inverse kinematics
 /// @param pos {x, y, z} in meters of the end effector.
 /// @returns {theta_0, theta_1} of the joints in radians required to move to the location.
-std::vector<float> inverse_kinematics(std::vector<float> pos)
+static std::vector<float> inverse_kinematics(std::vector<float> pos)
 {
     // Check joint space of robot
     const float radius2 = pos.at(0) * pos.at(0) + pos.at(2) * pos.at(2); // radius squared

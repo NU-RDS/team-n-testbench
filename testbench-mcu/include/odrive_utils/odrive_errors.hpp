@@ -6,7 +6,7 @@
 #include <Arduino.h>
 
 /// \brief: Clear errors deemed as "Safe to Clean Automatically"
-bool clear_safe_errors(ODriveCAN odrive, uint32_t error)
+static bool clear_safe_errors(ODriveCAN odrive, uint32_t error)
 {
   if (error == ODRIVE_ERROR_NONE || error == ODRIVE_ERROR_ESTOP_REQUESTED) {
     odrive.clearErrors();
@@ -18,7 +18,7 @@ bool clear_safe_errors(ODriveCAN odrive, uint32_t error)
 
 /// @brief Print Odrive Error Code
 /// @param error - The Error Code
-void odrive_print_error(uint32_t error)
+static void odrive_print_error(uint32_t error)
 {
   switch (error) {
     case ODRIVE_ERROR_NONE:

@@ -89,7 +89,7 @@ struct Param
 };
 
 // https://odrive-cdn.nyc3.digitaloceanspaces.com/releases/firmware/laZ44T35qb_uR6AW6S5RdTrOL9sqZlc2_FonY3vm21Q/flat_endpoints.json
-std::vector<Param<float>> fconfig_params({
+static std::vector<Param<float>> fconfig_params({
   Param<float>{"spinout_mechanical_power_threshold", 420, -100.0},
   Param<float>{"spinout_eletrical_power_threshold", 421, 100.0},
   Param<float>{"max_regen_current", 139, 50.0},
@@ -111,7 +111,7 @@ std::vector<Param<float>> fconfig_params({
   Param<float>{"vel_limit_tolerance", 405, 1.5},
 });
 
-std::vector<Param<uint32_t>> bconfig_params({
+static std::vector<Param<uint32_t>> bconfig_params({
   // Param<uint32_t>{"anticogging.enabled", 304, 1},
   // Param<uint32_t>{"pos_vel_mapper.offset_valid", 466, 1},
   // Param<uint32_t>{"pos_vel_mapper.approx_init_pos_valid", 468, 1},
@@ -127,7 +127,7 @@ std::vector<Param<uint32_t>> bconfig_params({
   Param<uint32_t>{"enable_torque_mode_vel_limit", 394, 1},
 });
 
-std::vector<Param<float>> fanticogging_config_params(
+static std::vector<Param<float>> fanticogging_config_params(
   {Param<float>{"spinout_mechanical_power_threshold", 420, -100.0},
     Param<float>{"spinout_eletrical_power_threshold", 421, 100.0},
     Param<float>{"max_regen_current", 139, 50.0},
@@ -142,11 +142,11 @@ std::vector<Param<float>> fanticogging_config_params(
     Param<float>{"anticogging.calib_end_val", 307, 0.15},
     Param<float>{"anticogging.calib_coarse_integrator_gain", 311, 1}});
 
-std::vector<Param<uint32_t>> banticogging_config_params(
+static std::vector<Param<uint32_t>> banticogging_config_params(
   {Param<uint32_t>{"circular_setpoints", 408, true},
     Param<uint32_t>{"offset_valid", 466, true}});
 
-auto benable_config_param = Param<uint32_t>{"anticogging.enabled", 304, true};
+static auto benable_config_param = Param<uint32_t>{"anticogging.enabled", 304, true};
 
 /// \brief Message struct for reboooting Odrive
 struct Set_Reboot_msg_t final

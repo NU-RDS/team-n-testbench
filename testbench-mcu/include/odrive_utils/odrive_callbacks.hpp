@@ -1,3 +1,6 @@
+#ifndef __ODRIVE_CALLBACKS_H__
+#define __ODRIVE_CALLBACKS_H__
+
 #pragma once
 #include <Arduino.h>
 #include "ODriveCAN.h"
@@ -8,12 +11,12 @@
 #include "odrive_utils/odrive_errors.hpp"
 
 
-MovingAverageFilter filter = 5; /// Moving average filter
+static MovingAverageFilter filter = 5; /// Moving average filter
 
 /// \brief: Called every time a feedback message arrives from the ODrive
 /// \param msg - The address of the incoming message
 /// \param user_data - The pointer to the user data struct
-void onFeedback(Get_Encoder_Estimates_msg_t & msg, void * user_data)
+static void onFeedback(Get_Encoder_Estimates_msg_t & msg, void * user_data)
 {
   ODriveUserData * odrive_user_data = static_cast<ODriveUserData *>(user_data);
   // msg.Pos_Estimate = odrive_user_data->pos_filter.update(msg.Pos_Estimate);
@@ -25,7 +28,7 @@ void onFeedback(Get_Encoder_Estimates_msg_t & msg, void * user_data)
 /// \brief: Called every time a heartbeat message arrives from the ODrive
 /// \param msg - The address of the incoming message
 /// \param user_data - The pointer to the user data struct
-void onHeartbeat(Heartbeat_msg_t & msg, void * user_data)
+static void onHeartbeat(Heartbeat_msg_t & msg, void * user_data)
 {
   ODriveUserData * odrive_user_data = static_cast<ODriveUserData *>(user_data);
   odrive_user_data->last_heartbeat = msg;
@@ -41,7 +44,7 @@ void onHeartbeat(Heartbeat_msg_t & msg, void * user_data)
 /// \brief: Called every time a temperature message arrives from the ODrive
 /// \param msg - The address of the incoming message
 /// \param user_data - The pointer to the user data struct
-void onTemperature(Get_Temperature_msg_t & msg, void * user_data)
+static void onTemperature(Get_Temperature_msg_t & msg, void * user_data)
 {
   ODriveUserData * odrive_user_data = static_cast<ODriveUserData *>(user_data);
   // msg.Motor_Temperature = odrive_user_data->motor_temp_filter.update(msg.Motor_Temperature);
@@ -49,3 +52,4 @@ void onTemperature(Get_Temperature_msg_t & msg, void * user_data)
   odrive_user_data->last_temperature = msg;
   odrive_user_data->received_temperature = true;
 }
+#endif // __ODRIVE_CALLBACKS_H__
