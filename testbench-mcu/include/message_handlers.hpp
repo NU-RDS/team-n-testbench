@@ -2,6 +2,7 @@
 #define __MESSAGE_HANDLERS_H__
 
 #include <rdscom.hpp>
+
 #include "message_definitions.hpp"
 #include "user_command.hpp"
 
@@ -11,7 +12,7 @@ namespace msgs {
 /// This class registers callbacks with a CommunicationInterface and dispatches
 /// incoming messages to the appropriate handler functions.
 class MessageHandlers {
-public:
+   public:
     /// @brief Constructs a MessageHandlers object.
     /// @param com Reference to the CommunicationInterface.
     /// @param commandBuffer Reference to the UserCommandBuffer for scheduling commands.
@@ -23,10 +24,35 @@ public:
     /// @brief Registers all message handlers with the communication interface.
     void addHandlers();
 
-private:
+    /// @brief Send sensor datastream messages, if necessary.
+    void tickDatastreams();
+
+   private:
+    class SensorDatastream {
+       public:
+        SensorDatastream(std::uint8_t sensorID, std::uint8_t frequency) : _sensorID(sensorID), _frequency(frequency) {}
+
+        std::uint8_t sensorID() const { return _sensorID; }
+        std::uint8_t frequency() const { return _frequency; }
+
+        bool timeToSend() {
+            if (millis() - _lastSendTime > 1000 / _frequency) {
+                _lastSendTime = millis();
+                return true;
+            }
+            return false;
+        }
+
+       private:
+        std::uint8_t _sensorID;
+        std::uint8_t _frequency;
+        std::uint32_t _lastSendTime = 0;
+    };
+
     rdscom::CommunicationInterface &_com;  ///< Reference to the communication interface.
-    UserCommandBuffer &_commandBuffer;       ///< Reference to the command buffer.
-    bool _isSensorDatastreamActive;          ///< Indicates if the sensor datastream is active.
+    UserCommandBuffer &_commandBuffer;     ///< Reference to the command buffer.
+
+    std::vector<SensorDatastream> _sensorDatastreams;  ///< Vector of active sensor datastreams.
 
     /// @brief Handler for Heartbeat messages.
     /// @param msg The received Heartbeat message.
@@ -73,6 +99,6 @@ private:
     void onStopMessage(const rdscom::Message &msg);
 };
 
-} // namespace msgs
+}  // namespace msgs
 
 #endif  // __MESSAGE_HANDLERS_H__

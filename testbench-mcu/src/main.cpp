@@ -59,4 +59,5 @@ void loop() {
     // Let the CommunicationInterface process any incoming messages and handle callbacks.
     g_com.tick();
     g_commandBuffer.tick();
+    g_messageHandlers.tickDatastreams();
 }

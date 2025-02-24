@@ -7,7 +7,7 @@
 namespace msgs {
 
 MessageHandlers::MessageHandlers(rdscom::CommunicationInterface &com, UserCommandBuffer &commandBuffer)
-    : _com(com), _commandBuffer(commandBuffer), _isSensorDatastreamActive(false) {
+    : _com(com), _commandBuffer(commandBuffer), _sensorDatastreams() {
 }
 
 ///@brief Register all message prototypes
@@ -49,6 +49,20 @@ void MessageHandlers::addHandlers() {
         [this](const rdscom::Message &msg) { this->onErrorMessage(msg); });
     _com.addCallback(stopId(), rdscom::MessageType::REQUEST,
         [this](const rdscom::Message &msg) { this->onStopMessage(msg); });
+}
+
+/// @brief Send sensor datastream messages, if necessary.
+void MessageHandlers::tickDatastreams() {
+    for (SensorDatastream &stream : _sensorDatastreams) {
+        // Check if it's time to send a message
+        if (stream.timeToSend()) {
+            rdscom::Message msg = msgs::createSensorDatastreamMessageRequest(
+                stream.sensorID(),
+                random(0, 100) / 100.0f
+            );
+            _com.sendMessage(msg);
+        }
+    }
 }
 
 /// @brief Handler for Heartbeat messages.
@@ -109,12 +123,16 @@ void MessageHandlers::onControlDoneMessage(const rdscom::Message &msg) {
 
 /// @brief Handler for StartSensorDatastream messages.
 void MessageHandlers::onStartSensorDatastreamMessage(const rdscom::Message &msg) {
-    _isSensorDatastreamActive = true;
     rdscom::Message response = createStartSensorDatastreamMessageResponse(
         msg,
         msg.getField<std::uint8_t>("sensor_id").value(),
         msg.getField<std::uint8_t>("frequency").value()
     );
+
+    // Start the sensor datastream
+    SensorDatastream stream = SensorDatastream(msg.getField<std::uint8_t>("sensor_id").value(), msg.getField<std::uint8_t>("frequency").value());
+    _sensorDatastreams.push_back(stream);
+
     _com.sendMessage(response);
 }
 
@@ -125,11 +143,20 @@ void MessageHandlers::onSensorDatastreamMessage(const rdscom::Message &msg) {
 
 /// @brief Handler for StopSensorDatastream messages.
 void MessageHandlers::onStopSensorDatastreamMessage(const rdscom::Message &msg) {
-    _isSensorDatastreamActive = false;
     rdscom::Message response = createStopSensorDatastreamMessageResponse(
         msg,
         msg.getField<std::uint8_t>("sensor_id").value()
     );
+
+    // Stop the sensor datastream
+    std::uint8_t sensorID = msg.getField<std::uint8_t>("sensor_id").value();
+    auto it = std::find_if(_sensorDatastreams.begin(), _sensorDatastreams.end(), [sensorID](const SensorDatastream &stream) {
+        return stream.sensorID() == sensorID;
+    });
+
+    if (it != _sensorDatastreams.end()) {
+        _sensorDatastreams.erase(it);
+    }
 
     _com.sendMessage(response);
 }
