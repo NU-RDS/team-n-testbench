@@ -35,6 +35,7 @@ void onHeartbeat(Heartbeat_msg_t & msg, void * user_data)
     odrive_user_data->last_error = odrive_user_data->last_heartbeat.Axis_Error;
     odrive_print_error(odrive_user_data->last_error);
   }
+  Serial.println("Received heartbeat from ODrive" + String(odrive_user_data->node_id));
 }
 
 /// \brief: Called every time a temperature message arrives from the ODrive

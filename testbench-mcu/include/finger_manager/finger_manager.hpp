@@ -5,10 +5,6 @@
 #undef CAN_ERROR_BUS_OFF
 #endif
 
-#ifndef M_PI
-#define M_PI 3.14159265358979323846
-#endif
-
 #include "odrive_manager/odrive_manager.hpp"
 #include "robot_description/finger.hpp"
 #include <Arduino.h>
@@ -20,55 +16,6 @@ static const unsigned long odrive_timeout = 1000;
 /// @brief Zeroing timeout in seconds (10 seconds)
 static const unsigned long zeroing_timeout = 10000;
 
-/**
- * @struct PhiVal
- * @brief Stores adjusted phi values
- */
-class PhiVal
-{
-public:
-    float last_phi0;
-    float last_phi1;
-    float adjusted_phi0;
-    float adjusted_phi1;
-    int cycles0 = 0;
-    int cycles1 = 0;
-    std::vector<float> adjust_phi_vals(std::vector<float> phi);
-};
-
-std::vector<float> PhiVal::adjust_phi_vals(std::vector<float> phi) 
-    {
-        const float current_phi_0 = phi.at(0);
-        const float current_phi_1 = phi.at(1);
-
-        // If we are crossing a full rotation, we adjust the cycle count
-        if (last_phi0 > 0.0f && current_phi_0 < 0.0f) 
-        {
-            cycles0++;  // Completed a cycle
-        }
-        else if (last_phi0 < 0.0f && current_phi_0 > 0.0f) 
-        {
-            cycles0--;  // Completed a cycle in reverse direction
-        }
-
-        // If we are crossing a full rotation, we adjust the cycle count
-        if (last_phi1 > 0.0f && current_phi_1 < 0.0f) 
-        {
-            cycles1++;  // Completed a cycle
-        }
-        else if (last_phi1 < 0.0f && current_phi_1 > 0.0f) 
-        {
-            cycles1--;  // Completed a cycle in reverse direction
-        }
-
-        // Update previous and current angles
-        last_phi0 = current_phi_0;
-        last_phi1 = current_phi_1;
-
-        adjusted_phi0 = current_phi_0 + cycles0 * M_PI * 2;
-        adjusted_phi1 = current_phi_1 + cycles1 * M_PI * 2;
-        return {adjusted_phi0, adjusted_phi1};
-    }
 
 /**
  * @struct FingerData
@@ -178,9 +125,6 @@ public:
      */
     bool zero();
 
-    /// @brief Get phi values
-    PhiVal adjusted_phi();
-
     /// @brief Get finger data
     FingerData get_finger_data();
 
@@ -205,7 +149,7 @@ FingerManager::FingerManager(
     canbus0_.setMaxMB(16);
     canbus0_.enableFIFO();
     canbus0_.enableFIFOInterrupt();
-    canbus1_.onReceive(callback_odrive0);
+    canbus0_.onReceive(callback_odrive0);
 
     canbus1_.begin();
     canbus1_.setBaudRate(CAN_BAUDRATE);
@@ -260,7 +204,8 @@ bool FingerManager::find_odrive(T &odrive) {
     unsigned long start_time = millis();
     while (!odrive.odrive_user_data_.received_heartbeat) {
         tick();
-        delay(100);
+        delay(10);
+        tick();
         Serial.println("Waiting for ODrive" + String(odrive.odrive_user_data_.node_id));
 
         if (millis() - start_time > odrive_timeout) {
@@ -307,7 +252,6 @@ std::vector<float> FingerManager::soft_limit_joints(std::vector<float> joint_the
 
 std::vector<float> FingerManager::phi_to_theta(std::vector<float> phi)
 {
-    std::vector<float> adjusted_phi_vals = adjusted_phi().adjust_phi_vals(phi);
     const float phi_0 = phi.at(0);
     const float phi_1 = phi.at(1);
     const float theta_0 = phi_0 * t1 + joint_0_cali_offset;
