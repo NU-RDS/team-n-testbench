@@ -13,13 +13,13 @@ class PySerialChannel(CommunicationChannel):
         self.tx_callbacks = []
         self._write_lock = threading.Lock()
         self._read_lock = threading.Lock()
-        try :
+        try:
             self.ser = serial.Serial(port, baudrate, timeout=0.1)
             self.is_open = True
         except serial.SerialException:
-            print("Error: Could not open serial port.")
-            self.ser = None
             self.is_open = False
+            print(f"Error: Could not open serial port '{port}' at baudrate {baudrate}.")
+            return
 
     def receive(self) -> bytearray:
         if not self.is_open:

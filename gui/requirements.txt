@@ -19,4 +19,3 @@ PyYAML==6.0.2
 qt-material==2.14
 qtmodern==0.2.0
 QtPy==2.4.3
-serial==0.0.97
