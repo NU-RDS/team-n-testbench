@@ -51,7 +51,7 @@ class PySerialChannel(CommunicationChannel):
             self.history += serialized + b"\n"
             # print(f"[sent:{len(serialized)}] {serialized}")
             for callback in self.tx_callbacks:
-                callback(decoded_message)
+                callback(serialized)
             self.ser.write(serialized)
 
 
