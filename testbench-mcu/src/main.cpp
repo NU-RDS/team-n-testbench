@@ -1,5 +1,4 @@
 // Echoing server example for the rdscom library.
-
 #include <Arduino.h>
 #include <HardwareSerial.h>
 
@@ -8,13 +7,44 @@
 #include "serial_com_channel.hpp"
 #include "message_handlers.hpp"
 
-#if defined(ARDUINO_TEENSY40) || defined(ARDUINO_TEENSY41)
-#define INTERNAL_LED_PIN LED_BUILTIN
-#else
-#define INTERNAL_LED_PIN GPIO_NUM_2
-#endif
+#include "teensy_can.h"
+#include "finger_manager/finger_manager.hpp"
+#include "odrive_manager/odrive_manager.hpp"
 
-uint8_t g_internalLEDState = HIGH;
+FlexCAN_T4<CAN2, RX_SIZE_256, TX_SIZE_256> canbus0;
+FlexCAN_T4<CAN3, RX_SIZE_256, TX_SIZE_256> canbus1;
+
+ODriveUserData odrive0_user_data{};
+ODriveUserData odrive1_user_data{};
+
+/// @brief: Odrive manager object for the first motor
+ODriveManager<CAN2> odrive0 = ODriveManager<CAN2>(canbus0, ODRIVE0_ID, odrive0_user_data);
+
+/// @brief: Odrive manager object for the second motor
+ODriveManager<CAN3> odrive1 = ODriveManager<CAN3>(canbus1, ODRIVE1_ID, odrive1_user_data);
+
+FingerData finger_data{};
+
+// Called for every message that arrives on the CAN bus
+void callback_odrive0(const CanMsg &msg)
+{
+    onReceive(msg, odrive0.odrive_);
+}
+
+void callback_odrive1(const CanMsg &msg)
+{
+    onReceive(msg, odrive1.odrive_);
+}
+
+/// @brief Reboot the Teensy
+void reboot()
+{
+    SCB_AIRCR = 0x05FA0004;
+}
+
+
+/// @brief  Finger manager object for N demo
+FingerManager g_finger_manager{canbus0, canbus1, odrive0, odrive1, callback_odrive0, callback_odrive1};
 
 // Create a CommunicationInterfaceOptions instance with 3 retries, 2000 ms timeout, and the Arduino millis() function.
 rdscom::CommunicationInterfaceOptions options{3, 2000, millis};
@@ -64,7 +94,7 @@ void setup() {
 
     Serial.println("Starting CAN setup");
 
-    if (!finger_manager.initialize())
+    if (!g_finger_manager.initialize())
     {
         Serial.println("CAN failed to initialize: Rebooting the teensy");
         // reboot();
@@ -84,19 +114,4 @@ void loop() {
     g_messageHandlers.addHandlers();
     g_commandBuffer.onExecutionComplete(onExecutionComplete);
     g_commandBuffer.onCalibrationComplete(onCalibrationComplete);
-
-    // finger_manager.move_js({0.0f, -0.1});
-    // finger_manager.tick();
-    // finger_data = finger_manager.get_finger_data();
-
-    // // Serial.println("Motor 0 - " + String(finger_data.motor_pos_estimates[0]));
-    // // Serial.println("Motor 1 - " + String(finger_data.motor_pos_estimates[1]));
-
-    // Serial.println("Joint 0 - " + String(finger_data.estimated_joint_angles[0]));
-    // Serial.println("Joint 1 - " + String(finger_data.estimated_joint_angles[1]));
-
-    
-
-    delay(5);
-
 }
