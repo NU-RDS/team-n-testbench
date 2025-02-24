@@ -115,9 +115,7 @@ class Renderer:
     
         # print(f"Rendering mesh from {mesh_handle.starting_index} to {mesh_handle.ending_index}")
         GL.glUniformMatrix4fv(self.context.renderer_locations.model, 1, GL.GL_FALSE, glm.value_ptr(transform))
-
         offset = ctypes.c_void_p(mesh_handle.starting_index * ctypes.sizeof(GL.GLuint))
-        
 
         if draw_mode == GL.GL_LINES:
             # disable writing to depth buffer for lines

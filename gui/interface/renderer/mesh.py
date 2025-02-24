@@ -41,9 +41,12 @@ class Mesh:
         self.indices = indices  # List of int
 
     def add_to_buffer(self, vbos: list, ibos: list):
+        offset = len(vbos) // 6
         for vertex in self.vertices:
             vertex.add_to_vbo(vbos)
-        ibos.extend(self.indices)
+
+        for index in self.indices:
+            ibos.append(index + offset)
 
     @staticmethod
     def from_obj_file(file_path: str) -> "Mesh":
