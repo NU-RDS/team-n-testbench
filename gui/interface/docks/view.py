@@ -68,8 +68,8 @@ class OpenGLWidget(QtOpenGL.QGLWidget):
         link_2_node = self.renderer.add_child(
             "link_2",
             red_material,
-            Transform().set_position(glm.vec3(0, 0, 0)),
-            # link_1_node
+            Transform().set_position(glm.vec3(0, 0, -0.5)),
+            link_1_node
         )
 
         self.renderer.begin_rendering()
