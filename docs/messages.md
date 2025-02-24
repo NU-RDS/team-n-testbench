@@ -72,7 +72,7 @@ This message is used to start the sensor datastream. The GUI sends a request to 
 ````
 Message ID: 5
 Fields:
-    - `sensor_id`: `uint8` - The ID of the sensor to start the datastream for, 255 for all sensors
+    - `joint_id`: `uint8` - The ID of the sensor to start the datastream for, 255 for all sensors
     - `frequency`: `uint8` - The frequency of the datastream in Hz
 Acknowledgement: Yes
 ````
@@ -83,7 +83,7 @@ This message is used to send sensor data from the MCU to the GUI. The MCU sends 
 ````
 Message ID: 6
 Fields:
-    - `sensor_id`: `uint8` - The ID of the sensor that the data is for
+    - `joint_id`: `uint8` - The ID of the sensor that the data is for
     - `data`: `float` - The data from the sensor
 Acknowledgement: No
 ````
@@ -94,7 +94,7 @@ This message is used to stop the sensor datastream. The GUI sends a request to t
 ````
 Message ID: 7
 Fields:
-    - `sensor_id`: `uint8` - The ID of the sensor to stop the datastream for, 255 for all sensors
+    - `joint_id`: `uint8` - The ID of the sensor to stop the datastream for, 255 for all sensors
 Acknowledgement: Yes
 ````
 
