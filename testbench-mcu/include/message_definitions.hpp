@@ -20,7 +20,7 @@ inline rdscom::DataPrototype motorControlProto() {
     proto.addField("motor_id", rdscom::DataFieldType::UINT8);
     proto.addField("control_mode", rdscom::DataFieldType::UINT8);
     proto.addField("control_value", rdscom::DataFieldType::FLOAT);
-    proto.addField("simutaneous", rdscom::DataFieldType::BOOL);
+    proto.addField("simultaneous", rdscom::DataFieldType::BOOL);
     return proto;
 }
 
@@ -137,7 +137,7 @@ inline rdscom::Message createMotorControlMessageRequest(std::uint8_t motor_id,
     msg.setField<std::uint8_t>("motor_id", motor_id);
     msg.setField<std::uint8_t>("control_mode", control_mode);
     msg.setField<float>("control_value", control_value);
-    msg.setField<std::uint8_t>("simutaneous", simultaneous ? 1 : 0);
+    msg.setField<std::uint8_t>("simultaneous", simultaneous ? 1 : 0);
     return msg;
 }
 

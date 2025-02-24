@@ -1,4 +1,5 @@
 #include "user_command.hpp"
+#include "message_definitions.hpp"
 
 /**------------------------------------------------------------------------
  *                           UserCommand Implementation
@@ -162,6 +163,11 @@ FingerControlCommand::FingerControlCommand(std::uint8_t fingerJoinID, FingerCont
 }
 
 rdscom::Result<FingerControlCommand> FingerControlCommand::fromMessage(const rdscom::Message &msg) {
+    // check that the message is the right prototoype
+    if (msg.data().type().identifier() != msgs::motorControlProto().identifier()) {
+        return rdscom::Result<FingerControlCommand>::errorResult("Invalid prototype");
+    }
+
     bool error = rdscom::check(
         rdscom::defaultErrorCallback(std::cerr),
         msg.getField<std::uint8_t>("motor_id"),

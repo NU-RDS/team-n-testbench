@@ -70,6 +70,11 @@ void MessageHandlers::onMotorControlMessage(const rdscom::Message &msg) {
 
     FingerControlCommand command = result.value();
     _commandBuffer.addCommand(std::make_shared<FingerControlCommand>(command));
+    std::cout << "Added MotorControl command to buffer\n";
+    std::cout << "Finger ID: " << static_cast<int>(command.fingerJoinID()) << "\n";
+    std::cout << "Control Type: " << static_cast<int>(command.controlType()) << "\n";
+    std::cout << "Control Value: " << command.controlValue() << "\n";
+    std::cout << "Sending response\n";
     rdscom::Message response = createMotorControlMessageResponse(
         msg,
         command.fingerJoinID(),
@@ -77,7 +82,7 @@ void MessageHandlers::onMotorControlMessage(const rdscom::Message &msg) {
         command.controlValue(),
         command.simultaneous()
     );
-    _com.sendMessage(response, true);
+    _com.sendMessage(response);
 }
 
 /// @brief Handler for MotorEvent messages.
@@ -88,6 +93,13 @@ void MessageHandlers::onMotorEventMessage(const rdscom::Message &msg) {
 /// @brief Handler for ControlGo messages.
 void MessageHandlers::onControlGoMessage(const rdscom::Message &msg) {
     _commandBuffer.executeCurrentCommandSlice();
+
+    rdscom::Message response = msgs::createControlGoMessageResponse(
+        msg,
+        msg.getField<std::int8_t>("rand").value()
+    );
+
+    _com.sendMessage(response);
 }
 
 /// @brief Handler for ControlDone messages.
@@ -103,7 +115,7 @@ void MessageHandlers::onStartSensorDatastreamMessage(const rdscom::Message &msg)
         msg.getField<std::uint8_t>("sensor_id").value(),
         msg.getField<std::uint8_t>("frequency").value()
     );
-    _com.sendMessage(response, true);
+    _com.sendMessage(response);
 }
 
 /// @brief Handler for SensorDatastream messages.
@@ -119,7 +131,7 @@ void MessageHandlers::onStopSensorDatastreamMessage(const rdscom::Message &msg) 
         msg.getField<std::uint8_t>("sensor_id").value()
     );
 
-    _com.sendMessage(response, true);
+    _com.sendMessage(response);
 }
 
 /// @brief Handler for ClearControlQueue messages.
@@ -130,7 +142,7 @@ void MessageHandlers::onClearControlQueueMessage(const rdscom::Message &msg) {
         msg.getField<std::int8_t>("rand").value()
     );
 
-    _com.sendMessage(response, true);
+    _com.sendMessage(response);
 }
 
 /// @brief Handler for Error messages.
