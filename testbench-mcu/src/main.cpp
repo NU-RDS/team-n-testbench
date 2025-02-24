@@ -8,26 +8,26 @@ FlexCAN_T4<CAN3, RX_SIZE_256, TX_SIZE_256> canbus1;
 ODriveUserData odrive0_user_data{};
 ODriveUserData odrive1_user_data{};
 
-/// \brief: Odrive manager object for the first motor
+/// @brief: Odrive manager object for the first motor
 ODriveManager<CAN2> odrive0 = ODriveManager<CAN2>(canbus0, ODRIVE0_ID, odrive0_user_data);
 
-/// \brief: Odrive manager object for the second motor
+/// @brief: Odrive manager object for the second motor
 ODriveManager<CAN3> odrive1 = ODriveManager<CAN3>(canbus1, ODRIVE1_ID, odrive1_user_data);
 
+
 // Called for every message that arrives on the CAN bus
-void onOdriveCanMessage(const CanMsg &msg)
+void callback_odrive0(const CanMsg &msg)
 {
     onReceive(msg, odrive0.odrive_);
+}
+
+void callback_odrive1(const CanMsg &msg)
+{
     onReceive(msg, odrive1.odrive_);
 }
 
-FingerManager finger_mananger{canbus0,
-                              canbus1,
-                              odrive0,
-                              odrive1,
-                              onOdriveCanMessage};
-
-
+/// @brief  Finger manager object for N demo
+FingerManager finger_manager{canbus0, canbus1, odrive0, odrive1, callback_odrive0, callback_odrive1};
 
 void setup() {
     
@@ -43,7 +43,7 @@ void setup() {
 
     Serial.println("Starting CAN setup");
 
-    if (!finger_mananger.initialize())
+    if (!finger_manager.initialize())
     {
         Serial.println("CAN failed to initialize: reset required");
     }
