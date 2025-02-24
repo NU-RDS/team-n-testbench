@@ -25,6 +25,7 @@ class PySerialChannel(CommunicationChannel):
         if not self.is_open:
             # print("Error: Serial port is not open.")
             return bytearray()
+            
         
         # self._read_lock.acquire()
         # Read all available bytes.
