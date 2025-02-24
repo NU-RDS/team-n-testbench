@@ -90,7 +90,23 @@ void UserCommandBuffer::tick() {
     if (_numCompletedCommands == _currentSlice.size()) {
         _currentSlice = CommandSlice::empty();
         _numCompletedCommands = 0;
+
+        ExecutionStats stats = {
+            .time = millis() - _startTime,
+            .executed = static_cast<std::uint8_t>(_currentSlice.size()),
+            .success = true,
+        };
+
+        for (auto &callback : _onExecutionCompleteCallbacks) {
+            callback(stats);
+        }
+
+        _isExecuting = false;
     }
+}
+
+void UserCommandBuffer::onExecutionComplete(std::function<void(ExecutionStats)> callback) {
+    _onExecutionCompleteCallbacks.push_back(callback);
 }
 
 void UserCommandBuffer::startExecution() {
@@ -98,6 +114,8 @@ void UserCommandBuffer::startExecution() {
         std::cerr << "Command buffer is already executing" << std::endl;
         return;
     }
+
+    this->_startTime = millis();
 
     _isExecuting = true;
 }
@@ -146,9 +164,13 @@ UserCommandBuffer::CommandSlice UserCommandBuffer::findNextSlice(const CommandSl
     std::size_t start = currentSlice.end();
     std::size_t end = currentSlice.end();
 
+    if (start >= _commands.size()) {
+        return CommandSlice::empty();
+    }
+
     for (std::size_t i = currentSlice.end(); i < _commands.size(); i++) {
         if (!_commands[i]->isParralelizable()) {
-            end = i;
+            end = i + 1;
             break;
         }
     }
@@ -202,6 +224,7 @@ void FingerControlCommand::onStart() {
 
 void FingerControlCommand::onUpdate() {
     // Implement update behavior if needed.
+    std::cout << "FingerControlCommand update\n";
 }
 
 void FingerControlCommand::onEnd() {

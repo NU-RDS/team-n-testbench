@@ -68,6 +68,12 @@ class UserCommand {
 /// This class collects user commands and executes them in slices.
 class UserCommandBuffer {
    public:
+    struct ExecutionStats {
+        std::uint32_t time;     ///< Execution time.
+        std::uint8_t executed;  ///< Number of executed commands.
+        bool success;           ///< Whether the execution
+    };
+
     /// @brief Constructor.
     UserCommandBuffer();
 
@@ -86,6 +92,10 @@ class UserCommandBuffer {
 
     /// @brief Executes the current slice of commands.
     void startExecution();
+
+    /// @brief Registers a callback to be called when execution is complete.
+    /// @param callback The callback to register.
+    void onExecutionComplete(std::function<void(ExecutionStats)> callback);
 
    private:
     /// @brief Nested class representing a slice of commands.
@@ -126,6 +136,9 @@ class UserCommandBuffer {
     CommandSlice _currentSlice;                           ///< The current command slice.
     std::size_t _numCompletedCommands;                    ///< Number of completed commands.
     bool _isExecuting;                                    ///< Whether the buffer is executing commands.
+    std::uint32_t _startTime;                             ///< Time when execution
+
+    std::vector<std::function<void(ExecutionStats)>> _onExecutionCompleteCallbacks;  ///< Callbacks to call when execution is complete.
 
     /// @brief Finds the next slice of commands to execute.
     /// @param currentSlice The current command slice.
@@ -170,8 +183,8 @@ class FingerControlCommand : public UserCommand {
    private:
     std::uint8_t _fingerID;          ///< The motor identifier.
     FingerControlType _controlType;  ///< The control type.
-    float _controlValue;            ///< The control value.
-    bool _simultaneous;             ///< Whether the command is simultaneous.
+    float _controlValue;             ///< The control value.
+    bool _simultaneous;              ///< Whether the command is simultaneous.
 
     // Implementation of virtual methods.
     void onReset() override;

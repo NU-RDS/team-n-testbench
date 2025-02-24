@@ -66,7 +66,7 @@ class CommandBuffer:
 
 
     def _execute_buffer_on_success(self, request_message : Message, response_message : Message):
-        if response_message.data().type().identifier() != MessageDefinitions.CONTROL_GO_MESSAGE:
+        if response_message.data().type().identifier() != MessageDefinitions.control_go_id():
             ApplicationContext.error_manager.report_error("Response message is not a control go message", ErrorSeverity.WARNING)
             return
         
@@ -167,14 +167,14 @@ class CommandBuffer:
         
         # check that the control mode is the same
         request_control_mode = request_message.get_field("control_mode").value()
-        response_control_mode = motor_event_response.get_field("event_type").value()
+        response_control_mode = motor_event_response.get_field("control_mode").value()
         if request_control_mode != response_control_mode:
             ApplicationContext.error_manager.report_error(f"Control mode mismatch: {request_control_mode} != {response_control_mode}", ErrorSeverity.WARNING)
             return False
         
         # check that the control value is the same
         request_control_value = request_message.get_field("control_value").value()
-        response_control_value = motor_event_response.get_field("event_value").value()
+        response_control_value = motor_event_response.get_field("control_value").value()
 
         if request_control_value != response_control_value:
             ApplicationContext.error_manager.report_error(f"Control value mismatch: {request_control_value} != {response_control_value}", ErrorSeverity.WARNING)

@@ -88,7 +88,7 @@ class MCUCom:
 
     def _heartbeat_msg_on_success(self, request_message : Message, response_message : Message):
         # check that the response is a heartbeat
-        if response_message.data().type().identifier() != MessageDefinitions.HEARTBEAT_MESSAGE:
+        if response_message.data().type().identifier() != MessageDefinitions.heartbeat_id():
             ApplicationContext.error_manager.report_error("Response message is not a heartbeat message", ErrorSeverity.WARNING)
             return
         

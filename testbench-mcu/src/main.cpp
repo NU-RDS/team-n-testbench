@@ -31,6 +31,17 @@ msgs::MessageHandlers g_messageHandlers{g_com, g_commandBuffer};
 
 std::uint64_t g_loop_counter = 0;
 
+void onExecutionComplete(UserCommandBuffer::ExecutionStats stats) {
+    std::cout << "Execution complete: " << stats.executed << " commands in " << stats.time << " ms" << std::endl;
+    // send a message back to the GUI
+    rdscom::Message response = msgs::createControlDoneMessageRequest(
+        stats.success,
+        stats.time,
+        stats.executed
+    );
+    g_com.sendMessage(response, true);
+}
+
 
 void setup() {
     // Initialize the Serial port.
@@ -41,6 +52,7 @@ void setup() {
 
     g_messageHandlers.registerPrototypes();
     g_messageHandlers.addHandlers();
+    g_commandBuffer.onExecutionComplete(onExecutionComplete);
 }
 
 void loop() {

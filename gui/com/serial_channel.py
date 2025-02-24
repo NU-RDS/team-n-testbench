@@ -8,7 +8,7 @@ import threading
 
 class PySerialChannel(CommunicationChannel):
     def __init__(self, port, baudrate=115200):
-        self.history = ""
+        self.history = b""
         self.rx_callbacks = []
         self.tx_callbacks = []
         self._write_lock = threading.Lock()
@@ -31,9 +31,8 @@ class PySerialChannel(CommunicationChannel):
         
         # Now, outside of the lock, process the data.
         if data:
-            decoded = data.decode('utf8')
-            print(f"[received:{len(data)}] {decoded}")
-            self.history += decoded + "\n"
+            print(f"[received:{len(data)}] {data}")
+            self.history += data + b"\n"
             for callback in self.rx_callbacks:
                 # Calling callbacks outside the lock prevents blocking other threads.
                 callback(data)
@@ -49,16 +48,20 @@ class PySerialChannel(CommunicationChannel):
         # Acquire the write lock using a context manager.
         with self._write_lock:
             serialized = message.serialize()
-            decoded_message = serialized.decode('utf8')
-            self.history += decoded_message + "\n"
-            print(f"[sent:{len(decoded_message)}] {decoded_message}")
+            self.history += serialized + b"\n"
+            print(f"[sent:{len(serialized)}] {serialized}")
             for callback in self.tx_callbacks:
                 callback(decoded_message)
             self.ser.write(serialized)
 
 
     def get_history(self):
-        return self.history
+        # decode the bytes to a string
+        try:
+            return self.history.decode('utf8')
+        except UnicodeDecodeError:
+            # just do a normal decode
+            return self.history
     
     def clear_history(self):
         self.history = ""
