@@ -71,7 +71,7 @@ void loop() {
     // Serial.println("Motor 1 - " + String(finger_data.motor_pos_estimates[1]));
 
     Serial.println("Joint 0 - " + String(finger_data.estimated_joint_angles[0]));
-    // Serial.println("Joint 1 - " + String(finger_data.estimated_joint_angles[1]));
+    Serial.println("Joint 1 - " + String(finger_data.estimated_joint_angles[1]));
 
     
 
