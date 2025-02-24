@@ -53,7 +53,7 @@ class ControlDock(ImmediateInspectorDock):
 
     def send_datastream_start(self, joint_number: int):
         print("Sending datastream start")
-        ApplicationContext.telemetry.enable_sensor_datastream(joint_number, 10)
+        ApplicationContext.telemetry.enable_sensor_datastream(joint_number, 20)
 
     def send_datastream_stop(self, joint_number: int):
         print("Sending datastream stop")

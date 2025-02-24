@@ -25,6 +25,11 @@ class SensorDatastream:
             # only store the last 50
             self.snapshots = self.snapshots[-50:]
 
+    def get_latest_snapshot(self) -> SensorDataSnapshot:
+        if len(self.snapshots) == 0:
+            return None
+        return self.snapshots[-1]
+
 class Telemetry:
     def __init__(self):
         self.sensor_datastreams : list[SensorDatastream] = []
