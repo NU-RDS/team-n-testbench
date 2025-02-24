@@ -31,18 +31,18 @@ class OpenGLWidget(QtOpenGL.QGLWidget):
             self.renderer.add_mesh(Mesh.from_obj_file(PathUtil.asset_file_path(f"meshes/{mesh_name}.obj")), mesh_name)
 
 
-        # grid_size = 1000
-        # self.renderer.add_mesh(Grid.create_grid_data(grid_size, 0.5), "grid")
+        grid_size = 1000
+        self.renderer.add_mesh(Grid.create_grid_data(grid_size, 0.5), "grid")
 
-        # # Create a grid node with GL_LINES draw mode.
-        # self.renderer.add_child(
-        #     "grid",
-        #     Material.base_color(
-        #         self.renderer.context, glm.vec3(0.0, 1.0, 1.0), fade=True
-        #     ),
-        #     Transform().set_scale(glm.vec3(1.0, 1.0, 1.0)),
-        #     draw_mode=GL.GL_LINES,
-        # )
+        # Create a grid node with GL_LINES draw mode.
+        self.renderer.add_child(
+            "grid",
+            Material.base_color(
+                self.renderer.context, glm.vec3(0.0, 1.0, 1.0), fade=True
+            ),
+            Transform().set_scale(glm.vec3(1.0, 1.0, 1.0)),
+            draw_mode=GL.GL_LINES,
+        )
 
         red_material = Material.base_color(
             self.renderer.context, glm.vec3(1.0, 0.0, 0.0)
@@ -56,21 +56,21 @@ class OpenGLWidget(QtOpenGL.QGLWidget):
             Transform().set_position(glm.vec3(0, 0, 0)).set_scale(glm.vec3(scale_axis, scale_axis, scale_axis)),
         )
 
-        # # as a parent of the base, add the first link
-        # link_1_node = self.renderer.add_child(
-        #     "link_1",
-        #     red_material,
-        #     Transform().set_position(glm.vec3(0, 1, 0)),
-        #     base_node
-        # )
+        # as a parent of the base, add the first link
+        link_1_node = self.renderer.add_child(
+            "link_1",
+            red_material,
+            Transform().set_position(glm.vec3(0, 0, -0.2)),
+            base_node
+        )
 
-        # # as a parent of the first link, add the second link
-        # link_2_node = self.renderer.add_child(
-        #     "link_2",
-        #     red_material,
-        #     Transform().set_position(glm.vec3(0, 1, 0)),
-        #     link_1_node
-        # )
+        # as a parent of the first link, add the second link
+        link_2_node = self.renderer.add_child(
+            "link_2",
+            red_material,
+            Transform().set_position(glm.vec3(0, 0, 0)),
+            # link_1_node
+        )
 
         self.renderer.begin_rendering()
 

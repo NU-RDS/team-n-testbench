@@ -51,9 +51,11 @@ class Camera:
     @staticmethod
     def default() -> "Camera":
         camera = Camera.perspective(45.0, 1.0, 0.1, 1000.0)
-        camera.transform.position = glm.vec3(-10.0, 10.0, -10.0)
+        camera.transform.position = glm.vec3(10.0, 10.0, 10.0)
         # set the camera to look at the origin
-        camera.transform.rotation = glm.angleAxis(glm.radians(-135.0), glm.vec3(1.0, 0.0, 0.0))
+        direction = glm.normalize(glm.sub(glm.vec3(0.0, 0.0, 0.0), camera.transform.position))
+        rot = glm.quatLookAt(direction, glm.vec3(0.0, 1.0, 0.0))
+        camera.transform.rotation = rot
 
         return camera
     
