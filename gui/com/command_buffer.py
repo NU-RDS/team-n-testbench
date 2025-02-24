@@ -79,6 +79,8 @@ class CommandBuffer:
 
     def send_command_buffer(self, com: CommunicationInterface):
         self._is_sending_buffer = True
+        self._successfully_sent = True
+        print(f"Sending buffer of size {len(self.buffer)}")
         for message in self.buffer:
             # curry the message into the lambda function
             on_success_curry = lambda response_message : self._command_msg_on_success(message, response_message)
@@ -90,14 +92,17 @@ class CommandBuffer:
             print("Begin waiting for response")
             while self._is_waiting:
                 com.tick()
-
             print("End waiting for response")
 
+            if not self._successfully_sent:
+                ApplicationContext.error_manager.report_error("Failed to send command message, no acknowledgement. Stopping send early.", ErrorSeverity.WARNING)
+                break
 
             for callback in self.callbacks_on_send:
                 callback(message)
 
         self._is_sending_buffer = False
+        print("Finished sending buffer")
 
         if not self._successfully_sent:
             # if the buffer was not successfully sent, then we need to keep the buffer
@@ -120,18 +125,20 @@ class CommandBuffer:
 
 
     def _command_msg_on_success(self, request_message : Message, response_message : Message):
-        if request_message.data().type().identifier() == MessageDefinitions.MOTOR_CONTROL_MESSAGE:
+        print("Command message success")
+        self._is_waiting = False
+        if request_message.data().type().identifier() == MessageDefinitions.motor_control_id():
             # check that the response message is a motor event message
-            if response_message.data().type().identifier() != MessageDefinitions.MOTOR_EVENT_MESSAGE:
+            if response_message.data().type().identifier() != MessageDefinitions.motor_control_id():
                 self._successfully_sent = False
                 ApplicationContext.error_manager.report_error("Response message is not a motor event message", ErrorSeverity.WARNING)
                 return
 
             if self._compare_motor_control_messages(request_message, response_message):
                 self._successfully_sent = True
-        elif request_message.data().type().identifier() == MessageDefinitions.SENSOR_EVENT_MESSAGE:
+        elif request_message.data().type().identifier() == MessageDefinitions.sensor_datastream_id():
             # check that the response message is a sensor event message
-            if response_message.data().type().identifier() != MessageDefinitions.SENSOR_EVENT_MESSAGE:
+            if response_message.data().type().identifier() != MessageDefinitions.sensor_datastream_id():
                 ApplicationContext.error_manager.report_error("Response message is not a sensor event message", ErrorSeverity.WARNING)
                 self._successfully_sent = False
                 return

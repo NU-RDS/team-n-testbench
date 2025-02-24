@@ -23,41 +23,39 @@ class PySerialChannel(CommunicationChannel):
 
     def receive(self) -> bytearray:
         if not self.is_open:
-            # print("Error: Serial port is not open.")
             return bytearray()
             
+        # Acquire and immediately release the lock using a context manager.
+        with self._read_lock:
+            data = self.ser.read(self.ser.in_waiting or 1)
         
-        # self._read_lock.acquire()
-        # Read all available bytes.
-        data = self.ser.read(self.ser.in_waiting or 1)
-        if len(data) > 0:
-            print(f"[recieved:{len(data)}] {data.decode('utf8')}")
-            # append the data to the history as a string
-            self.history += data.decode('utf8') + "\n"
+        # Now, outside of the lock, process the data.
+        if data:
+            decoded = data.decode('utf8')
+            print(f"[received:{len(data)}] {decoded}")
+            self.history += decoded + "\n"
             for callback in self.rx_callbacks:
+                # Calling callbacks outside the lock prevents blocking other threads.
                 callback(data)
-
-        # self._read_lock.release()
-
+                
         return bytearray(data)
+
 
     def send(self, message: Message) -> None:
         if not self.is_open:
             print("Error: Serial port is not open.")
             return
-        
-        # self._write_lock.acquire()
 
-        self.history += message.serialize().decode('utf8') + "\n"
-        decode_message = message.serialize().decode('utf8')
-        print(f"[sent:{len(decode_message)}] {message.serialize().decode('utf8')}")
+        # Acquire the write lock using a context manager.
+        with self._write_lock:
+            serialized = message.serialize()
+            decoded_message = serialized.decode('utf8')
+            self.history += decoded_message + "\n"
+            print(f"[sent:{len(decoded_message)}] {decoded_message}")
+            for callback in self.tx_callbacks:
+                callback(decoded_message)
+            self.ser.write(serialized)
 
-        for callback in self.tx_callbacks:
-            callback(message.serialize().decode('utf8'))
-        serialized = message.serialize()
-        self.ser.write(serialized)
-
-        # self._write_lock.release()
 
     def get_history(self):
         return self.history

@@ -84,7 +84,7 @@ class MCUCom:
         self.send_message(heartbeat, ack_required=True, on_failure=on_failure, on_success=on_success)
 
     def _on_heartbeat_failure(self, message: Message):
-        ApplicationContext.error_manager.report_error(f"Failed to send heartbeat message {message.message_number()}", ErrorSeverity.WARNING)
+        ApplicationContext.error_manager.report_error(f"Failed to send heartbeat message {message.message_number()}, no response", ErrorSeverity.WARNING)
 
     def _heartbeat_msg_on_success(self, request_message : Message, response_message : Message):
         # check that the response is a heartbeat
@@ -104,7 +104,11 @@ class MCUCom:
             ApplicationContext.error_manager.report_error("Response message has different random value", ErrorSeverity.WARNING)
 
     def tick(self):
-        self.comm_interface.tick()
+        # hack to avoid race condition
+        if self.command_buffer.is_sending_buffer() == False:
+            self.comm_interface.tick()
+        # else:
+            # print("Not ticking because buffer is sending")
         self.timer_group.tick()
 
         
