@@ -51,8 +51,31 @@ void onCalibrationComplete() {
 
 
 void setup() {
-    // Initialize the Serial port.
+    
     Serial.begin(115200);
+    
+    // Wait for up to 3 seconds for the serial port to be opened on the PC side
+    // If no PC connects, continue anyway
+    for (int i = 0; i < 30 && !Serial; ++i)
+    {
+        delay(100);
+    }
+    delay(200);
+
+    Serial.println("Starting CAN setup");
+
+    if (!finger_manager.initialize())
+    {
+        Serial.println("CAN failed to initialize: Rebooting the teensy");
+        // reboot();
+    }
+
+    Serial.println("Setup complete");
+
+}
+
+void loop() {
+
     while (!Serial) {
         ;  // wait for serial port to connect. (Needed for some boards.)
     }
@@ -61,11 +84,19 @@ void setup() {
     g_messageHandlers.addHandlers();
     g_commandBuffer.onExecutionComplete(onExecutionComplete);
     g_commandBuffer.onCalibrationComplete(onCalibrationComplete);
-}
 
-void loop() {
-    // Let the CommunicationInterface process any incoming messages and handle callbacks.
-    g_com.tick();
-    g_commandBuffer.tick();
-    g_messageHandlers.tickDatastreams();
+    // finger_manager.move_js({0.0f, -0.1});
+    // finger_manager.tick();
+    // finger_data = finger_manager.get_finger_data();
+
+    // // Serial.println("Motor 0 - " + String(finger_data.motor_pos_estimates[0]));
+    // // Serial.println("Motor 1 - " + String(finger_data.motor_pos_estimates[1]));
+
+    // Serial.println("Joint 0 - " + String(finger_data.estimated_joint_angles[0]));
+    // Serial.println("Joint 1 - " + String(finger_data.estimated_joint_angles[1]));
+
+    
+
+    delay(5);
+
 }

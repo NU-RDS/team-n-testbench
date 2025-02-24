@@ -1,9 +1,3 @@
-
-<div align="center">
-  <img src="docs/img/finger.png" width="200">
-  <img src="docs/img/motor-box.png" width="300">
-</div>
-
 # team-n-testbench
 
 A warm-up project for RDS, involving the creation of a "testbench," which is a robotic finger driven with `N` tendon-driven actuators. The scope of the project involves:
@@ -45,12 +39,6 @@ To run the GUI, simply run the following command:
 
 ```bash
 python gui.py
-```
-
-You can specify the port that the GUI will connect to the MCU on by passing the `--port` argument. For example, to connect to the MCU on port `/dev/ttyACM0`, run the following command:
-
-```bash
-python gui.py --port /dev/ttyACM0
 ```
 
 ### MCU
