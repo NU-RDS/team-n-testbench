@@ -96,7 +96,11 @@ class MessageHandlers {
 
     /// @brief Handler for Stop messages.
     /// @param msg The received Stop message.
-    void onStopMessage(const rdscom::Message &msg);
+void onStopMessage(const rdscom::Message &msg);
+
+    /// @brief Handler for ZeroCommand messages.
+    /// @param msg The received ZeroCommand message.
+    void onZeroCommandMessage(const rdscom::Message &msg);
 };
 
 }  // namespace msgs

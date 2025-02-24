@@ -99,6 +99,18 @@ inline rdscom::DataPrototype stopProto() {
     return proto;
 }
 
+inline rdscom::DataPrototype zeroCommandProto() {
+    rdscom::DataPrototype proto(11);
+    proto.addField("rand", rdscom::DataFieldType::UINT8);
+    return proto;
+}
+
+inline rdscom::DataPrototype zeroDoneProto() {
+    rdscom::DataPrototype proto(12);
+    proto.addField("success", rdscom::DataFieldType::UINT8);
+    return proto;
+}
+
 // --- Utility Functions for Getting Message IDs (thisTypeOfCase) ---
 
 inline std::uint8_t heartbeatId() { return 0; }
@@ -112,6 +124,8 @@ inline std::uint8_t stopSensorDatastreamId() { return 7; }
 inline std::uint8_t clearControlQueueId() { return 8; }
 inline std::uint8_t errorId() { return 9; }
 inline std::uint8_t stopId() { return 10; }
+inline std::uint8_t zeroCommandID() { return 11; }
+inline std::uint8_t zeroDoneID() { return 12; }
 
 // --- Factory Methods to Build Request Messages ---
 // Request functions no longer take a MessageType parameter,
@@ -133,9 +147,9 @@ inline rdscom::Message createHeartbeatMessageRequest(std::int8_t randVal) {
 /// @param simultaneous Whether control is simultaneous.
 /// @return A MotorControl Message object.
 inline rdscom::Message createMotorControlMessageRequest(std::uint8_t motor_id,
-                                                         std::uint8_t control_mode,
-                                                         float control_value,
-                                                         bool simultaneous) {
+                                                        std::uint8_t control_mode,
+                                                        float control_value,
+                                                        bool simultaneous) {
     rdscom::Message msg(rdscom::MessageType::REQUEST, motorControlProto());
     msg.setField<std::uint8_t>("motor_id", motor_id);
     msg.setField<std::uint8_t>("control_mode", control_mode);
@@ -153,11 +167,11 @@ inline rdscom::Message createMotorControlMessageRequest(std::uint8_t motor_id,
 /// @param executed_with_count Number executed with count (UINT8).
 /// @return A MotorEvent Message object.
 inline rdscom::Message createMotorEventMessageRequest(std::uint8_t motor_id,
-                                                       bool success,
-                                                       std::uint8_t event_type,
-                                                       float event_value,
-                                                       std::uint8_t num_in_queue,
-                                                       std::uint8_t executed_with_count) {
+                                                      bool success,
+                                                      std::uint8_t event_type,
+                                                      float event_value,
+                                                      std::uint8_t num_in_queue,
+                                                      std::uint8_t executed_with_count) {
     rdscom::Message msg(rdscom::MessageType::REQUEST, motorEventProto());
     msg.setField<std::uint8_t>("motor_id", motor_id);
     msg.setField<std::uint8_t>("success", success ? 1 : 0);
@@ -183,8 +197,8 @@ inline rdscom::Message createControlGoMessageRequest(std::int8_t randVal) {
 /// @param executed Number executed (UINT8).
 /// @return A ControlDone Message object.
 inline rdscom::Message createControlDoneMessageRequest(bool success,
-                                                        std::uint32_t time,
-                                                        std::uint8_t executed) {
+                                                       std::uint32_t time,
+                                                       std::uint8_t executed) {
     rdscom::Message msg(rdscom::MessageType::REQUEST, controlDoneProto());
     msg.setField<std::uint8_t>("success", success ? 1 : 0);
     msg.setField<std::uint32_t>("time", time);
@@ -197,7 +211,7 @@ inline rdscom::Message createControlDoneMessageRequest(bool success,
 /// @param frequency Frequency in Hz (UINT8).
 /// @return A StartSensorDatastream Message object.
 inline rdscom::Message createStartSensorDatastreamMessageRequest(std::uint8_t joint_id,
-                                                                  std::uint8_t frequency) {
+                                                                 std::uint8_t frequency) {
     rdscom::Message msg(rdscom::MessageType::REQUEST, startSensorDataStreamProto());
     msg.setField<std::uint8_t>("joint_id", joint_id);
     msg.setField<std::uint8_t>("frequency", frequency);
@@ -261,6 +275,18 @@ inline rdscom::Message createStopMessageRequest(std::int8_t randVal) {
     return msg;
 }
 
+inline rdscom::Message createZeroCommandRequest(std::uint8_t randVal) {
+    rdscom::Message msg(rdscom::MessageType::REQUEST, zeroCommandProto());
+    msg.setField<std::uint8_t>("rand", randVal);
+    return msg;
+}
+
+inline rdscom::Message createZeroDoneRequest(std::uint8_t success) {
+    rdscom::Message msg(rdscom::MessageType::REQUEST, zeroDoneProto());
+    msg.setField<std::uint8_t>("success", success);
+    return msg;
+}
+
 // --- Factory Methods to Build Response Messages ---
 // Each function creates a response message using Message::createResponse().
 
@@ -282,10 +308,10 @@ inline rdscom::Message createHeartbeatMessageResponse(const rdscom::Message &req
 /// @param simultaneous Whether the control is simultaneous.
 /// @return A MotorControl Response message.
 inline rdscom::Message createMotorControlMessageResponse(const rdscom::Message &request,
-                                                           std::uint8_t motor_id,
-                                                           std::uint8_t control_mode,
-                                                           float control_value,
-                                                           bool simultaneous) {
+                                                         std::uint8_t motor_id,
+                                                         std::uint8_t control_mode,
+                                                         float control_value,
+                                                         bool simultaneous) {
     rdscom::Message response = rdscom::Message::createResponse(request, motorControlProto());
     response.setField<std::uint8_t>("motor_id", motor_id);
     response.setField<std::uint8_t>("control_mode", control_mode);
@@ -304,12 +330,12 @@ inline rdscom::Message createMotorControlMessageResponse(const rdscom::Message &
 /// @param executed_with_count Number executed with count (UINT8).
 /// @return A MotorEvent Response message.
 inline rdscom::Message createMotorEventMessageResponse(const rdscom::Message &request,
-                                                         std::uint8_t motor_id,
-                                                         bool success,
-                                                         std::uint8_t event_type,
-                                                         float event_value,
-                                                         std::uint8_t num_in_queue,
-                                                         std::uint8_t executed_with_count) {
+                                                       std::uint8_t motor_id,
+                                                       bool success,
+                                                       std::uint8_t event_type,
+                                                       float event_value,
+                                                       std::uint8_t num_in_queue,
+                                                       std::uint8_t executed_with_count) {
     rdscom::Message response = rdscom::Message::createResponse(request, motorEventProto());
     response.setField<std::uint8_t>("motor_id", motor_id);
     response.setField<std::uint8_t>("success", success ? 1 : 0);
@@ -337,9 +363,9 @@ inline rdscom::Message createControlGoMessageResponse(const rdscom::Message &req
 /// @param executed Number executed (UINT8).
 /// @return A ControlDone Response message.
 inline rdscom::Message createControlDoneMessageResponse(const rdscom::Message &request,
-                                                          bool success,
-                                                          std::uint32_t time_val,
-                                                          std::uint8_t executed) {
+                                                        bool success,
+                                                        std::uint32_t time_val,
+                                                        std::uint8_t executed) {
     rdscom::Message response = rdscom::Message::createResponse(request, controlDoneProto());
     response.setField<std::uint8_t>("success", success ? 1 : 0);
     response.setField<std::uint32_t>("time", time_val);
@@ -353,8 +379,8 @@ inline rdscom::Message createControlDoneMessageResponse(const rdscom::Message &r
 /// @param frequency The frequency (UINT8).
 /// @return A StartSensorDatastream Response message.
 inline rdscom::Message createStartSensorDatastreamMessageResponse(const rdscom::Message &request,
-                                                                    std::uint8_t joint_id,
-                                                                    std::uint8_t frequency) {
+                                                                  std::uint8_t joint_id,
+                                                                  std::uint8_t frequency) {
     rdscom::Message response = rdscom::Message::createResponse(request, startSensorDataStreamProto());
     response.setField<std::uint8_t>("joint_id", joint_id);
     response.setField<std::uint8_t>("frequency", frequency);
@@ -370,11 +396,11 @@ inline rdscom::Message createStartSensorDatastreamMessageResponse(const rdscom::
 /// @param joint_pos The joint position (FLOAT).
 /// @return A SensorDatastream Response message.
 inline rdscom::Message createSensorDatastreamMessageResponse(const rdscom::Message &request,
-                                                              std::uint8_t joint_id,
-                                                              float motor_pos,
-                                                              float motor_vel,
-                                                              float motor_temp,
-                                                              float joint_pos) {
+                                                             std::uint8_t joint_id,
+                                                             float motor_pos,
+                                                             float motor_vel,
+                                                             float motor_temp,
+                                                             float joint_pos) {
     rdscom::Message response = rdscom::Message::createResponse(request, sensorDataStreamProto());
     response.setField<std::uint8_t>("joint_id", joint_id);
     response.setField<float>("motor_pos", motor_pos);
@@ -389,7 +415,7 @@ inline rdscom::Message createSensorDatastreamMessageResponse(const rdscom::Messa
 /// @param joint_id The sensor identifier (UINT8).
 /// @return A StopSensorDatastream Response message.
 inline rdscom::Message createStopSensorDatastreamMessageResponse(const rdscom::Message &request,
-                                                                   std::uint8_t joint_id) {
+                                                                 std::uint8_t joint_id) {
     rdscom::Message response = rdscom::Message::createResponse(request, stopSensorDataStreamProto());
     response.setField<std::uint8_t>("joint_id", joint_id);
     return response;
@@ -422,6 +448,18 @@ inline rdscom::Message createErrorMessageResponse(const rdscom::Message &request
 inline rdscom::Message createStopMessageResponse(const rdscom::Message &request, std::int8_t randVal) {
     rdscom::Message response = rdscom::Message::createResponse(request, stopProto());
     response.setField<std::int8_t>("rand", randVal);
+    return response;
+}
+
+inline rdscom::Message createZeroCommandResponse(const rdscom::Message &request, std::uint8_t randVal) {
+    rdscom::Message response = rdscom::Message::createResponse(request, zeroCommandProto());
+    response.setField<std::uint8_t>("rand", randVal);
+    return response;
+}
+
+inline rdscom::Message createZeroDoneResponse(const rdscom::Message &request, bool success) {
+    rdscom::Message response = rdscom::Message::createResponse(request, zeroDoneProto());
+    response.setField<std::uint8_t>("success", success == true ? 1 : 0);
     return response;
 }
 

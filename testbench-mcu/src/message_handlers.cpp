@@ -23,6 +23,8 @@ void MessageHandlers::registerPrototypes() {
     _com.addPrototype(msgs::clearControlQueueProto());
     _com.addPrototype(msgs::errorProto());
     _com.addPrototype(msgs::stopProto());
+    _com.addPrototype(msgs::zeroCommandProto());
+    _com.addPrototype(msgs::zeroDoneProto());
 }
 
 /// @brief Registers all message handlers with the communication interface.
@@ -49,6 +51,8 @@ void MessageHandlers::addHandlers() {
         [this](const rdscom::Message &msg) { this->onErrorMessage(msg); });
     _com.addCallback(stopId(), rdscom::MessageType::REQUEST,
         [this](const rdscom::Message &msg) { this->onStopMessage(msg); });
+    _com.addCallback(zeroCommandID(), rdscom::MessageType::REQUEST,
+        [this](const rdscom::Message &msg) { this->onZeroCommandMessage(msg); });
 }
 
 /// @brief Send sensor datastream messages, if necessary.
@@ -194,6 +198,18 @@ void MessageHandlers::onStopMessage(const rdscom::Message &msg) {
         msg.getField<std::int8_t>("rand").value()
     );
     _com.sendMessage(response, true);
+}
+
+/// @brief Handler for ZeroCommand messages.
+void MessageHandlers::onZeroCommandMessage(const rdscom::Message &msg) {
+    rdscom::Message response = createZeroCommandResponse(
+        msg,
+        msg.getField<std::uint8_t>("rand").value()
+    );
+    _com.sendMessage(response);
+
+    // do some zeroing
+    std::cout << "Zeroing\n";
 }
 
 } // namespace msgs
