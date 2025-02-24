@@ -11,6 +11,7 @@ class CommandBuffer:
         self._successfully_sent = False
         self._is_waiting = False
         self._is_sending_buffer = False
+        self._is_zeroing = False
         self.callbacks_on_send = []
 
     def add_command(self, message: Message):
@@ -66,7 +67,7 @@ class CommandBuffer:
             callback(clear_buffer_message)
 
     def _clear_buffer_on_success(self, request_message : Message, response_message : Message):        
-        if response_message.data().type().identifier() != MessageDefinitions.CLEAR_BUFFER_MESSAGE:
+        if response_message.data().type().identifier() != MessageDefinitions.clear_control_queue_id():
             ApplicationContext.error_manager.report_error("Response message is not a clear buffer message", ErrorSeverity.WARNING)
             return
         
@@ -222,3 +223,73 @@ class CommandBuffer:
 
         return True
         
+
+    def zero(self, com : CommunicationInterface):
+        if self._is_sending_buffer:
+            ApplicationContext.error_manager.report_error("Cannot zero while sending buffer", ErrorSeverity.WARNING)
+            return
+
+        zero_message = MessageDefinitions.create_zero_command_message(MessageType.REQUEST, 0)
+        on_success = lambda response_message : self._on_zero_success(response_message)
+        on_failure = lambda : self._on_zero_failure()
+        self._is_waiting = True
+        self._successfully_sent = False
+        com.send_message(zero_message, ack_required=True, on_failure=on_failure, on_success=on_success)
+        while self._is_waiting:
+            com.tick()
+
+        if not self._successfully_sent:
+            ApplicationContext.error_manager.report_error("Failed to send zero message", ErrorSeverity.WARNING)
+            self._is_sending_buffer = False
+            return
+        
+        self._is_zeroing = True
+        # now we have to wait for the zero to complete
+        while self._is_waiting:
+            com.tick()
+        
+        self._is_zeroing = False
+
+    def zero_async(self, com : CommunicationInterface):
+        if self._is_sending_buffer:
+            ApplicationContext.error_manager.report_error("Cannot zero while sending buffer", ErrorSeverity.WARNING)
+            return
+
+        thread = threading.Thread(target=self.zero, args=(com,))
+        thread.start()
+            
+    def handle_zero_done(self, response_message : Message):
+        # send back a response message
+        response = Message.create_response(response_message, response_message.data())
+        ApplicationContext.mcu_com.send_message(response)
+
+        if response_message.data().type().identifier() != MessageDefinitions.zero_done_id():
+            ApplicationContext.error_manager.report_error("Response message is not a zero command message", ErrorSeverity.WARNING)
+            return
+        
+        success = response_message.data().get_field("success").value()
+        if success == 0:
+            ApplicationContext.error_manager.report_error("Zero failed", ErrorSeverity.WARNING)
+        else:
+            ApplicationContext.error_manager.report_error("Zero succeeded", ErrorSeverity.INFO)
+
+        self._is_waiting = False
+
+    def _on_zero_success(self, response_message : Message):
+        self._is_waiting = False
+        if response_message.data().type().identifier() != MessageDefinitions.zero_command_id():
+            ApplicationContext.error_manager.report_error("Response message is not a zero command message", ErrorSeverity.WARNING)
+            return
+        
+        success = response_message.data().get_field("success").value()
+        if success == 0:
+            ApplicationContext.error_manager.report_error("Zero failed", ErrorSeverity.WARNING)
+            self._successfully_sent = False
+        else:
+            ApplicationContext.error_manager.report_error("Zero succeeded", ErrorSeverity.INFO)
+            self._successfully_sent = True
+
+    def _on_zero_failure(self):
+        self._is_waiting = False
+        self._successfully_sent = False
+        ApplicationContext.error_manager.report_error("Failed to send zero message", ErrorSeverity.WARNING)
