@@ -53,7 +53,7 @@ class ControlDock(ImmediateInspectorDock):
         ApplicationContext.mcu_com.send_buffer_message(message)
 
     def send_datastream_start(self, joint_number: int):
-        ApplicationContext.telemetry.enable_sensor_datastream(joint_number, 100)
+        ApplicationContext.telemetry.enable_sensor_datastream(joint_number, 10)
 
     def send_datastream_stop(self, joint_number: int):
         ApplicationContext.telemetry.disable_sensor_datastream(joint_number)

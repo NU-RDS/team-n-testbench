@@ -162,11 +162,17 @@ class MessageDefinitions:
 
         Fields:
         - "joint_id": UINT8
-        - "data": FLOAT
+        - "motor_pos": FLOAT
+        - "motor_vel": FLOAT
+        - "motor_temp": FLOAT
+        - "joint_angle": FLOAT
         """
         proto = DataPrototype(MessageDefinitions.sensor_datastream_id())
         proto.add_field("joint_id", DataFieldType.UINT8)
-        proto.add_field("data", DataFieldType.FLOAT)
+        proto.add_field("motor_pos", DataFieldType.FLOAT)
+        proto.add_field("motor_vel", DataFieldType.FLOAT)
+        proto.add_field("motor_temp", DataFieldType.FLOAT)
+        proto.add_field("joint_angle", DataFieldType.FLOAT)
         return proto
 
     @staticmethod

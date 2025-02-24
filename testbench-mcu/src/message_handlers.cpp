@@ -58,6 +58,9 @@ void MessageHandlers::tickDatastreams() {
         if (stream.timeToSend()) {
             rdscom::Message msg = msgs::createSensorDatastreamMessageRequest(
                 stream.sensorID(),
+                random(0, 100) / 100.0f,
+                random(0, 100) / 100.0f,
+                random(0, 100) / 100.0f,
                 random(0, 100) / 100.0f
             );
             _com.sendMessage(msg);
@@ -125,12 +128,12 @@ void MessageHandlers::onControlDoneMessage(const rdscom::Message &msg) {
 void MessageHandlers::onStartSensorDatastreamMessage(const rdscom::Message &msg) {
     rdscom::Message response = createStartSensorDatastreamMessageResponse(
         msg,
-        msg.getField<std::uint8_t>("sensor_id").value(),
+        msg.getField<std::uint8_t>("joint_id").value(),
         msg.getField<std::uint8_t>("frequency").value()
     );
 
     // Start the sensor datastream
-    SensorDatastream stream = SensorDatastream(msg.getField<std::uint8_t>("sensor_id").value(), msg.getField<std::uint8_t>("frequency").value());
+    SensorDatastream stream = SensorDatastream(msg.getField<std::uint8_t>("joint_id").value(), msg.getField<std::uint8_t>("frequency").value());
     _sensorDatastreams.push_back(stream);
 
     _com.sendMessage(response);
@@ -145,11 +148,11 @@ void MessageHandlers::onSensorDatastreamMessage(const rdscom::Message &msg) {
 void MessageHandlers::onStopSensorDatastreamMessage(const rdscom::Message &msg) {
     rdscom::Message response = createStopSensorDatastreamMessageResponse(
         msg,
-        msg.getField<std::uint8_t>("sensor_id").value()
+        msg.getField<std::uint8_t>("joint_id").value()
     );
 
     // Stop the sensor datastream
-    std::uint8_t sensorID = msg.getField<std::uint8_t>("sensor_id").value();
+    std::uint8_t sensorID = msg.getField<std::uint8_t>("joint_id").value();
     auto it = std::find_if(_sensorDatastreams.begin(), _sensorDatastreams.end(), [sensorID](const SensorDatastream &stream) {
         return stream.sensorID() == sensorID;
     });

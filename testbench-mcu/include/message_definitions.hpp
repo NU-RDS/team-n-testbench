@@ -55,7 +55,7 @@ inline rdscom::DataPrototype controlDoneProto() {
 /// @brief Returns the StartSensorDatastream DataPrototype (ID: 5).
 inline rdscom::DataPrototype startSensorDataStreamProto() {
     rdscom::DataPrototype proto(5);
-    proto.addField("sensor_id", rdscom::DataFieldType::UINT8);
+    proto.addField("joint_id", rdscom::DataFieldType::UINT8);
     proto.addField("frequency", rdscom::DataFieldType::UINT8);
     return proto;
 }
@@ -63,15 +63,18 @@ inline rdscom::DataPrototype startSensorDataStreamProto() {
 /// @brief Returns the SensorDatastream DataPrototype (ID: 6).
 inline rdscom::DataPrototype sensorDataStreamProto() {
     rdscom::DataPrototype proto(6);
-    proto.addField("sensor_id", rdscom::DataFieldType::UINT8);
-    proto.addField("data", rdscom::DataFieldType::FLOAT);
+    proto.addField("joint_id", rdscom::DataFieldType::UINT8);
+    proto.addField("motor_pos", rdscom::DataFieldType::FLOAT);
+    proto.addField("motor_vel", rdscom::DataFieldType::FLOAT);
+    proto.addField("motor_temp", rdscom::DataFieldType::FLOAT);
+    proto.addField("joint_pos", rdscom::DataFieldType::FLOAT);
     return proto;
 }
 
 /// @brief Returns the StopSensorDatastream DataPrototype (ID: 7).
 inline rdscom::DataPrototype stopSensorDataStreamProto() {
     rdscom::DataPrototype proto(7);
-    proto.addField("sensor_id", rdscom::DataFieldType::UINT8);
+    proto.addField("joint_id", rdscom::DataFieldType::UINT8);
     return proto;
 }
 
@@ -190,35 +193,44 @@ inline rdscom::Message createControlDoneMessageRequest(bool success,
 }
 
 /// @brief Creates a StartSensorDatastream Request message.
-/// @param sensor_id Sensor identifier (UINT8).
+/// @param joint_id Sensor identifier (UINT8).
 /// @param frequency Frequency in Hz (UINT8).
 /// @return A StartSensorDatastream Message object.
-inline rdscom::Message createStartSensorDatastreamMessageRequest(std::uint8_t sensor_id,
+inline rdscom::Message createStartSensorDatastreamMessageRequest(std::uint8_t joint_id,
                                                                   std::uint8_t frequency) {
     rdscom::Message msg(rdscom::MessageType::REQUEST, startSensorDataStreamProto());
-    msg.setField<std::uint8_t>("sensor_id", sensor_id);
+    msg.setField<std::uint8_t>("joint_id", joint_id);
     msg.setField<std::uint8_t>("frequency", frequency);
     return msg;
 }
 
 /// @brief Creates a SensorDatastream Request message.
-/// @param sensor_id Sensor identifier (UINT8).
-/// @param data Sensor data (FLOAT).
+/// @param joint_id Sensor identifier (UINT8).
+/// @param motor_pos Motor position (FLOAT).
+/// @param motor_vel Motor velocity (FLOAT).
+/// @param motor_temp Motor temperature (FLOAT).
+/// @param joint_pos Joint position (FLOAT).
 /// @return A SensorDatastream Message object.
-inline rdscom::Message createSensorDatastreamMessageRequest(std::uint8_t sensor_id,
-                                                             float data) {
+inline rdscom::Message createSensorDatastreamMessageRequest(std::uint8_t joint_id,
+                                                            float motor_pos,
+                                                            float motor_vel,
+                                                            float motor_temp,
+                                                            float joint_pos) {
     rdscom::Message msg(rdscom::MessageType::REQUEST, sensorDataStreamProto());
-    msg.setField<std::uint8_t>("sensor_id", sensor_id);
-    msg.setField<float>("data", data);
+    msg.setField<std::uint8_t>("joint_id", joint_id);
+    msg.setField<float>("motor_pos", motor_pos);
+    msg.setField<float>("motor_vel", motor_vel);
+    msg.setField<float>("motor_temp", motor_temp);
+    msg.setField<float>("joint_pos", joint_pos);
     return msg;
 }
 
 /// @brief Creates a StopSensorDatastream Request message.
-/// @param sensor_id Sensor identifier (UINT8).
+/// @param joint_id Sensor identifier (UINT8).
 /// @return A StopSensorDatastream Message object.
-inline rdscom::Message createStopSensorDatastreamMessageRequest(std::uint8_t sensor_id) {
+inline rdscom::Message createStopSensorDatastreamMessageRequest(std::uint8_t joint_id) {
     rdscom::Message msg(rdscom::MessageType::REQUEST, stopSensorDataStreamProto());
-    msg.setField<std::uint8_t>("sensor_id", sensor_id);
+    msg.setField<std::uint8_t>("joint_id", joint_id);
     return msg;
 }
 
@@ -337,40 +349,49 @@ inline rdscom::Message createControlDoneMessageResponse(const rdscom::Message &r
 
 /// @brief Creates a StartSensorDatastream Response message based on a request.
 /// @param request The original request message.
-/// @param sensor_id The sensor identifier (UINT8).
+/// @param joint_id The sensor identifier (UINT8).
 /// @param frequency The frequency (UINT8).
 /// @return A StartSensorDatastream Response message.
 inline rdscom::Message createStartSensorDatastreamMessageResponse(const rdscom::Message &request,
-                                                                    std::uint8_t sensor_id,
+                                                                    std::uint8_t joint_id,
                                                                     std::uint8_t frequency) {
     rdscom::Message response = rdscom::Message::createResponse(request, startSensorDataStreamProto());
-    response.setField<std::uint8_t>("sensor_id", sensor_id);
+    response.setField<std::uint8_t>("joint_id", joint_id);
     response.setField<std::uint8_t>("frequency", frequency);
     return response;
 }
 
 /// @brief Creates a SensorDatastream Response message based on a request.
 /// @param request The original request message.
-/// @param sensor_id The sensor identifier (UINT8).
-/// @param data The sensor data (FLOAT).
+/// @param joint_id The sensor identifier (UINT8).
+/// @param motor_pos The motor position (FLOAT).
+/// @param motor_vel The motor velocity (FLOAT).
+/// @param motor_temp The motor temperature (FLOAT).
+/// @param joint_pos The joint position (FLOAT).
 /// @return A SensorDatastream Response message.
 inline rdscom::Message createSensorDatastreamMessageResponse(const rdscom::Message &request,
-                                                               std::uint8_t sensor_id,
-                                                               float data) {
+                                                              std::uint8_t joint_id,
+                                                              float motor_pos,
+                                                              float motor_vel,
+                                                              float motor_temp,
+                                                              float joint_pos) {
     rdscom::Message response = rdscom::Message::createResponse(request, sensorDataStreamProto());
-    response.setField<std::uint8_t>("sensor_id", sensor_id);
-    response.setField<float>("data", data);
+    response.setField<std::uint8_t>("joint_id", joint_id);
+    response.setField<float>("motor_pos", motor_pos);
+    response.setField<float>("motor_vel", motor_vel);
+    response.setField<float>("motor_temp", motor_temp);
+    response.setField<float>("joint_pos", joint_pos);
     return response;
 }
 
 /// @brief Creates a StopSensorDatastream Response message based on a request.
 /// @param request The original request message.
-/// @param sensor_id The sensor identifier (UINT8).
+/// @param joint_id The sensor identifier (UINT8).
 /// @return A StopSensorDatastream Response message.
 inline rdscom::Message createStopSensorDatastreamMessageResponse(const rdscom::Message &request,
-                                                                   std::uint8_t sensor_id) {
+                                                                   std::uint8_t joint_id) {
     rdscom::Message response = rdscom::Message::createResponse(request, stopSensorDataStreamProto());
-    response.setField<std::uint8_t>("sensor_id", sensor_id);
+    response.setField<std::uint8_t>("joint_id", joint_id);
     return response;
 }
 
