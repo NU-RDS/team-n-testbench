@@ -123,5 +123,4 @@ class AppInterface:
     def tick(self):
         self.app.processEvents()
         self.main_win.tick()
-        print("Ticking...")
 

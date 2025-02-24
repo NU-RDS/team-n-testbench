@@ -110,9 +110,7 @@ class ControlDock(ImmediateInspectorDock):
         self.draw_command_creator()
 
         if self.builder.button("Send Command Buffer"):
-            # add an execute command
-            request = MessageDefinitions.create_control_go_message(MessageType.REQUEST, 0)
-            ApplicationContext.mcu_com.send_buffer_message(request)
+            # add an execute command)
             ApplicationContext.mcu_com.send_buffer()
             self.set_dirty()
             self.show()

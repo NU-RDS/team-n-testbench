@@ -94,6 +94,7 @@ class CommandBuffer:
             for callback in self.callbacks_on_send:
                 callback(message)
 
+        self._is_sending_buffer = False
 
         if not self._successfully_sent:
             # if the buffer was not successfully sent, then we need to keep the buffer

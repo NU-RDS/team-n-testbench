@@ -5,6 +5,7 @@ from interface.imqt import FontStyle, LayoutAlignment
 from com.message_definitions import MessageDefinitions
 from util.timer import TimerGroup, TimedTask
 from PyQt5.QtCore import Qt
+from interface.docks.control import ControlModes
 
 @dock("Command Buffer")
 class CommandBufferDock(ImmediateInspectorDock):
@@ -20,42 +21,55 @@ class CommandBufferDock(ImmediateInspectorDock):
         self.builder.label(value_str)
         self.builder.end_horizontal()
 
-    def draw_message(self, message : Message):
-        type_str = MessageType.to_string(message.type())
-        payload_type_str = MessageDefinitions.get_human_name(message.data().type().identifier())
+    def calculate_command_groups(self, commands : Message):
+        # group the commands
+        command_groups = [] # lists of lists of commands
+        current_group = []
+        for command in commands:
+            is_simultaneous = command.get_field("simultaneous").value()
+            # if it is simultaneous, add it to the current group
+            if is_simultaneous:
+                print("Adding to current group")
+                current_group.append(command)
+            else:
+                if len(current_group) > 0:
+                    command_groups.append(current_group)
+                    current_group = []
+                command_groups.append([command])
 
-        show = self.builder.begin_foldout_header_group(f"{payload_type_str} {type_str} - {message.message_number()}", indent=10)
-        if show:
-            self.builder.begin_vertical()
-            self.builder.label("Meta Data", font_style=FontStyle.BOLD)
-            self.builder.begin_horizontal(indent=10)
-            self.draw_label("Message Type:", type_str)
-            self.draw_label("Message ID:", str(message.message_number()))
-            self.draw_label("Payload Type:", message.data().type().identifier())
-            self.builder.end_horizontal()
-            self.builder.end_vertical()
+        if len(current_group) > 0:
+            command_groups.append(current_group)
 
-            self.builder.begin_vertical()
-            self.builder.label("Payload", font_style=FontStyle.BOLD)
-            self.builder.begin_vertical(indent=10)
-            fields = message.data().type().field_names()
-            for field_name in fields:
-                value = message.data().get_field(field_name).value()
-                self.draw_label(field_name, value)
-            self.builder.end_vertical()
-            self.builder.end_vertical()
+        return command_groups
 
-        self.builder.end_foldout_header_group()
+    def draw_command_bufer(self):
+        commands = ApplicationContext.mcu_com.get_current_command_buffer()
+        command_groups = self.calculate_command_groups(commands)
+        # draw the groups
+        self.builder.begin_scroll()
+        for idx, group in enumerate(command_groups):
+            group_title = f"Command Group {idx}"
+            show = self.builder.begin_foldout_header_group(group_title)
+            if show:
+                for command in group:
+                    self.builder.begin_horizontal()
+                    motor_id = command.get_field("motor_id").value()
+                    control_mode = command.get_field("control_mode").value()
+                    control_value = command.get_field("control_value").value()
+                    self.builder.label(f"Motor ID: {motor_id}")
+                    self.builder.label(f"Mode: {ControlModes.to_string(control_mode)} ({control_mode})")
+                    self.builder.label(f"Value: {control_value}")
+                    self.builder.end_horizontal()
+            self.builder.end_foldout_header_group()
+
+        self.builder.flexible_space()
+        self.builder.end_scroll()
+
         
     def draw_inspector(self):
         self.builder.start()
         self.builder.begin_scroll(policy=Qt.ScrollBarAlwaysOn)
-        message_history = ApplicationContext.mcu_com.get_current_command_buffer()
-        # draw in reverse order
-        max_messages = min(20, len(message_history))
-        for message in reversed(message_history[-max_messages:]):
-            self.draw_message(message)
-
+        self.draw_command_bufer()
         self.builder.flexible_space()
         self.builder.end_scroll()
 

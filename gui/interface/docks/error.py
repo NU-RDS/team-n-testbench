@@ -3,6 +3,7 @@ from app_context import ApplicationContext
 from interface.imqt import FontStyle, LayoutAlignment
 from interface.error_manager import ErrorManager, ErrorSeverity, Error
 from app_context import ApplicationContext
+from PyQt5.QtCore import Qt
 
 @dock("Errors")
 class MessageHistoryDock(ImmediateInspectorDock):
@@ -40,8 +41,12 @@ class MessageHistoryDock(ImmediateInspectorDock):
             return
 
         self.builder.start()
+        self.builder.begin_scroll(policy=Qt.ScrollBarAlwaysOn)
         for error in ApplicationContext.error_manager.get_errors():
             self.draw_error(error)
+
+        self.builder.flexible_space()
+        self.builder.end_scroll()
 
 
     def redraw(self):
