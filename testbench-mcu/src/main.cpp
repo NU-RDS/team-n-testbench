@@ -83,14 +83,10 @@ void onCalibrationComplete() {
 void setup() {
     
     Serial.begin(115200);
-    
-    // Wait for up to 3 seconds for the serial port to be opened on the PC side
-    // If no PC connects, continue anyway
-    for (int i = 0; i < 30 && !Serial; ++i)
-    {
-        delay(100);
+
+    while (!Serial) {
+        ;  // wait for serial port to connect. (Needed for some boards.)
     }
-    delay(200);
 
     Serial.println("Starting CAN setup");
 
@@ -105,11 +101,6 @@ void setup() {
 }
 
 void loop() {
-
-    while (!Serial) {
-        ;  // wait for serial port to connect. (Needed for some boards.)
-    }
-
     g_messageHandlers.registerPrototypes();
     g_messageHandlers.addHandlers();
     g_commandBuffer.onExecutionComplete(onExecutionComplete);
