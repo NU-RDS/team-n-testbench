@@ -28,8 +28,15 @@ class CommandBufferDock(ImmediateInspectorDock):
         for command in commands:
             is_simultaneous = command.get_field("simultaneous").value()
             # if it is simultaneous, add it to the current group
-            if is_simultaneous:
-                print("Adding to current group")
+            # check if there is a motor id shared with the current group
+            can_add = True if len(current_group) == 0 else False
+            for current_command in current_group:
+                if current_command.get_field("motor_id").value() == command.get_field("motor_id").value():
+                    can_add = False # if there is a shared motor id, don't add
+                    break
+
+            if is_simultaneous and can_add:
+                # print("Adding to current group")
                 current_group.append(command)
             else:
                 if len(current_group) > 0:
@@ -68,7 +75,7 @@ class CommandBufferDock(ImmediateInspectorDock):
         
     def draw_inspector(self):
         self.builder.start()
-        self.builder.begin_scroll(policy=Qt.ScrollBarAlwaysOn)
+        self.builder.begin_scroll()
         self.draw_command_bufer()
         self.builder.flexible_space()
         self.builder.end_scroll()

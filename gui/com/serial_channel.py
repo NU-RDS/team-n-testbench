@@ -26,7 +26,7 @@ class PySerialChannel(CommunicationChannel):
             # print("Error: Serial port is not open.")
             return bytearray()
         
-        self._read_lock.acquire()
+        # self._read_lock.acquire()
         # Read all available bytes.
         data = self.ser.read(self.ser.in_waiting or 1)
         if len(data) > 0:
@@ -36,7 +36,7 @@ class PySerialChannel(CommunicationChannel):
             for callback in self.rx_callbacks:
                 callback(data)
 
-        self._read_lock.release()
+        # self._read_lock.release()
 
         return bytearray(data)
 
@@ -45,7 +45,7 @@ class PySerialChannel(CommunicationChannel):
             print("Error: Serial port is not open.")
             return
         
-        self._write_lock.acquire()
+        # self._write_lock.acquire()
 
         self.history += message.serialize().decode('utf8') + "\n"
         decode_message = message.serialize().decode('utf8')
@@ -56,7 +56,7 @@ class PySerialChannel(CommunicationChannel):
         serialized = message.serialize()
         self.ser.write(serialized)
 
-        self._write_lock.release()
+        # self._write_lock.release()
 
     def get_history(self):
         return self.history

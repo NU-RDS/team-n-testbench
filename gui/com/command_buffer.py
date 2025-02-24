@@ -1,4 +1,4 @@
-from rdscom.rdscom import CommunicationChannel, Message, MessageType, CommunicationInterface
+from rdscom.rdscom import CommunicationInterface, Message, MessageType, CommunicationInterface
 from com.message_definitions import MessageDefinitions
 from interface.error_manager import ErrorManager, ErrorSeverity
 import threading
@@ -25,17 +25,17 @@ class CommandBuffer:
         # return a copy of the buffer
         return self.buffer.copy()
     
-    def clear_buffer(self, channel : CommunicationInterface):
+    def clear_buffer(self, com : CommunicationInterface):
         if self._is_sending_buffer:
             ApplicationContext.error_manager.report_error("Cannot clear buffer while sending buffer", ErrorSeverity.WARNING)
             return
 
         # send a request to clear the buffer
-        clear_buffer_message = MessageDefinitions.create_clear_buffer_message()
+        clear_buffer_message = MessageDefinitions.create_clear_control_queue_message(MessageType.REQUEST, 0)
         on_success = lambda response_message : self._clear_buffer_on_success(clear_buffer_message, response_message)
         on_failure = lambda : self._clear_buffer_on_failure(clear_buffer_message)
         
-        channel.send_message(clear_buffer_message, ack_required=True, on_success=on_success, on_failure=on_failure)
+        com.send_message(clear_buffer_message, ack_required=True, on_success=on_success, on_failure=on_failure)
 
         for callback in self.callbacks_on_send:
             callback(clear_buffer_message)
@@ -50,7 +50,7 @@ class CommandBuffer:
     def _clear_buffer_on_failure(self, request_message : Message):
         ApplicationContext.error_manager.report_error("Failed to clear buffer message, no response", ErrorSeverity.WARNING)
 
-    def execute_buffer(self, channel: CommunicationInterface):
+    def execute_buffer(self, com: CommunicationInterface):
         if self._is_sending_buffer:
             ApplicationContext.error_manager.report_error("Cannot execute buffer while sending buffer", ErrorSeverity.WARNING)
             return
@@ -59,7 +59,7 @@ class CommandBuffer:
         control_go_message = MessageDefinitions.create_control_go_message(MessageType.REQUEST, random_value)
         on_success = lambda response_message : self._execute_buffer_on_success(control_go_message, response_message)
         on_failure = lambda : self._execute_buffer_on_failure(control_go_message)
-        channel.send_message(control_go_message, ack_required=True, on_success=on_success, on_failure=on_failure)
+        com.send_message(control_go_message, ack_required=True, on_success=on_success, on_failure=on_failure)
 
         for callback in self.callbacks_on_send:
             callback(control_go_message)
@@ -77,7 +77,7 @@ class CommandBuffer:
         print("Failed to execute buffer message, no response")
 
 
-    def send_command_buffer(self, channel: CommunicationInterface):
+    def send_command_buffer(self, com: CommunicationInterface):
         self._is_sending_buffer = True
         for message in self.buffer:
             # curry the message into the lambda function
@@ -85,10 +85,13 @@ class CommandBuffer:
             on_failure_curry = lambda : self._command_msg_on_failure(message)
 
             self._is_waiting = True
-            channel.send_message(message, ack_required=True, on_success=on_success_curry, on_failure=on_failure_curry)
+            com.send_message(message, ack_required=True, on_success=on_success_curry, on_failure=on_failure_curry)
             
+            print("Begin waiting for response")
             while self._is_waiting:
-                channel.tick()
+                com.tick()
+
+            print("End waiting for response")
 
 
             for callback in self.callbacks_on_send:
@@ -99,20 +102,20 @@ class CommandBuffer:
         if not self._successfully_sent:
             # if the buffer was not successfully sent, then we need to keep the buffer
             ApplicationContext.error_manager.report_error("Buffer was not successfully sent", ErrorSeverity.WARNING)
-            self.clear_buffer(channel)
+            self.clear_buffer(com)
             return
         else:
             print("Buffer was successfully sent")
-            self.execute_buffer(channel) # will clear the buffer once the buffer is executed
+            self.execute_buffer(com) # will clear the buffer once the buffer is executed
         
         self._is_sending_buffer = False
 
-    def send_command_buffer_async(self, channel: CommunicationInterface):
+    def send_command_buffer_async(self, com: CommunicationInterface):
         if self._is_sending_buffer:
             ApplicationContext.error_manager.report_error("Cannot send buffer while sending buffer", ErrorSeverity.WARNING)
             return
         
-        thread = threading.Thread(target=self.send_command_buffer, args=(channel,))
+        thread = threading.Thread(target=self.send_command_buffer, args=(com,))
         thread.start()
 
 
