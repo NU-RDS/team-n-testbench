@@ -53,16 +53,13 @@ class ControlDock(ImmediateInspectorDock):
         ApplicationContext.mcu_com.send_buffer_message(message)
 
     def send_datastream_start(self, joint_number: int):
+        print("Sending datastream start")
         ApplicationContext.telemetry.enable_sensor_datastream(joint_number, 10)
 
     def send_datastream_stop(self, joint_number: int):
+        print("Sending datastream stop")
         ApplicationContext.telemetry.disable_sensor_datastream(joint_number)
         
-
-    def send_datastream_stop(self, joint_number: int):
-        message = MessageDefinitions.create_stop_sensor_datastream_message(MessageType.REQUEST, joint_number)
-        ApplicationContext.mcu_com.send_message(message, ack_required=True)
-
 
     def draw_control_value(self, type : str, label: str, default_value: int) -> ControlValues:
         self.builder.label(label, font_style=FontStyle.BOLD)

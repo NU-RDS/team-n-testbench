@@ -10,7 +10,7 @@ class TelemetryGraphDock(ImmediateInspectorDock):
     def __init__(self, parent=None):
         super().__init__(parent)
         # Use a timer to refresh the graph periodically.
-        self.timer_group.add_task(100, self.redraw)
+        self.timer_group.add_task(1000, self.redraw)
         # We'll create the plot widget once and update it on each draw.
         self.plot_widget = None
 
@@ -46,9 +46,6 @@ class TelemetryGraphDock(ImmediateInspectorDock):
 
         # Optionally, add a flexible space below the plot.
         self.builder.flexible_space()
-
-        self.is_dirty = False
-        super().show()
 
     def redraw(self):
         self.set_dirty()

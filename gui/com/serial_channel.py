@@ -31,7 +31,7 @@ class PySerialChannel(CommunicationChannel):
         
         # Now, outside of the lock, process the data.
         if data:
-            print(f"[received:{len(data)}] {data}")
+            # print(f"[received:{len(data)}] {data}")
             self.history += data + b"\n"
             for callback in self.rx_callbacks:
                 # Calling callbacks outside the lock prevents blocking other threads.
@@ -49,7 +49,7 @@ class PySerialChannel(CommunicationChannel):
         with self._write_lock:
             serialized = message.serialize()
             self.history += serialized + b"\n"
-            print(f"[sent:{len(serialized)}] {serialized}")
+            # print(f"[sent:{len(serialized)}] {serialized}")
             for callback in self.tx_callbacks:
                 callback(decoded_message)
             self.ser.write(serialized)

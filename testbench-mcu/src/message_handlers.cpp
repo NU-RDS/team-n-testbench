@@ -126,6 +126,12 @@ void MessageHandlers::onControlDoneMessage(const rdscom::Message &msg) {
 
 /// @brief Handler for StartSensorDatastream messages.
 void MessageHandlers::onStartSensorDatastreamMessage(const rdscom::Message &msg) {
+
+    if (msg.getField<std::uint8_t>("joint_id").value() >= 3) {
+        std::cerr << "Invalid joint ID: " << static_cast<int>(msg.getField<std::uint8_t>("joint_id").value()) << "\n";
+        return;
+    }
+
     rdscom::Message response = createStartSensorDatastreamMessageResponse(
         msg,
         msg.getField<std::uint8_t>("joint_id").value(),
