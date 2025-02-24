@@ -1,6 +1,10 @@
 #ifndef __FINGER_MANAGER_H__
 #define __FINGER_MANAGER_H__
 
+#ifdef CAN_ERROR_BUS_OFF
+#undef CAN_ERROR_BUS_OFF
+#endif
+
 #include "odrive_manager/odrive_manager.hpp"
 #include "robot_description/finger.hpp"
 #include <Arduino.h>
@@ -83,10 +87,12 @@ public:
     template <typename T>
     bool startup_odrive(T &odrive);
 
-    /// @brief Changes the desired joint angles if angles are over the soft limits
-    /// @param joint_thetas 
-    /// @return damped new joint angles
-    std::vector<float> soft_limit_torques(std::vector<float> joint_thetas);
+    /** 
+     * @brief Changes the desired joint angles if angles are over the soft limits
+     * @param joint_thetas 
+     * @return damped new joint angles
+     */ 
+    std::vector<float> soft_limit_joints(std::vector<float> joint_thetas);
 
     /// @brief Determines the joint angles (including the offset values)
     /// @param phi position or velocity of the motor (either)
@@ -106,6 +112,13 @@ public:
     /// @brief Moves J0 and J1 to desired angles.
     /// @param theta_des desired angles for both joints (rad) 
     void move_js(std::vector<float> theta_des);
+
+    /**
+     * @brief Calibrates the joints to motor angles
+     * @param torque Commanded torque values
+     * @returns Boolean to indicate success
+     */
+    bool home(float theta);
 
     /// @brief Get finger data
     FingerData get_finger_data();
@@ -223,7 +236,7 @@ bool FingerManager::startup_odrive(T &odrive) {
     return true;
 }
 
-std::vector<float> FingerManager::soft_limit_torques(std::vector<float> joint_thetas)
+std::vector<float> FingerManager::soft_limit_joints(std::vector<float> joint_thetas)
 {
     const float joint_0_d_t = -discouraging_stiffness * joint_0_soft_limits.over_limits(joint_thetas.at(0));
     const float joint_1_d_t = -discouraging_stiffness * joint_1_soft_limits.over_limits(joint_thetas.at(1));
@@ -264,7 +277,7 @@ void FingerManager::move_js(std::vector<float> theta_des)
     const float phi_0 = odrive0_.odrive_user_data_.last_feedback.Pos_Estimate;
     const float phi_1 = odrive1_.odrive_user_data_.last_feedback.Pos_Estimate; 
     std::vector<float> joint_thetas = phi_to_theta({phi_0, phi_1});
-    joint_thetas = soft_limit_torques(joint_thetas);
+    joint_thetas = soft_limit_joints(joint_thetas);
     const float theta_0_dif = theta_des.at(0) - joint_thetas.at(0);
     const float theta_1_dif = theta_des.at(1) - joint_thetas.at(1);
 
@@ -276,6 +289,12 @@ void FingerManager::move_js(std::vector<float> theta_des)
     const float torque_1 = limit<float>(torques.at(1), motor_torque_limit);
     odrive0_.odrive_.setTorque(torque_0);
     odrive1_.odrive_.setTorque(torque_1);
+}
+
+bool FingerManager::home(float torque) 
+{
+    return true;
+
 }
 
 FingerData FingerManager::get_finger_data() {

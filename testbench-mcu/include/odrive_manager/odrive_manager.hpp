@@ -26,7 +26,7 @@ public:
         : canbus_(odrive_can), odrive_(ODriveCAN(wrap_can_intf(odrive_can), CAN_ID)), odrive_user_data_(odrive_user_data)
         {
             odrive_user_data_.node_id = CAN_ID;
-            // Register callbacks for the heartbeat and encoder feedback messages
+            // Register callbacks for the heartbeat, encoder, and temperature feedback messages
             odrive_.onFeedback(onFeedback, &odrive_user_data_);
             odrive_.onStatus(onHeartbeat, &odrive_user_data_);
             odrive_.onTemperature(onTemperature, &odrive_user_data_);
