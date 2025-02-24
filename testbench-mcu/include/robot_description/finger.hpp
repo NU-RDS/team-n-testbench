@@ -8,7 +8,10 @@
 #include "utils/matrix.hpp"
 
 /// @brief Torque limit in N-m
-static constexpr float motor_torque_limit = 0.036f; // N*m
+static constexpr float motor_torque_limit = 0.002f; // N*m
+
+/// @brief Zeroing torque limit in N-m
+static constexpr float zeroing_motor_torque_limit = 0.001f; // N*m
 
 /// @brief Software spring stiffness
 static constexpr float discouraging_stiffness = 0.01f; 

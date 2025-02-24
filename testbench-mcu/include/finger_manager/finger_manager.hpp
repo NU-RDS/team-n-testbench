@@ -10,7 +10,11 @@
 #include <Arduino.h>
 #include <math.h>
 
-const unsigned long odrive_timeout = 1000; ///< 1 second timeout
+/// @brief Odrive detection timeout in seconds (1 sec)
+static const unsigned long odrive_timeout = 1000;
+
+/// @brief Zeroing timeout in seconds (10 seconds)
+static const unsigned long zeroing_timeout = 10000;
 
 /**
  * @struct FingerData
@@ -115,10 +119,9 @@ public:
 
     /**
      * @brief Calibrates the joints to motor angles
-     * @param torque Commanded torque values
      * @returns Boolean to indicate success
      */
-    bool home(float theta);
+    bool zero();
 
     /// @brief Get finger data
     FingerData get_finger_data();
@@ -291,11 +294,47 @@ void FingerManager::move_js(std::vector<float> theta_des)
     odrive1_.odrive_.setTorque(torque_1);
 }
 
-bool FingerManager::home(float torque) 
+bool FingerManager::zero() 
 {
-    return true;
+    float prev_velocity_motor0 = 0.0f, current_velocity_motor0 = 0.0f;
+    float prev_velocity_motor1 = 0.0f, current_velocity_motor1 = 0.0f;
+    bool motor0_zeroed{false}, motor1_zeroed{false};
 
+    unsigned long start_time = millis();
+    const unsigned long zeroing_timeout = 10000;  // 10-second timeout to prevent infinite loops
+
+    while (((not motor0_zeroed) or (not motor1_zeroed)) and (millis() - start_time) < zeroing_timeout) {
+
+        // Get the latest velocity readings
+        prev_velocity_motor0 = current_velocity_motor0;
+        prev_velocity_motor1 = current_velocity_motor1;
+        current_velocity_motor0 = odrive0_.odrive_user_data_.last_feedback.Vel_Estimate;
+        current_velocity_motor1 = odrive1_.odrive_user_data_.last_feedback.Vel_Estimate;
+
+        // Check if velocity is close to zero for motor 0
+        if (!motor0_zeroed && float_close_compare(current_velocity_motor0, prev_velocity_motor0, 1e-4)) {
+            motor0_zeroed = true;
+            odrive0_.set_torque(0.0f);  // Stop applying torque
+        } else if (!motor0_zeroed) {
+            odrive0_.set_torque(zeroing_torque_limit);
+        }
+
+        // Check if velocity is close to zero for motor 1
+        if (!motor1_zeroed && float_close_compare(current_velocity_motor1, prev_velocity_motor1, 1e-4)) {
+            motor1_zeroed = true;
+            odrive1_.set_torque(0.0f);  // Stop applying torque
+        } else if (!motor1_zeroed) {
+            odrive1_.set_torque(zeroing_torque_limit);
+        }
+
+        // Small delay to allow ODrive feedback updates
+        delay(10);
+    }
+
+    // Return true only if both motors have reached their zeroed state
+    return motor0_zeroed and motor1_zeroed;
 }
+
 
 FingerData FingerManager::get_finger_data() {
     FingerData finger_data;
