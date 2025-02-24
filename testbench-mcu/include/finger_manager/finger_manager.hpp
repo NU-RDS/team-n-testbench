@@ -204,7 +204,7 @@ FingerManager::FingerManager(
     canbus0_.setMaxMB(16);
     canbus0_.enableFIFO();
     canbus0_.enableFIFOInterrupt();
-    canbus1_.onReceive(callback_odrive0);
+    canbus0_.onReceive(callback_odrive0);
 
     canbus1_.begin();
     canbus1_.setBaudRate(CAN_BAUDRATE);
@@ -259,7 +259,8 @@ bool FingerManager::find_odrive(T &odrive) {
     unsigned long start_time = millis();
     while (!odrive.odrive_user_data_.received_heartbeat) {
         tick();
-        delay(100);
+        delay(10);
+        tick();
         Serial.println("Waiting for ODrive" + String(odrive.odrive_user_data_.node_id));
 
         if (millis() - start_time > odrive_timeout) {

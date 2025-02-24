@@ -54,7 +54,7 @@ void setup() {
     if (!finger_manager.initialize())
     {
         Serial.println("CAN failed to initialize: Rebooting the teensy");
-        reboot();
+        // reboot();
     }
 
     Serial.println("Setup complete");
@@ -66,8 +66,8 @@ void loop() {
     // finger_manager.move_js({0.0f, 0.0f});
     finger_data = finger_manager.get_finger_data();
 
-    Serial.println("Joint 0 - " + String(finger_data.estimated_joint_angles[0]));
-    Serial.println("Joint 1 - " + String(finger_data.estimated_joint_angles[0]));
+    // Serial.println("Joint 0 - " + String(finger_data.estimated_joint_angles[0]));
+    // Serial.println("Joint 1 - " + String(finger_data.estimated_joint_angles[0]));
 
     delay(5);
 
