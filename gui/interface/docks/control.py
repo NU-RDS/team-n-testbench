@@ -70,10 +70,7 @@ class ControlDock(ImmediateInspectorDock):
         self.builder.label(f"Joint {joint_number}", font_style=FontStyle.BOLD)
 
         self.builder.begin_vertical()
-        mode = self.builder.dropdown(
-            "Control Mode", options=ControlModes.all_modes_str(), initial_value=0
-        )
-
+        mode = ControlModes.POSITION
         mode_str = ControlModes.to_string(mode)
         control_values = self.draw_control_value("Control Value", f"{mode_str} Value", 0)
 

@@ -48,7 +48,7 @@ class MCUCom:
         self.command_buffer.add_callback_on_send(self.handle_message_event)
         self.comm_interface.add_callback(MessageDefinitions.zero_done_id(), MessageType.REQUEST, self.command_buffer.handle_zero_done)
 
-        self.timer_group.add_task(10000, self.send_hearbeat)
+        self.timer_group.add_task(100, self.send_hearbeat)
 
     def handle_message_event(self, message: Message):
         self.message_history.append(message)
