@@ -79,7 +79,7 @@ class ControlDock(ImmediateInspectorDock):
     def draw_command_creator(self):
         self.builder.begin_horizontal()
         for motor_num in range(2):
-            self.builder.begin_vertical(boxed=True, alignment=LayoutAlignment.CENTER)
+            self.builder.begin_vertical(alignment=LayoutAlignment.CENTER)
             self.draw_motor_control(motor_num)
             self.builder.end_vertical()
         self.builder.end_horizontal()

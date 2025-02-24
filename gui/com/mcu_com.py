@@ -80,10 +80,11 @@ class MCUCom:
     def send_hearbeat(self):
         heartbeat = MessageDefinitions.create_heartbeat_message(MessageType.REQUEST, random.randint(0, 100))
         on_success = lambda response_message : self._heartbeat_msg_on_success(heartbeat, response_message)
-        self.send_message(heartbeat, ack_required=True, on_failure=self._on_heartbeat_failure, on_success=on_success)
+        on_failure = lambda : self._on_heartbeat_failure(heartbeat)
+        self.send_message(heartbeat, ack_required=True, on_failure=on_failure, on_success=on_success)
 
-    def _on_heartbeat_failure(self):
-        ApplicationContext.error_manager.report_error("Failed to send heartbeat", ErrorSeverity.WARNING)
+    def _on_heartbeat_failure(self, message: Message):
+        ApplicationContext.error_manager.report_error(f"Failed to send heartbeat message {message.message_number()}", ErrorSeverity.WARNING)
 
     def _heartbeat_msg_on_success(self, request_message : Message, response_message : Message):
         # check that the response is a heartbeat
