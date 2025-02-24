@@ -83,7 +83,7 @@ class Mesh:
                         # "1//3" (position//normal), or "1/2/3" (position/texcoord/normal)
                         splits = token.split("/")
                         pos_index = int(splits[0])
-                        norm_index = None
+                        norm_index = 3
                         if len(splits) >= 3 and splits[2] != "":
                             norm_index = int(splits[2])
 
@@ -91,7 +91,7 @@ class Mesh:
                         key = (pos_index, norm_index if norm_index is not None else 0)
 
                         # Check if we've already created this vertex.
-                        if key not in vertex_map:
+                        if key not in vertex_map.keys():
                             position = positions[pos_index - 1]
                             # If no normal is provided, use a default normal.
                             if norm_index is not None:

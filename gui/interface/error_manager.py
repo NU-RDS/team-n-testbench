@@ -27,4 +27,4 @@ class ErrorManager:
     def report_error(self, message: str, severity: ErrorSeverity):
         error = Error(message, severity)
         self.errors.append(error)
-        print(error)
+        # print(error)

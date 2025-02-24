@@ -26,46 +26,51 @@ class OpenGLWidget(QtOpenGL.QGLWidget):
         )
 
     def initializeGL(self):
-        self.renderer.add_mesh(
-            Mesh.from_obj_file(PathUtil.asset_file_path("meshes/crystal.obj")),
-            "crystal",
-        )
+        needed_meshes = ["crystal", "base"]
+        for mesh_name in needed_meshes:
+            self.renderer.add_mesh(Mesh.from_obj_file(PathUtil.asset_file_path(f"meshes/{mesh_name}.obj")), mesh_name)
 
-        grid_size = 1000
-        self.renderer.add_mesh(Grid.create_grid_data(grid_size, 0.5), "grid")
 
-        # Create a grid node with GL_LINES draw mode.
-        self.renderer.add_child(
-            "grid",
-            Material.base_color(
-                self.renderer.context, glm.vec3(0.0, 1.0, 1.0), fade=True
-            ),
-            Transform().set_scale(glm.vec3(1.0, 1.0, 1.0)),
-            draw_mode=GL.GL_LINES,
-        )
+        # grid_size = 1000
+        # self.renderer.add_mesh(Grid.create_grid_data(grid_size, 0.5), "grid")
 
-        position_magnitude = 100
-        scale_magnitude = 10
+        # # Create a grid node with GL_LINES draw mode.
+        # self.renderer.add_child(
+        #     "grid",
+        #     Material.base_color(
+        #         self.renderer.context, glm.vec3(0.0, 1.0, 1.0), fade=True
+        #     ),
+        #     Transform().set_scale(glm.vec3(1.0, 1.0, 1.0)),
+        #     draw_mode=GL.GL_LINES,
+        # )
+
         red_material = Material.base_color(
             self.renderer.context, glm.vec3(1.0, 0.0, 0.0)
         )
 
-        for i in range(100):
-            random_position = glm.vec3(
-                random.uniform(-position_magnitude, position_magnitude),
-                random.uniform(-position_magnitude, position_magnitude),
-                random.uniform(-position_magnitude, position_magnitude),
-            )
-            random_scale = glm.vec3(
-                random.uniform(0, scale_magnitude),
-                random.uniform(0, scale_magnitude),
-                random.uniform(0, scale_magnitude),
-            )
-            self.renderer.add_child(
-                "crystal",
-                red_material,
-                Transform().set_position(random_position).set_scale(random_scale),
-            )
+        # add the base
+        scale_axis = 10.0
+        base_node = self.renderer.add_child(
+            "base",
+            red_material,
+            Transform().set_position(glm.vec3(0, 0, 0)).set_scale(glm.vec3(scale_axis, scale_axis, scale_axis)),
+        )
+
+        # # as a parent of the base, add the first link
+        # link_1_node = self.renderer.add_child(
+        #     "link_1",
+        #     red_material,
+        #     Transform().set_position(glm.vec3(0, 1, 0)),
+        #     base_node
+        # )
+
+        # # as a parent of the first link, add the second link
+        # link_2_node = self.renderer.add_child(
+        #     "link_2",
+        #     red_material,
+        #     Transform().set_position(glm.vec3(0, 1, 0)),
+        #     link_1_node
+        # )
 
         self.renderer.begin_rendering()
 
