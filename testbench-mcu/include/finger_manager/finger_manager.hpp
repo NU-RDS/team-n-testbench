@@ -2,7 +2,10 @@
 #define __FINGER_MANAGER_H__
 
 #include "odrive_manager/odrive_manager.hpp"
+#include "robot_description/finger.hpp"
+#include "utils/filters.hpp"
 #include <Arduino.h>
+#include <math.h>
 
 const unsigned long odrive_timeout = 1000; ///< 1 second timeout
 
@@ -50,12 +53,41 @@ public:
     template <typename T>
     bool startup_odrive(T &odrive);
 
+    /// @brief Changes the desired joint angles if angles are over the soft limits
+    /// @param joint_thetas 
+    /// @return damped new joint angles
+    std::vector<float> soft_limit_torques(std::vector<float> joint_thetas);
+
+    /// @brief Determines the joint angles (including the offset values)
+    /// @param phi position or velocity of the motor (either)
+    /// @returns joint angles
+    std::vector<float> phi_to_theta(std::vector<float> phi);
+
+    /// @brief Determines the motor angles (including the offset values)
+    /// @param joint_thetas either the position or velocities of the joints (either)
+    /// @returns motor angles
+    std::vector<float> theta_to_phi(std::vector<float> joint_thetas);
+
+    /// @brief Determines desired tau to send to motors
+    /// @param theta_dif, theta_dot_dif parameters for pd controller
+    /// @returns desired torque
+    std::vector<float> theta_to_torque(std::vector<float> theta_dif, std::vector<float> theta_dot_dif);
+
+    /// @brief Moves J0 to a desired angle.
+    /// @param theta_des desired angle of the first joint (rad).
+    void move_j0(float theta_des);
+
+    /// @brief Moves J1 to a desired angle.
+    /// @param theta_des desired angle of the second joint (rad).
+    void move_j1(float theta_des);
+
+
 public:
     FlexCAN_T4<CAN2, RX_SIZE_256, TX_SIZE_256> &canbus0_; /// CAN bus for first ODrive
     FlexCAN_T4<CAN3, RX_SIZE_256, TX_SIZE_256> &canbus1_; /// CAN bus for second ODrive
     ODriveManager<CAN2> &odrive0_; /// Address of first ODrive
     ODriveManager<CAN3> &odrive1_; /// Address of second ODrive
-    _MB_ptr F; /// Callback function that executes when data comes on CAN bus
+    MovingAverageFilter filter; /// Moving average filter
 };
 
 FingerManager::FingerManager(
@@ -65,7 +97,7 @@ FingerManager::FingerManager(
     ODriveManager<CAN3> &odrive1,
     _MB_ptr callback_odrive0,
     _MB_ptr callback_odrive1)
-    : canbus0_(canbus0), canbus1_(canbus1), odrive0_(odrive0), odrive1_(odrive1) {
+    : canbus0_(canbus0), canbus1_(canbus1), odrive0_(odrive0), odrive1_(odrive1), filter(5) {
     
     canbus0_.begin();
     canbus0_.setBaudRate(CAN_BAUDRATE);
@@ -162,6 +194,80 @@ bool FingerManager::startup_odrive(T &odrive) {
 
     Serial.println("ODrive" + String(odrive.odrive_user_data_.node_id) + " running");
     return true;
+}
+
+std::vector<float> FingerManager::soft_limit_torques(std::vector<float> joint_thetas)
+{
+    const float joint_0_d_t = -discouraging_stiffness * joint_0_soft_limits.over_limits(joint_thetas.at(0));
+    const float joint_1_d_t = -discouraging_stiffness * joint_1_soft_limits.over_limits(joint_thetas.at(1));
+
+    return {joint_0_d_t, joint_1_d_t};
+}
+
+std::vector<float> FingerManager::phi_to_theta(std::vector<float> phi)
+{
+    const float phi_0 = phi.at(0);
+    const float phi_1 = phi.at(1);
+    const float theta_0 = phi_0 * t1 + joint_0_cali_offset;
+    const float theta_1 = phi_0 * t2 + phi_1 * t3 + joint_1_cali_offset;
+    return {theta_0, theta_1};
+}
+
+std::vector<float> FingerManager::theta_to_phi(std::vector<float> joint_thetas)
+{
+    const float theta_0 = joint_thetas.at(0) - joint_0_cali_offset;
+    const float theta_1 = joint_thetas.at(1) - joint_1_cali_offset;
+    const float phi_0 = t1 * theta_0 + t2 * theta_1;
+    const float phi_1 = t3 * theta_1;
+    return {phi_0, phi_1};
+}
+
+std::vector<float> FingerManager::theta_to_torque(std::vector<float> theta_dif, std::vector<float> theta_dot_dif) 
+{
+    const float tau_0 = kp * theta_dif.at(0) - kd * theta_dot_dif.at(0);
+    const float tau_1 = kp * theta_dif.at(1) - kd * theta_dot_dif.at(0);
+    const float torque_0 = t1 * tau_0 + t2 * tau_1;
+    const float torque_1 = t3 * tau_1;
+    return {torque_0, torque_1};
+}
+
+void FingerManager::move_j0(float theta_des) 
+{
+    // Get position difference
+    const float phi_0 = filter.update(odrive0_.odrive_user_data_.last_feedback.Pos_Estimate);
+    const float phi_1 = filter.update(odrive1_.odrive_user_data_.last_feedback.Pos_Estimate); 
+    
+    std::vector<float> joint_thetas = phi_to_theta({phi_0, phi_1});
+    joint_thetas = soft_limit_torques(joint_thetas);
+    const float theta_0_dif = theta_des - joint_thetas.at(0);
+
+    // Send joints and get motor torque
+    const std::vector<float> torques = theta_to_torque({theta_0_dif, 0.0}, {0.0, 0.0});
+
+    // Send torque
+    const float torque_0 = limit<float>(torques.at(0), motor_torque_limit);
+    const float torque_1 = limit<float>(torques.at(1), motor_torque_limit);
+    odrive0_.odrive_.setTorque(torque_0);
+    odrive1_.odrive_.setTorque(torque_1);
+}
+
+void FingerManager::move_j1(float theta_des) 
+{
+    // Get position difference
+    const float phi_0 = filter.update(odrive0_.odrive_user_data_.last_feedback.Pos_Estimate);
+    const float phi_1 = filter.update(odrive1_.odrive_user_data_.last_feedback.Pos_Estimate); 
+    std::vector<float> joint_thetas = phi_to_theta({phi_0, phi_1});
+    joint_thetas = soft_limit_torques(joint_thetas);
+    const float theta_1_dif = theta_des - joint_thetas.at(1);
+
+    // Send joints and get motor torque
+    const std::vector<float> torques = theta_to_torque({0.0, theta_1_dif}, {0.0, 0.0});
+
+    // Send torque
+    const float torque_0 = limit<float>(torques.at(0), motor_torque_limit);
+    const float torque_1 = limit<float>(torques.at(1), motor_torque_limit);
+    odrive0_.odrive_.setTorque(torque_0);
+    odrive1_.odrive_.setTorque(torque_1);
 }
 
 #endif // __FINGER_MANAGER_H__
