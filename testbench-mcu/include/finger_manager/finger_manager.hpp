@@ -10,6 +10,37 @@
 const unsigned long odrive_timeout = 1000; ///< 1 second timeout
 
 /**
+ * @struct FingerData
+ * @brief Stores sensor and computed data for a robotic finger
+ */
+struct FingerData
+{
+    /**
+     * @brief Position estimates from motor encoders
+     * @details Stores the most recent position estimates for both ODrives
+     */
+    float motor_pos_estimates[2];
+
+    /**
+     * @brief Velocity estimates from motor encoders
+     * @details Stores the most recent velocity estimates for both ODrives
+     */
+    float motor_vel_estimates[2];
+
+    /**
+     * @brief Temperature estimates of motors
+     * @details Stores the most recent temperature readings from both ODrives
+     */
+    float motor_temp_estimates[2];
+
+    /**
+     * @brief Computed joint angles
+     * @details Stores the calculated joint angles based on encoder readings
+     */
+    float joint_angles[2];
+};
+
+/**
  * @class FingerManager
  * @brief Manages communication for two CAN buses controlling robotic fingers
  */
@@ -81,6 +112,8 @@ public:
     /// @param theta_des desired angle of the second joint (rad).
     void move_j1(float theta_des);
 
+    /// @brief Get finger data
+    FingerData get_finger_data();
 
 public:
     FlexCAN_T4<CAN2, RX_SIZE_256, TX_SIZE_256> &canbus0_; /// CAN bus for first ODrive
@@ -268,6 +301,24 @@ void FingerManager::move_j1(float theta_des)
     const float torque_1 = limit<float>(torques.at(1), motor_torque_limit);
     odrive0_.odrive_.setTorque(torque_0);
     odrive1_.odrive_.setTorque(torque_1);
+}
+
+FingerData FingerManager::get_finger_data() {
+    FingerData finger_data;
+
+    // Store position estimates
+    finger_data.motor_pos_estimates[0] = odrive0_.odrive_user_data_.last_feedback.Pos_Estimate;
+    finger_data.motor_pos_estimates[1] = odrive1_.odrive_user_data_.last_feedback.Pos_Estimate;
+
+    // Store velocity estimates
+    finger_data.motor_vel_estimates[0] = odrive0_.odrive_user_data_.last_feedback.Vel_Estimate;
+    finger_data.motor_vel_estimates[1] = odrive1_.odrive_user_data_.last_feedback.Vel_Estimate;
+
+    // Store temperature estimates
+    finger_data.motor_temp_estimates[0] = odrive0_.odrive_user_data_.last_temperature.Motor_Temperature;
+    finger_data.motor_temp_estimates[1] = odrive0_.odrive_user_data_.last_temperature.Motor_Temperature;
+
+    return finger_data;
 }
 
 #endif // __FINGER_MANAGER_H__
