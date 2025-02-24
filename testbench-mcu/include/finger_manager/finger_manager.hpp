@@ -263,8 +263,8 @@ std::vector<float> FingerManager::theta_to_phi(std::vector<float> joint_thetas)
 {
     const float theta_0 = joint_thetas.at(0) - joint_0_cali_offset;
     const float theta_1 = joint_thetas.at(1) - joint_1_cali_offset;
-    const float phi_0 = it1 * theta_0 + it2 * theta_1;
-    const float phi_1 = it3 * theta_1;
+    const float phi_0 = t1 * theta_0 + t2 * theta_1;
+    const float phi_1 = t3 * theta_1;
     return {phi_0, phi_1};
 }
 
@@ -282,33 +282,40 @@ bool FingerManager::move_js(std::vector<float> theta_des)
     // Get position difference
     const float phi_0 = odrive0_.odrive_user_data_.last_feedback.Pos_Estimate;
     const float phi_1 = odrive1_.odrive_user_data_.last_feedback.Pos_Estimate; 
-    const float phi_dot_0 = odrive0_.odrive_user_data_.last_feedback.Vel_Estimate;
-    const float phi_dot_1 = odrive1_.odrive_user_data_.last_feedback.Vel_Estimate;
+
     std::vector<float> joint_thetas = phi_to_theta({phi_0, phi_1});
-    std::vector<float> joint_thetas_dot = phi_to_theta({phi_dot_0, phi_dot_1});
-    joint_thetas = soft_limit_joints(joint_thetas);
+    Serial.println("J0 - " + String(joint_thetas.at(0)));
+    Serial.println("J1 - " + String(joint_thetas.at(1)));
+
+    // joint_thetas = soft_limit_joints(joint_thetas);
 
     // Check if within tolerance
     if (float_close_compare(theta_des.at(0), joint_thetas.at(0), 1e-3) and float_close_compare(theta_des.at(1), joint_thetas.at(1), 1e-3)) {
+        odrive0_.odrive_.setTorque(0.0f);
+        odrive1_.odrive_.setTorque(0.0f);
         return true;
     }
 
     const float theta_0_dif = theta_des.at(0) - joint_thetas.at(0);
     const float theta_1_dif = theta_des.at(1) - joint_thetas.at(1);
-    // const float theta_0_dif_dot = 
 
     // Send joints and get motor torque
     const std::vector<float> torques = theta_to_torque({theta_0_dif, theta_1_dif}, {0.0, 0.0});
+    Serial.println("Diff 0 - " + String(theta_0_dif*1000));
+    Serial.println("Diff 1 - " + String(theta_1_dif*1000));
 
     // Send torque
     const float torque_0 = limit<float>(torques.at(0), motor_torque_limit);
     const float torque_1 = limit<float>(torques.at(1), motor_torque_limit);
+    Serial.println("Torque 0 - " + String(-torque_0*1000));
+    Serial.println("Torque 1 - " + String(torque_1*1000));
     odrive0_.odrive_.setTorque(torque_0);
     odrive1_.odrive_.setTorque(torque_1);
     return false;
 }
 
 bool FingerManager::zero() 
+
 {
     float prev_velocity_motor0 = 0.0f, current_velocity_motor0 = 0.0f;
     float prev_velocity_motor1 = 0.0f, current_velocity_motor1 = 0.0f;
@@ -330,7 +337,7 @@ bool FingerManager::zero()
             motor0_zeroed = true;
             odrive0_.set_torque(0.0f);  // Stop applying torque
         } else if (!motor0_zeroed) {
-            odrive0_.set_torque(zeroing_motor_torque_limit);
+            odrive0_.set_torque(-zeroing_motor_torque_limit);
         }
 
         // Check if velocity is close to zero for motor 1
@@ -363,12 +370,12 @@ FingerData FingerManager::get_finger_data() {
 
     // Store motor temperature estimates
     finger_data.motor_temp_estimates[0] = odrive0_.odrive_user_data_.last_temperature.Motor_Temperature;
-    finger_data.motor_temp_estimates[1] = odrive0_.odrive_user_data_.last_temperature.Motor_Temperature;
+    finger_data.motor_temp_estimates[1] = odrive1_.odrive_user_data_.last_temperature.Motor_Temperature;
 
     // Store joint angle estimates
-    std::vector<float> phi = theta_to_phi({finger_data.motor_pos_estimates[0], finger_data.motor_pos_estimates[1]});
-    finger_data.estimated_joint_angles[0] = phi[0]; 
-    finger_data.estimated_joint_angles[1] = phi[1]; 
+    std::vector<float> theta = phi_to_theta({finger_data.motor_pos_estimates[0], finger_data.motor_pos_estimates[1]});
+    finger_data.estimated_joint_angles[0] = theta[0]; 
+    finger_data.estimated_joint_angles[1] = theta[1]; 
 
     return finger_data;
 }
