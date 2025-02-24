@@ -324,7 +324,7 @@ bool FingerManager::zero()
             motor1_zeroed = true;
             odrive1_.set_torque(0.0f);  // Stop applying torque
         } else if (!motor1_zeroed) {
-            odrive1_.set_torque(zeroing_torque_limit);
+            odrive1_.set_torque(-zeroing_torque_limit);
         }
 
         // Small delay to allow ODrive feedback updates
