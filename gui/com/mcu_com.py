@@ -13,6 +13,8 @@ from util.timer import TimerGroup, TimedTask
 from com.message_definitions import MessageDefinitions
 from com.serial_channel import PySerialChannel
 from com.command_buffer import CommandBuffer
+from interface.error_manager import ErrorSeverity
+from app_context import ApplicationContext
 import time
 import random
 import sys
@@ -45,7 +47,7 @@ class MCUCom:
 
         self.command_buffer.add_callback_on_send(self.handle_message_event)
 
-        self.timer_group.add_task(50000, self.send_hearbeat)
+        self.timer_group.add_task(2000, self.send_hearbeat)
 
     def handle_message_event(self, message: Message):
         self.message_history.append(message)
@@ -55,12 +57,12 @@ class MCUCom:
     def get_message_history(self) -> list[Message]:
         return self.message_history
 
-    def send_message(self, message: Message, ack_required: bool = False, on_failure = None):
+    def send_message(self, message: Message, ack_required: bool = False, on_failure = None, on_success = None):
         for callback in self.on_send_callbacks:
             callback(message)
 
         self.handle_message_event(message)
-        self.comm_interface.send_message(message, ack_required, on_failure)
+        self.comm_interface.send_message(message, ack_required, on_failure, on_success)
 
     def send_buffer_message(self, message: Message):
         self.command_buffer.add_command(message)
@@ -74,13 +76,31 @@ class MCUCom:
     def get_current_command_buffer(self):
         return self.command_buffer.get_buffer()
     
-    def on_heartbeat_failure(self):
-        print("Heartbeat failure")
     
     def send_hearbeat(self):
-        # print("Sending heartbeat")
         heartbeat = MessageDefinitions.create_heartbeat_message(MessageType.REQUEST, random.randint(0, 100))
-        self.send_message(heartbeat, ack_required=True, on_failure=self.on_heartbeat_failure)
+        on_success = lambda response_message : self._heartbeat_msg_on_success(heartbeat, response_message)
+        self.send_message(heartbeat, ack_required=True, on_failure=self._on_heartbeat_failure, on_success=on_success)
+
+    def _on_heartbeat_failure(self):
+        ApplicationContext.error_manager.report_error("Failed to send heartbeat", ErrorSeverity.WARNING)
+
+    def _heartbeat_msg_on_success(self, request_message : Message, response_message : Message):
+        # check that the response is a heartbeat
+        if response_message.data().type().identifier() != MessageDefinitions.HEARTBEAT_MESSAGE:
+            ApplicationContext.error_manager.report_error("Response message is not a heartbeat message", ErrorSeverity.WARNING)
+            return
+        
+        # check that the message number is the same
+        if response_message.message_number() != request_message.message_number():
+            ApplicationContext.error_manager.report_error("Response message has different message number", ErrorSeverity.WARNING)
+
+        # check that the random value is the same
+        request_random_value = request_message.data().get_field("random_value").value()
+        response_random_value = response_message.data().get_field("random_value").value()
+
+        if request_random_value != response_random_value:
+            ApplicationContext.error_manager.report_error("Response message has different random value", ErrorSeverity.WARNING)
 
     def tick(self):
         self.comm_interface.tick()
