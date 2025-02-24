@@ -3,10 +3,16 @@
 #include <Arduino.h>
 #include <HardwareSerial.h>
 
+// #define RDSCOM_DEBUG_ENABLED 1
 #include "rdscom.hpp"
 #include "serial_com_channel.hpp"
+#include "message_handlers.hpp"
 
+#if defined(ARDUINO_TEENSY40) || defined(ARDUINO_TEENSY41)
 #define INTERNAL_LED_PIN LED_BUILTIN
+#else
+#define INTERNAL_LED_PIN GPIO_NUM_2
+#endif
 
 uint8_t g_internalLEDState = HIGH;
 
@@ -14,24 +20,35 @@ uint8_t g_internalLEDState = HIGH;
 rdscom::CommunicationInterfaceOptions options{3, 2000, millis};
 
 // Instantiate a SerialCommunicationChannel using the hardware Serial port.
-SerialCommunicationChannel channel;
+SerialCommunicationChannel g_channel;
 
 // Create the communication interface using our serial channel.
-rdscom::CommunicationInterface com{channel, options};
+rdscom::CommunicationInterface g_com{g_channel, options};
 
-// Define an echo prototype with identifier 1. (This must match what the sender uses.)
-rdscom::DataPrototype echoProto{1};
+UserCommandBuffer g_commandBuffer;
 
-// Callback that echoes the received message.
-void onEchoMessage(const rdscom::Message &msg) {
-    // send back a response with the same data
-    // toggle back and forth
-    g_internalLEDState = (g_internalLEDState == HIGH) ? LOW : HIGH;
-    digitalWrite(INTERNAL_LED_PIN, g_internalLEDState);
-    rdscom::DataBuffer& buf = msg.data();
-    rdscom::Message response = rdscom::Message::createResponse(msg, buf);
-    com.sendMessage(response);
+msgs::MessageHandlers g_messageHandlers{g_com, g_commandBuffer};
+
+std::uint64_t g_loop_counter = 0;
+
+void onExecutionComplete(UserCommandBuffer::ExecutionStats stats) {
+    std::cout << "Execution complete: " << stats.executed << " commands in " << stats.time << " ms" << std::endl;
+    // send a message back to the GUI
+    rdscom::Message response = msgs::createControlDoneMessageRequest(
+        stats.success,
+        stats.time,
+        stats.executed
+    );
+    g_com.sendMessage(response, true);
 }
+
+void onCalibrationComplete() {
+    std::cout << "Calibration complete" << std::endl;
+    // send a message back to the GUI
+    rdscom::Message response = msgs::createZeroDoneRequest(true);
+    g_com.sendMessage(response, true);
+}
+
 
 void setup() {
     // Initialize the Serial port.
@@ -40,23 +57,15 @@ void setup() {
         ;  // wait for serial port to connect. (Needed for some boards.)
     }
 
-    echoProto.addField("dummy", rdscom::DataFieldType::UINT8);
-
-    // Register the echo prototype with the communication interface.
-    com.addPrototype(echoProto);
-
-    // Register callbacks for the prototype 1 for all message types.
-    com.addCallback(1, rdscom::MessageType::REQUEST, onEchoMessage);
-    com.addCallback(1, rdscom::MessageType::ERROR, onEchoMessage);
-
-    // Optional: Print a startup message.
-    Serial.println("Echo server started.");
-
-    pinMode(INTERNAL_LED_PIN, OUTPUT);
-    digitalWrite(INTERNAL_LED_PIN, g_internalLEDState);
+    g_messageHandlers.registerPrototypes();
+    g_messageHandlers.addHandlers();
+    g_commandBuffer.onExecutionComplete(onExecutionComplete);
+    g_commandBuffer.onCalibrationComplete(onCalibrationComplete);
 }
 
 void loop() {
     // Let the CommunicationInterface process any incoming messages and handle callbacks.
-    com.tick();
+    g_com.tick();
+    g_commandBuffer.tick();
+    g_messageHandlers.tickDatastreams();
 }
