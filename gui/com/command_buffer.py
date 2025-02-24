@@ -1,7 +1,8 @@
 from rdscom.rdscom import CommunicationChannel, Message, MessageType, CommunicationInterface
 from com.message_definitions import MessageDefinitions
-
+from interface.error_manager import ErrorManager, ErrorSeverity
 import threading
+from app_context import ApplicationContext
 
 class CommandBuffer:
     def __init__(self):
@@ -26,7 +27,7 @@ class CommandBuffer:
     
     def clear_buffer(self, channel : CommunicationInterface):
         if self._is_sending_buffer:
-            print("Cannot clear buffer while sending buffer")
+            ApplicationContext.error_manager.report_error("Cannot clear buffer while sending buffer", ErrorSeverity.WARNING)
             return
 
         # send a request to clear the buffer
@@ -41,7 +42,7 @@ class CommandBuffer:
 
     def _clear_buffer_on_success(self, request_message : Message, response_message : Message):        
         if response_message.data().type().identifier() != MessageDefinitions.CLEAR_BUFFER_MESSAGE:
-            print("Response message is not a clear buffer message")
+            ApplicationContext.error_manager.report_error("Response message is not a clear buffer message", ErrorSeverity.WARNING)
             return
         
         self.buffer = []
@@ -51,7 +52,7 @@ class CommandBuffer:
 
     def execute_buffer(self, channel: CommunicationInterface):
         if self._is_sending_buffer:
-            print("Cannot execute buffer while sending buffer")
+            ApplicationContext.error_manager.report_error("Cannot execute buffer while sending buffer", ErrorSeverity.WARNING)
             return
 
         random_value = 0
@@ -66,7 +67,7 @@ class CommandBuffer:
 
     def _execute_buffer_on_success(self, request_message : Message, response_message : Message):
         if response_message.data().type().identifier() != MessageDefinitions.CONTROL_GO_MESSAGE:
-            print("Response message is not a control go message")
+            ApplicationContext.error_manager.report_error("Response message is not a control go message", ErrorSeverity.WARNING)
             return
         
         print("Buffer executed successfully")
@@ -88,7 +89,7 @@ class CommandBuffer:
             
             while self._is_waiting:
                 channel.tick()
-                
+
 
             for callback in self.callbacks_on_send:
                 callback(message)
@@ -96,7 +97,7 @@ class CommandBuffer:
 
         if not self._successfully_sent:
             # if the buffer was not successfully sent, then we need to keep the buffer
-            print("Buffer was not successfully sent, keeping buffer locally, clearing buffer remotely")
+            ApplicationContext.error_manager.report_error("Buffer was not successfully sent", ErrorSeverity.WARNING)
             self.clear_buffer(channel)
             return
         else:
@@ -119,6 +120,7 @@ class CommandBuffer:
             # check that the response message is a motor event message
             if response_message.data().type().identifier() != MessageDefinitions.MOTOR_EVENT_MESSAGE:
                 self._successfully_sent = False
+                ApplicationContext.error_manager.report_error("Response message is not a motor event message", ErrorSeverity.WARNING)
                 return
 
             if self._compare_motor_control_messages(request_message, response_message):
@@ -126,6 +128,7 @@ class CommandBuffer:
         elif request_message.data().type().identifier() == MessageDefinitions.SENSOR_EVENT_MESSAGE:
             # check that the response message is a sensor event message
             if response_message.data().type().identifier() != MessageDefinitions.SENSOR_EVENT_MESSAGE:
+                ApplicationContext.error_manager.report_error("Response message is not a sensor event message", ErrorSeverity.WARNING)
                 self._successfully_sent = False
                 return
 
@@ -138,8 +141,8 @@ class CommandBuffer:
         self._is_waiting = False
 
 
-
     def _command_msg_on_failure(self, request_message : Message):
+        ApplicationContext.error_manager.report_error("Failed to send command message message", ErrorSeverity.WARNING)
         self._successfully_sent = False
         self._is_waiting = False
 
