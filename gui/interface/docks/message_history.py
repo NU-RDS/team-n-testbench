@@ -11,7 +11,7 @@ class MessageHistoryDock(ImmediateInspectorDock):
     def __init__(self, parent=None):
         super().__init__(parent)
         # ApplicationContext.mcu_com.add_message_event_callback(self.redraw)
-        self.timer_group.add_task(20, self.redraw)
+        self.timer_group.add_task(200, self.redraw)
 
     def draw_label(self, label, value):
         self.builder.begin_horizontal()
