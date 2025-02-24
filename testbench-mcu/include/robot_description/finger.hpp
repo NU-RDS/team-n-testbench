@@ -37,6 +37,14 @@ static constexpr float t3 = r_motor / r_pulley;
 // [  t1  0  ]
 // [  t2  t3 ]
 
+/// @note The inverse of the transmission martrix
+static constexpr float denom = 1 / (t1 * t3);
+static constexpr float it1 = t1 / denom;
+static constexpr float it2 = - t2 / denom;
+static constexpr float it3 = t3 / denom;
+// [ it3  it2 ]
+// [  0   it1 ]
+
 
 
 /// @brief Joint 0 limits in radians
