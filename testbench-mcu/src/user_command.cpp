@@ -61,6 +61,20 @@ void UserCommandBuffer::addCommand(std::shared_ptr<UserCommand> command) {
 }
 
 void UserCommandBuffer::tick() {
+    if (_isCalibrating) {
+        std::cout << "Calibrating finger" << std::endl;
+        calibrateFingerTick();
+        if (isDoneCalibrating()) {
+            _isCalibrating = false;
+        }
+
+        for (auto &callback : _onCalibrationCompleteCallbacks) {
+            callback();
+        }
+
+        return;
+    }
+
     if (_isExecuting == false) {
         return;
     }
@@ -109,6 +123,14 @@ void UserCommandBuffer::onExecutionComplete(std::function<void(ExecutionStats)> 
     _onExecutionCompleteCallbacks.push_back(callback);
 }
 
+void UserCommandBuffer::onCalibrationComplete(std::function<void()> callback) {
+    _onCalibrationCompleteCallbacks.push_back(callback);
+}
+
+void UserCommandBuffer::calibrateFinger() {
+    _isCalibrating = true;
+}
+
 void UserCommandBuffer::startExecution() {
     if (_isExecuting) {
         std::cerr << "Command buffer is already executing" << std::endl;
@@ -130,6 +152,14 @@ void UserCommandBuffer::reset() {
         _commands[i]->reset();
     }
     _currentSlice = UserCommandBuffer::CommandSlice(0, 0);
+}
+
+void UserCommandBuffer::calibrateFingerTick() {
+
+}
+
+bool UserCommandBuffer::isDoneCalibrating() {
+    return true;
 }
 
 /**------------------------------------------------------------------------

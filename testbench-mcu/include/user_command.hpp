@@ -97,6 +97,13 @@ class UserCommandBuffer {
     /// @param callback The callback to register.
     void onExecutionComplete(std::function<void(ExecutionStats)> callback);
 
+    /// @brief Registers a callback to be called when calibration is complete.
+    /// @param callback The callback to register.
+    void onCalibrationComplete(std::function<void()> callback);
+
+    /// @brief Calibrates the finger.
+    void calibrateFinger();
+
    private:
     /// @brief Nested class representing a slice of commands.
     class CommandSlice {
@@ -137,13 +144,22 @@ class UserCommandBuffer {
     std::size_t _numCompletedCommands;                    ///< Number of completed commands.
     bool _isExecuting;                                    ///< Whether the buffer is executing commands.
     std::uint32_t _startTime;                             ///< Time when execution
+    bool _isCalibrating;                                  ///< Whether the buffer is calibrating.
 
     std::vector<std::function<void(ExecutionStats)>> _onExecutionCompleteCallbacks;  ///< Callbacks to call when execution is complete.
+    std::vector<std::function<void()>> _onCalibrationCompleteCallbacks;              ///< Callbacks to call when calibration is complete.
 
     /// @brief Finds the next slice of commands to execute.
     /// @param currentSlice The current command slice.
     /// @return The next CommandSlice.
     CommandSlice findNextSlice(const CommandSlice &currentSlice);
+
+    /// @brief Called continuously while the finger is calibrating.
+    void calibrateFingerTick();
+
+    /// @brief Checks if the finger is calibrating.
+    /// @return true if the finger is calibrating.
+    bool isDoneCalibrating();
 };
 
 /// @brief Enumeration for motor control types.

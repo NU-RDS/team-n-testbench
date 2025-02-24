@@ -42,6 +42,13 @@ void onExecutionComplete(UserCommandBuffer::ExecutionStats stats) {
     g_com.sendMessage(response, true);
 }
 
+void onCalibrationComplete() {
+    std::cout << "Calibration complete" << std::endl;
+    // send a message back to the GUI
+    rdscom::Message response = msgs::createZeroDoneRequest(true);
+    g_com.sendMessage(response, true);
+}
+
 
 void setup() {
     // Initialize the Serial port.
@@ -53,6 +60,7 @@ void setup() {
     g_messageHandlers.registerPrototypes();
     g_messageHandlers.addHandlers();
     g_commandBuffer.onExecutionComplete(onExecutionComplete);
+    g_commandBuffer.onCalibrationComplete(onCalibrationComplete);
 }
 
 void loop() {

@@ -207,9 +207,7 @@ void MessageHandlers::onZeroCommandMessage(const rdscom::Message &msg) {
         msg.getField<std::uint8_t>("rand").value()
     );
     _com.sendMessage(response);
-
-    // do some zeroing
-    std::cout << "Zeroing\n";
+    _commandBuffer.calibrateFinger();
 }
 
 } // namespace msgs
