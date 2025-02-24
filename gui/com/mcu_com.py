@@ -12,6 +12,7 @@ from rdscom.rdscom import (
 from util.timer import TimerGroup, TimedTask
 from com.message_definitions import MessageDefinitions
 from com.serial_channel import PySerialChannel
+from com.command_buffer import CommandBuffer
 import time
 import random
 import sys
@@ -28,10 +29,8 @@ class MCUCom:
             options=self.comm_options, channel=self.channel
         )
         self.timer_group = TimerGroup()
-        self.tx_message_buffer = []
         self.on_send_callbacks = []  # listof func(message)
-        self.message_history = []
-        self.message_event_callbacks = []  # listof func(message)
+        self.command_buffer = CommandBuffer()
 
         # now add all of the prototypes
         for proto in MessageDefinitions.all_protos():
@@ -55,39 +54,19 @@ class MCUCom:
     def get_message_history(self) -> list[Message]:
         return self.message_history
 
-    def send_message(self, message: Message, ack_required: bool = False, on_failure = None, on_success = None):
+    def send_message(self, message: Message, ack_required: bool = False, on_failure = None):
         for callback in self.on_send_callbacks:
             callback(message)
 
         self.handle_message_event(message)
-        self.comm_interface.send_message(message, ack_required, on_failure, on_success)
+        self.comm_interface.send_message(message, ack_required, on_failure)
 
     def send_buffer_message(self, message: Message):
-        self.tx_message_buffer.append(message)
+        self.command_buffer.add_command(message)
 
     def send_buffer(self):
-
-        is_waiting = True
-        has_failed = False
-
-        def on_success():
-            nonlocal is_waiting
-            is_waiting = False
-
-        def on_failure():
-            nonlocal is_waiting
-            nonlocal has_failed
-            has_failed = True
-            is_waiting = False
-            print("Failed to send message")
-
         for message in self.tx_message_buffer:
-            self.send_message(message, ack_required=True, on_failure=on_failure, on_success=on_success)
-            while is_waiting:
-                self.comm_interface.tick()
-
-            if has_failed:
-                break
+            self.send_message(message)
 
         self.tx_message_buffer = []
 
