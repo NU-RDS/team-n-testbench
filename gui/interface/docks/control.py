@@ -128,5 +128,12 @@ class ControlDock(ImmediateInspectorDock):
             ApplicationContext.mcu_com.send_buffer()
             self.set_dirty()
             self.show()
+
+        if self.builder.button("Zero"):
+            # add an execute command)
+            ApplicationContext.mcu_com.zero()
+            self.set_dirty()
+            self.show()
+        
         self.builder.end_vertical()
 

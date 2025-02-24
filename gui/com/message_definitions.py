@@ -33,6 +33,8 @@ class MessageDefinitions:
             MessageDefinitions.clear_control_queue_proto(),
             MessageDefinitions.error_message_proto(),
             MessageDefinitions.stop_proto(),
+            MessageDefinitions.zero_command_proto(),
+            MessageDefinitions.zero_done_proto(),
         ]
     
     @staticmethod
@@ -49,6 +51,8 @@ class MessageDefinitions:
             "Clear Control Queue",
             "Error Message",
             "Stop",
+            "Zero Command",
+            "Zero Done",
         ]
 
         if proto_id < 0 or proto_id >= len(human_names):
@@ -222,6 +226,31 @@ class MessageDefinitions:
         proto = DataPrototype(MessageDefinitions.stop_id())
         proto.add_field("rand", DataFieldType.INT8)
         return proto
+    
+    @staticmethod
+    def zero_command_proto() -> DataPrototype:
+        """
+        Creates the ZeroCommand DataPrototype (ID: 11).
+
+        Fields:
+        - "motor_id": UINT8
+        """
+        proto = DataPrototype(MessageDefinitions.zero_command_id())
+        proto.add_field("rand", DataFieldType.UINT8)
+        return proto
+    
+    @staticmethod
+    def zero_done_proto() -> DataPrototype:
+        """
+        Creates the ZeroDone DataPrototype (ID: 12).
+
+        Fields:
+        - "success": BOOL
+        """
+        proto = DataPrototype(MessageDefinitions.zero_done_id())
+        proto.add_field("success", DataFieldType.UINT8)
+        return proto
+
 
 
     # --- Utility Functions for Getting Message IDs (thisTypeOfCase) ---
@@ -280,6 +309,16 @@ class MessageDefinitions:
     def stop_id() -> int:
         """Returns the ID for the Stop message (10)."""
         return 10
+    
+    @staticmethod
+    def zero_command_id() -> int:
+        """Returns the ID for the ZeroCommand message (11)."""
+        return 11
+    
+    @staticmethod
+    def zero_done_id() -> int:
+        """Returns the ID for the ZeroDone message (12)."""
+        return 12
 
 
     # --- Factory Methods to Build Messages ---
@@ -504,4 +543,36 @@ class MessageDefinitions:
         """
         msg = Message.from_type_and_proto(msg_type, MessageDefinitions.stop_proto())
         msg.set_field("rand", rand_val)
+        return msg
+    
+    @staticmethod
+    def create_zero_command_message(msg_type: MessageType, rand) -> Message:
+        """
+        Creates a ZeroCommand message.
+
+        Args:
+        msg_type: The MessageType.
+        rand_val: An UINT8 random value.
+
+        Returns:
+        A Message object.
+        """
+        msg = Message.from_type_and_proto(msg_type, MessageDefinitions.zero_command_proto())
+        msg.set_field("rand", rand)
+        return msg
+    
+    @staticmethod
+    def create_zero_done_message(msg_type: MessageType, success: bool) -> Message:
+        """
+        Creates a ZeroDone message.
+
+        Args:
+        msg_type: The MessageType.
+        success: Whether the zeroing was successful (BOOL).
+
+        Returns:
+        A Message object.
+        """
+        msg = Message.from_type_and_proto(msg_type, MessageDefinitions.zero_done_proto())
+        msg.set_field("success", success)
         return msg

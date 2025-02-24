@@ -106,6 +106,27 @@ class MCUCom:
         if request_random_value != response_random_value:
             ApplicationContext.error_manager.report_error("Response message has different random value", ErrorSeverity.WARNING)
 
+    def zero(self):
+        zero_message = MessageDefinitions.create_zero_command_message(MessageType.REQUEST, 0)
+        on_success = lambda response_message : self._on_zero_success(response_message)
+        on_failure = lambda : self._on_zero_failure()
+        self.send_message(zero_message, ack_required=True, on_failure=on_failure, on_success=on_success)
+
+    def _on_zero_success(self, response_message : Message):
+        if response_message.data().type().identifier() != MessageDefinitions.zero_done_id():
+            ApplicationContext.error_manager.report_error("Response message is not a zero done message", ErrorSeverity.WARNING)
+            return
+        
+        success = response_message.data().get_field("success").value()
+        if success == 0:
+            ApplicationContext.error_manager.report_error("Zero failed", ErrorSeverity.WARNING)
+        else:
+            ApplicationContext.error_manager.report_error("Zero succeeded", ErrorSeverity.INFO)
+
+    def _on_zero_failure(self):
+        ApplicationContext.error_manager.report_error("Failed to send zero message", ErrorSeverity.WARNING)
+
+
     def tick(self):
         # hack to avoid race condition
         if self.command_buffer.is_sending_buffer() == False:
