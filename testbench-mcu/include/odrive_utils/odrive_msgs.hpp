@@ -125,6 +125,7 @@ std::vector<Param<uint32_t>> bconfig_params({
   Param<uint32_t>{"can.temperature_msg_rate_ms", 253, 100},
   Param<uint32_t>{"enable_vel_limit", 393, 1},
   Param<uint32_t>{"enable_torque_mode_vel_limit", 394, 1},
+  Param<uint32_t>{"can.encoder_msg_rate_ms", 252, 10},  // Send encoder updates every 10ms
 });
 
 std::vector<Param<float>> fanticogging_config_params(

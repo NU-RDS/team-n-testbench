@@ -59,109 +59,116 @@ public:
             delay(100);
         }
 
-    return true;
-  }
+        // Request encoder estimates
+        Get_Encoder_Estimates_msg_t encoder_request;
+        odrive_.send(encoder_request);
+        pumpEvents(canbus_);
 
-  /// @brief Run the full calibration sequence given by ODrive
-  bool full_calibration()
-  {
-    Serial.println("Starting Calibration");
-    odrive_.setState(ODriveAxisState::AXIS_STATE_FULL_CALIBRATION_SEQUENCE);
-    delay(1000);
-    Serial.println("Calibration Done!");
-    return true;
-  }
+        Serial.println("Encoder estimates requested");
 
-  /// @brief Set parameters and set the motor to torque control
-  bool startup_odrive_checks()
-  {
-    Serial.println("\nAttempting to set configuration and start torque mode!");
-
-    set_params();
-    Serial.println("Configuration set");
-
-    Serial.println("Checking Temperature...");
-
-    odrive_.setControllerMode(ODriveControlMode::CONTROL_MODE_TORQUE_CONTROL, ODriveInputMode::INPUT_MODE_PASSTHROUGH);
-    Serial.println("Setting to Torque mode");
-
-    return true;
-  }
-
-
-  /// @brief Function to set the torque values based on the joint limits recorded from the startup_calibration.
-  /// @param torque Requested torque in N/m
-  /// @note torque is reduced when entering the buffer region.
-  void set_torque(float torque)
-  {
-    // This is the percentage of the joint limit before we begin limiting the outputted torque
-    float alpha_ = 0.95;
-
-    const auto pos = odrive_user_data_.last_feedback.Pos_Estimate;
-
-    // The position is outside of the joint limits
-    if (pos >= motor_limits_.upper || pos <= motor_limits_.lower) {
-      odrive_.setTorque(0);
-      return;
+        return true;
     }
 
-    // Here the joint limits are with in the acceptable range. No throttling required
-    if (pos <= motor_limits_.upper * alpha_ || pos >= motor_limits_.lower * alpha_) {
-      odrive_.setTorque(torque);
-      return;
+    /// @brief Run the full calibration sequence given by ODrive
+    bool full_calibration()
+    {
+        Serial.println("Starting Calibration");
+        odrive_.setState(ODriveAxisState::AXIS_STATE_FULL_CALIBRATION_SEQUENCE);
+        delay(1000);
+        Serial.println("Calibration Done!");
+        return true;
     }
 
-    // If we are in the upper buffer
-    if (pos >= motor_limits_.upper * alpha_) {
-      const auto gain = (motor_limits_.upper - pos) / motor_limits_.upper;
-      odrive_.setTorque(torque * gain);
-      return;
+    /// @brief Set parameters and set the motor to torque control
+    bool startup_odrive_checks()
+    {
+        Serial.println("\nAttempting to set configuration and start torque mode!");
+
+        set_params();
+        Serial.println("Configuration set");
+
+        Serial.println("Checking Temperature...");
+
+        odrive_.setControllerMode(ODriveControlMode::CONTROL_MODE_TORQUE_CONTROL, ODriveInputMode::INPUT_MODE_PASSTHROUGH);
+        Serial.println("Setting to Torque mode");
+
+        return true;
     }
 
-    // Only other condition is if we are in the lower buffer
-    const auto gain = (motor_limits_.lower - pos) / motor_limits_.lower;
-    odrive_.setTorque(torque * gain);
-    return;
-  }
 
+    /// @brief Function to set the torque values based on the joint limits recorded from the startup_calibration.
+    /// @param torque Requested torque in N/m
+    /// @note torque is reduced when entering the buffer region.
+    void set_torque(float torque)
+    {
+        // This is the percentage of the joint limit before we begin limiting the outputted torque
+        float alpha_ = 0.95;
 
-  /// @brief Sets desired motor torque to move motor to motor angle
-  /// @param phi_des Desired motor angle
-  void set_position(float phi_des)
-  {
-    // Get motor angles
-    const auto phi = odrive_user_data_.last_feedback.Pos_Estimate;
-    
-    // add PID
-    const auto kp = 5e-2;
-    const auto phi_dif = phi_des - phi;
-    const auto desired_torque = kp * phi_dif;
-    const auto max_torque = 0.036;
+        const auto pos = odrive_user_data_.last_feedback.Pos_Estimate;
 
-    // Ensure torque is not too large
-    if (desired_torque >= max_torque*0.8) {
-      odrive_.setTorque(max_torque * 0.8);
-    } else if (desired_torque <= - max_torque * 0.8) {
-      odrive_.setTorque(- max_torque * 0.8);
-    } else {
-      odrive_.setTorque(desired_torque);
+        // The position is outside of the joint limits
+        if (pos >= motor_limits_.upper || pos <= motor_limits_.lower) {
+            odrive_.setTorque(0);
+            return;
+        }
+
+        // Here the joint limits are with in the acceptable range. No throttling required
+        if (pos <= motor_limits_.upper * alpha_ || pos >= motor_limits_.lower * alpha_) {
+            odrive_.setTorque(torque);
+            return;
+        }
+
+        // If we are in the upper buffer
+        if (pos >= motor_limits_.upper * alpha_) {
+            const auto gain = (motor_limits_.upper - pos) / motor_limits_.upper;
+            odrive_.setTorque(torque * gain);
+            return;
+        }
+
+        // Only other condition is if we are in the lower buffer
+        const auto gain = (motor_limits_.lower - pos) / motor_limits_.lower;
+        odrive_.setTorque(torque * gain);
+        return;
     }
-    return;
-  }
+
+
+    /// @brief Sets desired motor torque to move motor to motor angle
+    /// @param phi_des Desired motor angle
+    void set_position(float phi_des)
+    {
+        // Get motor angles
+        const auto phi = odrive_user_data_.last_feedback.Pos_Estimate;
+        
+        // add PID
+        const auto kp = 5e-2;
+        const auto phi_dif = phi_des - phi;
+        const auto desired_torque = kp * phi_dif;
+        const auto max_torque = 0.036;
+
+        // Ensure torque is not too large
+        if (desired_torque >= max_torque*0.8) {
+            odrive_.setTorque(max_torque * 0.8);
+        } else if (desired_torque <= - max_torque * 0.8) {
+            odrive_.setTorque(- max_torque * 0.8);
+        } else {
+            odrive_.setTorque(desired_torque);
+        }
+        return;
+    }
 
 public:
 
-  /// @brief Address of canline for this odrive
-  FlexCAN_T4<CAN, RX_SIZE_256, TX_SIZE_256> & canbus_;
+    /// @brief Address of canline for this odrive
+    FlexCAN_T4<CAN, RX_SIZE_256, TX_SIZE_256> & canbus_;
 
-  /// \brief Odrive object to control
-  ODriveCAN odrive_;
+    /// \brief Odrive object to control
+    ODriveCAN odrive_;
 
-  /// \brief struct to store user data in
-  ODriveUserData & odrive_user_data_;
+    /// \brief struct to store user data in
+    ODriveUserData & odrive_user_data_;
 
-  /// \brief: Limits on motor torques
-  Limits<float> motor_limits_;
+    /// \brief: Limits on motor torques
+    Limits<float> motor_limits_;
 
 };
 
