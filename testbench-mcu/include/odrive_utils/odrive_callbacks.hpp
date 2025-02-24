@@ -20,8 +20,8 @@ void onFeedback(Get_Encoder_Estimates_msg_t & msg, void * user_data)
   msg.Vel_Estimate = odrive_user_data->pos_filter.update(msg.Vel_Estimate);
   odrive_user_data->last_feedback = msg;
   odrive_user_data->received_feedback = true;
-  Serial.print("Encoder update - Pos: ");
-  Serial.println(msg.Pos_Estimate);
+  // Serial.print("Encoder update - Pos: ");
+  // Serial.println(msg.Pos_Estimate);
 }
 
 /// \brief: Called every time a heartbeat message arrives from the ODrive

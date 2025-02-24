@@ -64,7 +64,7 @@ public:
         odrive_.send(encoder_request);
         pumpEvents(canbus_);
 
-        Serial.println("Encoder estimates requested");
+        // Serial.println("Encoder estimates requested");
 
         return true;
     }
