@@ -156,11 +156,11 @@ void UserCommandBuffer::reset() {
 }
 
 void UserCommandBuffer::calibrateFingerTick() {
-
+    // pass
 }
 
 bool UserCommandBuffer::isDoneCalibrating() {
-    return true;
+    return this->_fingerManager.zero();
 }
 
 /**------------------------------------------------------------------------
