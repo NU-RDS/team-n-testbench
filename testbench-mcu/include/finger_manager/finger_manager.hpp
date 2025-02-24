@@ -116,7 +116,7 @@ public:
     FlexCAN_T4<CAN3, RX_SIZE_256, TX_SIZE_256> &canbus1_; /// CAN bus for second ODrive
     ODriveManager<CAN2> &odrive0_; /// Address of first ODrive
     ODriveManager<CAN3> &odrive1_; /// Address of second ODrive
-    MovingAverageFilter filter; /// Moving average filter
+    MovingAverageFilter filter = 5; /// Moving average filter
 };
 
 FingerManager::FingerManager(
@@ -126,7 +126,7 @@ FingerManager::FingerManager(
     ODriveManager<CAN3> &odrive1,
     _MB_ptr callback_odrive0,
     _MB_ptr callback_odrive1)
-    : canbus0_(canbus0), canbus1_(canbus1), odrive0_(odrive0), odrive1_(odrive1), filter(5) {
+    : canbus0_(canbus0), canbus1_(canbus1), odrive0_(odrive0), odrive1_(odrive1) {
     
     canbus0_.begin();
     canbus0_.setBaudRate(CAN_BAUDRATE);
@@ -294,6 +294,9 @@ FingerData FingerManager::get_finger_data() {
     // Store temperature estimates
     finger_data.motor_temp_estimates[0] = odrive0_.odrive_user_data_.last_temperature.Motor_Temperature;
     finger_data.motor_temp_estimates[1] = odrive0_.odrive_user_data_.last_temperature.Motor_Temperature;
+
+    // Store joint angle estimates
+
 
     return finger_data;
 }
