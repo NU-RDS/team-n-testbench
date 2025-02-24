@@ -34,9 +34,9 @@ static constexpr float r_idler = 0.01; // 20 mm diameter idler pulley
 static constexpr float r_pulley = 0.01; // 20 mm diameter pulley
 
 /// @note The transmission ratio of joint : motor 
-static constexpr float t1 = r_motor / r_pulley;
-static constexpr float t2 = -r_motor / r_idler;
-static constexpr float t3 = r_motor / r_pulley;
+static constexpr float t1 = (r_motor / r_pulley) / 22.6; // account for gearbox ratio
+static constexpr float t2 = (-r_motor / r_idler) / 22.6; // account
+static constexpr float t3 = (r_motor / r_pulley) / 22.6;
 // [  t1  0  ]
 // [  t2  t3 ]
 

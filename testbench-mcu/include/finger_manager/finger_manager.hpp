@@ -263,8 +263,8 @@ std::vector<float> FingerManager::theta_to_phi(std::vector<float> joint_thetas)
 {
     const float theta_0 = joint_thetas.at(0);
     const float theta_1 = joint_thetas.at(1);
-    const float phi_0 = t1 * theta_0 + t2 * theta_1 + phi_0_cali_offset;
-    const float phi_1 = t3 * theta_1 + phi_1_cali_offset;
+    const float phi_0 = it1 * theta_0 + it2 * theta_1 + phi_0_cali_offset;
+    const float phi_1 = it3 * theta_1 + phi_1_cali_offset;
     return {phi_0, phi_1};
 }
 
@@ -279,106 +279,112 @@ std::vector<float> FingerManager::theta_to_torque(std::vector<float> theta_dif, 
 
 bool FingerManager::move_js(std::vector<float> theta_des) 
 {
-    // Get position difference
-    const float phi_0 = odrive0_.odrive_user_data_.last_feedback.Pos_Estimate;
-    const float phi_1 = odrive1_.odrive_user_data_.last_feedback.Pos_Estimate; 
+    // // Get position difference
+    // const float phi_0 = odrive0_.odrive_user_data_.last_feedback.Pos_Estimate * 2 * M_PI;
+    // const float phi_1 = odrive1_.odrive_user_data_.last_feedback.Pos_Estimate * 2 * M_PI; 
+    // const float phi_dot_0 = odrive0_.odrive_user_data_.last_feedback.Vel_Estimate * 2 * M_PI;
+    // const float phi_dot_1 = odrive1_.odrive_user_data_.last_feedback.Vel_Estimate * 2 * M_PI;
 
-    std::vector<float> joint_thetas = phi_to_theta({phi_0, phi_1});
-    Serial.println("J0 - " + String(joint_thetas.at(0)));
-    Serial.println("J1 - " + String(joint_thetas.at(1)));
+    // std::vector<float> joint_thetas = phi_to_theta({phi_0, phi_1});
+    // Serial.println("J0 - " + String(joint_thetas.at(0)));
+    // Serial.println("J1 - " + String(joint_thetas.at(1)));
 
-    // joint_thetas = soft_limit_joints(joint_thetas);
+    // // joint_thetas = soft_limit_joints(joint_thetas);
 
-    // Check if within tolerance
-    if (float_close_compare(theta_des.at(0), joint_thetas.at(0), 1e-3) and float_close_compare(theta_des.at(1), joint_thetas.at(1), 1e-3)) {
-        odrive0_.odrive_.setTorque(0.0f);
-        odrive1_.odrive_.setTorque(0.0f);
-        return true;
-    }
+    // // Check if within tolerance
+    // if (float_close_compare(theta_des.at(0), joint_thetas.at(0), 1e-3) and float_close_compare(theta_des.at(1), joint_thetas.at(1), 1e-3)) {
+    //     odrive0_.odrive_.setTorque(0.0f);
+    //     odrive1_.odrive_.setTorque(0.0f);
+    //     return true;
+    // }
 
-    const float theta_0_dif = theta_des.at(0) - joint_thetas.at(0);
-    const float theta_1_dif = theta_des.at(1) - joint_thetas.at(1);
+    // const float theta_0_dif = theta_des.at(0) - joint_thetas.at(0);
+    // const float theta_1_dif = theta_des.at(1) - joint_thetas.at(1);
 
-    // Send joints and get motor torque
-    const std::vector<float> torques = theta_to_torque({theta_0_dif, theta_1_dif}, {0.0, 0.0});
-    Serial.println("Diff 0 - " + String(theta_0_dif*1000));
-    Serial.println("Diff 1 - " + String(theta_1_dif*1000));
+    // // Send joints and get motor torque
+    // const std::vector<float> torques = theta_to_torque({theta_0_dif, theta_1_dif}, {0.0, 0.0});
+    // Serial.println("Diff 0 - " + String(theta_0_dif*1000));
+    // Serial.println("Diff 1 - " + String(theta_1_dif*1000));
 
-    // Send torque
-    const float torque_0 = limit<float>(torques.at(0), motor_torque_limit);
-    const float torque_1 = limit<float>(torques.at(1), motor_torque_limit);
-    Serial.println("Torque 0 - " + String(-torque_0*1000));
-    Serial.println("Torque 1 - " + String(torque_1*1000));
-    odrive0_.odrive_.setTorque(-0.002); // last one was 0.0015
-    odrive1_.odrive_.setTorque(0.002);
+    // // Send torque
+    // // const float torque_0 = limit<float>(torques.at(0), motor_torque_limit);
+    // // const float torque_1 = limit<float>(torques.at(1), motor_torque_limit);
+    // // Serial.println("Torque 0 - " + String(-torque_0*1000));
+    // // Serial.println("Torque 1 - " + String(torque_1*1000));
+
+    /// CURLING MOTION
+    const float torque_0 = t1 * 0.3 + t2 * 0.3;
+    const float torque_1 = t3 * 0.3;
+    odrive0_.odrive_.setTorque(torque_0); // last one was 0.0015
+    odrive1_.odrive_.setTorque(-torque_1);
     return false;
 }
 
-bool FingerManager::zero() 
+// bool FingerManager::zero() 
 
-{
-    float velocity_motor0 = 0.0f;
-    float velocity_motor1 = 0.0f;
+// {
+//     float velocity_motor0 = 0.0f;
+//     float velocity_motor1 = 0.0f;
 
-    if ((not motor0_zeroed) or (not motor1_zeroed)) {
+//     if ((not motor0_zeroed) or (not motor1_zeroed)) {
 
-        // Get the latest velocity readings
-        velocity_motor0 = odrive0_.odrive_user_data_.last_feedback.Vel_Estimate;
-        velocity_motor1 = odrive1_.odrive_user_data_.last_feedback.Vel_Estimate;
+//         // Get the latest velocity readings
+//         velocity_motor0 = odrive0_.odrive_user_data_.last_feedback.Vel_Estimate;
+//         velocity_motor1 = odrive1_.odrive_user_data_.last_feedback.Vel_Estimate;
 
-        // Check if velocity is close to zero for motor 0
-        if (motor0_start and (std::abs(velocity_motor0) < 5e-2)) {
-            motor0_zeroed = true;
-            odrive0_.odrive_.setTorque(0.0f);  // Stop applying torque
-            phi_0_cali_offset = odrive0_.odrive_user_data_.last_feedback.Pos_Estimate;
-            // Serial.println("PHI 0 DONNNEEEE");
+//         // Check if velocity is close to zero for motor 0
+//         if (motor0_start and (std::abs(velocity_motor0) < 5e-2)) {
+//             motor0_zeroed = true;
+//             odrive0_.odrive_.setTorque(0.0f);  // Stop applying torque
+//             phi_0_cali_offset = odrive0_.odrive_user_data_.last_feedback.Pos_Estimate;
+//             // Serial.println("PHI 0 DONNNEEEE");
             
-        } else if (!motor0_zeroed) {
-            if (!motor0_start and (std::abs(velocity_motor0) >= 5e-2)) {
-                motor0_start = true;
-            } else {
-                zeroing_motor_0_torque_limit += 0.0001;
-                Serial.println(("Current torque: " + String(zeroing_motor_1_torque_limit)));
-            }
-            odrive0_.odrive_.setTorque(-zeroing_motor_0_torque_limit);
-        }
+//         } else if (!motor0_zeroed) {
+//             if (!motor0_start and (std::abs(velocity_motor0) >= 5e-2)) {
+//                 motor0_start = true;
+//             } else {
+//                 zeroing_motor_0_torque_limit += 0.0001;
+//                 Serial.println(("Current torque: " + String(zeroing_motor_1_torque_limit)));
+//             }
+//             odrive0_.odrive_.setTorque(-zeroing_motor_0_torque_limit);
+//         }
 
-        // Check if velocity is close to zero for motor 1
-        if (motor1_start and (std::abs(velocity_motor1) < 5e-2)) {
-            motor1_zeroed = true;
-            odrive1_.odrive_.setTorque(0.0f);  // Stop applying torque
-            Serial.println("PHI 1 DONEEEEE");
-            phi_1_cali_offset = odrive1_.odrive_user_data_.last_feedback.Pos_Estimate;
-        } else if (!motor1_zeroed) {
-            if (!motor1_start and (std::abs(velocity_motor1) >= 5e-2)) {
-                motor1_start = true;
-                Serial.println("MADE IT INNNNNNNNNNNNNNNN");
-            } else {
-                zeroing_motor_1_torque_limit += 0.0001;
-                Serial.println(("Current torque: " + String(zeroing_motor_1_torque_limit)));
-            }
-            odrive1_.odrive_.setTorque(zeroing_motor_1_torque_limit);
-        }
+//         // Check if velocity is close to zero for motor 1
+//         if (motor1_start and (std::abs(velocity_motor1) < 5e-2)) {
+//             motor1_zeroed = true;
+//             odrive1_.odrive_.setTorque(0.0f);  // Stop applying torque
+//             Serial.println("PHI 1 DONEEEEE");
+//             phi_1_cali_offset = odrive1_.odrive_user_data_.last_feedback.Pos_Estimate;
+//         } else if (!motor1_zeroed) {
+//             if (!motor1_start and (std::abs(velocity_motor1) >= 5e-2)) {
+//                 motor1_start = true;
+//                 Serial.println("MADE IT INNNNNNNNNNNNNNNN");
+//             } else {
+//                 zeroing_motor_1_torque_limit += 0.0001;
+//                 Serial.println(("Current torque: " + String(zeroing_motor_1_torque_limit)));
+//             }
+//             odrive1_.odrive_.setTorque(zeroing_motor_1_torque_limit);
+//         }
 
-        // Small delay to allow ODrive feedback updates
-        delay(10);
-    }
+//         // Small delay to allow ODrive feedback updates
+//         delay(10);
+//     }
 
-    // Return true only if both motors have reached their zeroed state
-    return motor0_zeroed and motor1_zeroed;
-}
+//     // Return true only if both motors have reached their zeroed state
+//     return motor0_zeroed and motor1_zeroed;
+// }
 
 
 FingerData FingerManager::get_finger_data() {
     FingerData finger_data;
 
     // Store position estimates
-    finger_data.motor_pos_estimates[0] = odrive0_.odrive_user_data_.last_feedback.Pos_Estimate;
-    finger_data.motor_pos_estimates[1] = odrive1_.odrive_user_data_.last_feedback.Pos_Estimate;
+    finger_data.motor_pos_estimates[0] = odrive0_.odrive_user_data_.last_feedback.Pos_Estimate * 2 * M_PI;
+    finger_data.motor_pos_estimates[1] = odrive1_.odrive_user_data_.last_feedback.Pos_Estimate * 2 * M_PI;
 
     // Store velocity estimates
-    finger_data.motor_vel_estimates[0] = odrive0_.odrive_user_data_.last_feedback.Vel_Estimate;
-    finger_data.motor_vel_estimates[1] = odrive1_.odrive_user_data_.last_feedback.Vel_Estimate;
+    finger_data.motor_vel_estimates[0] = odrive0_.odrive_user_data_.last_feedback.Vel_Estimate * 2 * M_PI; // rad/s
+    finger_data.motor_vel_estimates[1] = odrive1_.odrive_user_data_.last_feedback.Vel_Estimate * 2 * M_PI;
 
     // Store motor temperature estimates
     finger_data.motor_temp_estimates[0] = odrive0_.odrive_user_data_.last_temperature.Motor_Temperature;
