@@ -48,7 +48,7 @@ class CommandBuffer:
         self.buffer = []
 
     def _clear_buffer_on_failure(self, request_message : Message):
-        print("Failed to clear buffer message")
+        ApplicationContext.error_manager.report_error("Failed to clear buffer message, no response", ErrorSeverity.WARNING)
 
     def execute_buffer(self, channel: CommunicationInterface):
         if self._is_sending_buffer:
@@ -74,7 +74,7 @@ class CommandBuffer:
         self.buffer = []
 
     def _execute_buffer_on_failure(self, request_message : Message):
-        print("Failed to execute buffer message")
+        print("Failed to execute buffer message, no response")
 
 
     def send_command_buffer(self, channel: CommunicationInterface):
@@ -108,7 +108,7 @@ class CommandBuffer:
 
     def send_command_buffer_async(self, channel: CommunicationInterface):
         if self._is_sending_buffer:
-            print("Buffer is already being sent")
+            ApplicationContext.error_manager.report_error("Cannot send buffer while sending buffer", ErrorSeverity.WARNING)
             return
         
         thread = threading.Thread(target=self.send_command_buffer, args=(channel,))
@@ -135,14 +135,14 @@ class CommandBuffer:
             if self._compare_sensor_event_messages(request_message, response_message):
                 self._successfully_sent = True
         else:
-            print("Unknown message type")
+            ApplicationContext.error_manager.report_error("Unknown message type", ErrorSeverity.WARNING)
             self._successfully_sent = False
 
         self._is_waiting = False
 
 
     def _command_msg_on_failure(self, request_message : Message):
-        ApplicationContext.error_manager.report_error("Failed to send command message message", ErrorSeverity.WARNING)
+        ApplicationContext.error_manager.report_error("Failed to send command message, no acknowledgement", ErrorSeverity.WARNING)
         self._successfully_sent = False
         self._is_waiting = False
 
@@ -151,12 +151,14 @@ class CommandBuffer:
         request_motor_id = request_message.get_field("motor_id").value()
         response_motor_id = motor_event_response.get_field("motor_id").value()
         if request_motor_id != response_motor_id:
+            ApplicationContext.error_manager.report_error(f"Motor ID mismatch: {request_motor_id} != {response_motor_id}", ErrorSeverity.WARNING)
             return False
         
         # check that the control mode is the same
         request_control_mode = request_message.get_field("control_mode").value()
         response_control_mode = motor_event_response.get_field("event_type").value()
         if request_control_mode != response_control_mode:
+            ApplicationContext.error_manager.report_error(f"Control mode mismatch: {request_control_mode} != {response_control_mode}", ErrorSeverity.WARNING)
             return False
         
         # check that the control value is the same
@@ -164,6 +166,7 @@ class CommandBuffer:
         response_control_value = motor_event_response.get_field("event_value").value()
 
         if request_control_value != response_control_value:
+            ApplicationContext.error_manager.report_error(f"Control value mismatch: {request_control_value} != {response_control_value}", ErrorSeverity.WARNING)
             return False
         
     def _compare_sensor_event_messages(self, request: Message, response: Message):
@@ -171,12 +174,14 @@ class CommandBuffer:
         request_sensor_id = request.get_field("sensor_id").value()
         response_sensor_id = response.get_field("sensor_id").value()
         if request_sensor_id != response_sensor_id:
+            ApplicationContext.error_manager.report_error(f"Sensor ID mismatch: {request_sensor_id} != {response_sensor_id}", ErrorSeverity.WARNING)
             return False
         
         # check that the sensor value is the same
         request_sensor_value = request.get_field("sensor_value").value()
         response_sensor_value = response.get_field("sensor_value").value()
         if request_sensor_value != response_sensor_value:
+            ApplicationContext.error_manager.report_error(f"Sensor value mismatch: {request_sensor_value} != {response_sensor_value}", ErrorSeverity.WARNING)
             return False
 
         return True
