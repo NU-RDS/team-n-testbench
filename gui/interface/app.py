@@ -3,7 +3,7 @@ from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QMainWindow, QDockWidget, QWidget, QVBoxLayout, QLabel
 from PyQt5.QtCore import Qt, QByteArray
 import json
-
+from app_context import ApplicationContext
 from util.path import PathUtil
 from interface.dock import DockRegistry
 
@@ -28,13 +28,29 @@ class MainWindow(QMainWindow):
 
     def setup_menus(self):
         menubar = self.menuBar()
-        viewMenu = menubar.addMenu("View")
+        view_menu = menubar.addMenu("View")
 
         DockRegistry.load_all_docks()
         for dock in DockRegistry.get_dock_names():
             docking_class = DockRegistry.get_dock(dock)
-            action = viewMenu.addAction(dock)
+            action = view_menu.addAction(dock)
             action.triggered.connect(lambda _, name=dock, cls=docking_class: self.add_new_frame(name, cls))
+
+        behaviors = menubar.addMenu("Behaviors")
+        # whenever you click the behaviors menu, it will open a file dialog
+        # and you can select a behavior file to load
+        load_behavior = behaviors.addAction("Load Behavior")
+        load_behavior.triggered.connect(self.load_behavior)
+
+    def load_behavior(self):
+        print("Loading behavior...")
+        file_dialog = QtWidgets.QFileDialog()
+        file_dialog.setFileMode(QtWidgets.QFileDialog.ExistingFile)
+        file_dialog.setNameFilter("Behavior Files (*.csv)")
+        if file_dialog.exec_():
+            file_path = file_dialog.selectedFiles()[0]
+            print(f"Selected file: {file_path}")
+            ApplicationContext.mcu_com.load_command_buffer(file_path)
 
     def add_new_frame(self, docking_name, docking_class):
         # Create a new dock widget and give it a unique object name

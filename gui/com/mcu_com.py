@@ -76,6 +76,9 @@ class MCUCom:
     def get_current_command_buffer(self):
         return self.command_buffer.get_buffer()
     
+    def load_command_buffer(self, path : str):
+        self.command_buffer.load_buffer_from_file(path)
+    
     
     def send_hearbeat(self):
         heartbeat = MessageDefinitions.create_heartbeat_message(MessageType.REQUEST, random.randint(0, 100))

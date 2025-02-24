@@ -2,6 +2,7 @@ from rdscom.rdscom import CommunicationInterface, Message, MessageType, Communic
 from com.message_definitions import MessageDefinitions
 from interface.error_manager import ErrorManager, ErrorSeverity
 import threading
+from interface.docks.control import ControlModes
 from app_context import ApplicationContext
 
 class CommandBuffer:
@@ -25,6 +26,30 @@ class CommandBuffer:
         # return a copy of the buffer
         return self.buffer.copy()
     
+    def load_buffer_from_file(self, file_path: str):
+        self.buffer = []
+        print(f"Loading buffer from file: {file_path}")
+        with open(file_path, "r") as file:
+            lines = file.readlines()
+            for line in lines:
+                # print(f"Line: {line}")
+                angles = line.split(",")
+                # print(f"Angles: {angles}")
+
+                if len(angles) < 2:
+                    ApplicationContext.error_manager.report_error("Invalid line in buffer file", ErrorSeverity.WARNING)
+                    break
+
+                angle_1 = float(angles[0])
+                angle_2 = float(angles[1])
+
+                # create a message for each angle
+                message_1 = MessageDefinitions.create_motor_control_message(MessageType.REQUEST, 0, ControlModes.POSITION, angle_1, True)
+                message_2 = MessageDefinitions.create_motor_control_message(MessageType.REQUEST, 1, ControlModes.POSITION, angle_2, True)
+
+                self.add_command(message_1)
+                self.add_command(message_2)
+
     def clear_buffer(self, com : CommunicationInterface):
         if self._is_sending_buffer:
             ApplicationContext.error_manager.report_error("Cannot clear buffer while sending buffer", ErrorSeverity.WARNING)

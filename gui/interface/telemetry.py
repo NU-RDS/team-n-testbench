@@ -2,7 +2,6 @@ from rdscom.rdscom import Message, CommunicationChannel, DataField, Communicatio
 from com.message_definitions import MessageDefinitions
 from interface.error_manager import ErrorSeverity
 from app_context import ApplicationContext
-from com.mcu_com import MCUCom
 import time
 
 class SensorDataSnapshot:

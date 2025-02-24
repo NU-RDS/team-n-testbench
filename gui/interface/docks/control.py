@@ -2,7 +2,6 @@ from interface.dock import dock, ImmediateInspectorDock
 from interface.imqt import LayoutUtility, FontStyle, LayoutAlignment
 from rdscom.rdscom import Message, CommunicationChannel, DataField
 from com.message_definitions import MessageDefinitions
-from com.mcu_com import MCUCom
 from app_context import ApplicationContext
 from rdscom.rdscom import MessageType
 from interface.telemetry import Telemetry
