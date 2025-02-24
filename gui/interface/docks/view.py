@@ -26,7 +26,7 @@ class OpenGLWidget(QtOpenGL.QGLWidget):
         )
 
     def initializeGL(self):
-        needed_meshes = ["crystal", "base"]
+        needed_meshes = ["crystal", "base", "link_1", "link_2"]
         for mesh_name in needed_meshes:
             self.renderer.add_mesh(Mesh.from_obj_file(PathUtil.asset_file_path(f"meshes/{mesh_name}.obj")), mesh_name)
 
