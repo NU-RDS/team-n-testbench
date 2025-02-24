@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include "can_helpers.hpp"
 #include <string>
+#include "utils/filters.hpp"
 
 /// \brief: The Struct to contain feedback from the ODrive
 struct ODriveUserData
@@ -17,6 +18,10 @@ struct ODriveUserData
   uint32_t last_error;
   Get_Temperature_msg_t last_temperature;
   bool received_temperature = false;
+  MovingAverageFilter pos_filter = MovingAverageFilter(5); /// Moving average filter for position estimates
+  MovingAverageFilter vel_filter = MovingAverageFilter(5); /// Moving average filter for velocity estimates
+  MovingAverageFilter motor_temp_filter = MovingAverageFilter(5); /// Moving average filter for motor temp estimates
+  MovingAverageFilter fet_temp_filter = MovingAverageFilter(5); /// Moving average filter for FET temp estimates
 };
 
 /// \brief Structure for setting ODrive Parameters

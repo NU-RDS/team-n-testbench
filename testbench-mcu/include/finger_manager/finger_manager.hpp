@@ -3,7 +3,6 @@
 
 #include "odrive_manager/odrive_manager.hpp"
 #include "robot_description/finger.hpp"
-#include "utils/filters.hpp"
 #include <Arduino.h>
 #include <math.h>
 
@@ -116,7 +115,6 @@ public:
     FlexCAN_T4<CAN3, RX_SIZE_256, TX_SIZE_256> &canbus1_; /// CAN bus for second ODrive
     ODriveManager<CAN2> &odrive0_; /// Address of first ODrive
     ODriveManager<CAN3> &odrive1_; /// Address of second ODrive
-    MovingAverageFilter filter = 5; /// Moving average filter
 };
 
 FingerManager::FingerManager(
@@ -263,8 +261,8 @@ std::vector<float> FingerManager::theta_to_torque(std::vector<float> theta_dif, 
 void FingerManager::move_js(std::vector<float> theta_des) 
 {
     // Get position difference
-    const float phi_0 = filter.update(odrive0_.odrive_user_data_.last_feedback.Pos_Estimate);
-    const float phi_1 = filter.update(odrive1_.odrive_user_data_.last_feedback.Pos_Estimate); 
+    const float phi_0 = odrive0_.odrive_user_data_.last_feedback.Pos_Estimate;
+    const float phi_1 = odrive1_.odrive_user_data_.last_feedback.Pos_Estimate; 
     std::vector<float> joint_thetas = phi_to_theta({phi_0, phi_1});
     joint_thetas = soft_limit_torques(joint_thetas);
     const float theta_0_dif = theta_des.at(0) - joint_thetas.at(0);
@@ -291,12 +289,14 @@ FingerData FingerManager::get_finger_data() {
     finger_data.motor_vel_estimates[0] = odrive0_.odrive_user_data_.last_feedback.Vel_Estimate;
     finger_data.motor_vel_estimates[1] = odrive1_.odrive_user_data_.last_feedback.Vel_Estimate;
 
-    // Store temperature estimates
+    // Store motor temperature estimates
     finger_data.motor_temp_estimates[0] = odrive0_.odrive_user_data_.last_temperature.Motor_Temperature;
     finger_data.motor_temp_estimates[1] = odrive0_.odrive_user_data_.last_temperature.Motor_Temperature;
 
     // Store joint angle estimates
-
+    std::vector<float> phi = theta_to_phi({finger_data.motor_pos_estimates[0], finger_data.motor_pos_estimates[1]});
+    finger_data.joint_angles[0] = phi[0]; 
+    finger_data.joint_angles[1] = phi[1]; 
 
     return finger_data;
 }
