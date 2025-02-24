@@ -154,14 +154,14 @@ UserCommandBuffer::CommandSlice UserCommandBuffer::findNextSlice(const CommandSl
 }
 
 /**------------------------------------------------------------------------
- *                    MotorControlCommand Implementation
+ *                    FingerControlCommand Implementation
  *------------------------------------------------------------------------**/
 
-MotorControlCommand::MotorControlCommand(std::uint8_t motorId, MotorControlType controlType, float controlValue, bool simultaneous)
-    : _motorId(motorId), _controlType(controlType), _controlValue(controlValue), _simultaneous(simultaneous) {
+FingerControlCommand::FingerControlCommand(std::uint8_t fingerJoinID, FingerControlType controlType, float controlValue, bool simultaneous)
+    : _fingerID(fingerJoinID), _controlType(controlType), _controlValue(controlValue), _simultaneous(simultaneous) {
 }
 
-rdscom::Result<MotorControlCommand> MotorControlCommand::fromMessage(const rdscom::Message &msg) {
+rdscom::Result<FingerControlCommand> FingerControlCommand::fromMessage(const rdscom::Message &msg) {
     bool error = rdscom::check(
         rdscom::defaultErrorCallback(std::cerr),
         msg.getField<std::uint8_t>("motor_id"),
@@ -170,33 +170,34 @@ rdscom::Result<MotorControlCommand> MotorControlCommand::fromMessage(const rdsco
         msg.getField<std::uint8_t>("simultaneous"));
 
     if (error) {
-        return rdscom::Result<MotorControlCommand>::errorResult("Error parsing message fields");
+        return rdscom::Result<FingerControlCommand>::errorResult("Error parsing message fields");
     }
 
-    std::uint8_t motorId = msg.getField<std::uint8_t>("motor_id").value();
-    MotorControlType controlType = static_cast<MotorControlType>(msg.getField<std::uint8_t>("control_mode").value());
+    std::uint8_t fingerJoinID = msg.getField<std::uint8_t>("motor_id").value();
+    FingerControlType controlType = static_cast<FingerControlType>(msg.getField<std::uint8_t>("control_mode").value());
     float controlValue = msg.getField<float>("control_value").value();
     bool simultaneous = msg.getField<std::uint8_t>("simultaneous").value() != 0;
 
-    return rdscom::Result<MotorControlCommand>::ok(MotorControlCommand(motorId, controlType, controlValue, simultaneous));
+    return rdscom::Result<FingerControlCommand>::ok(FingerControlCommand(fingerJoinID, controlType, controlValue, simultaneous));
 }
 
-bool MotorControlCommand::isDone() {
-    return millis() - _startTime > 1000;
+bool FingerControlCommand::isDone() {
+
 }
 
-void MotorControlCommand::onReset() {
+void FingerControlCommand::onReset() {
     // Implement reset behavior if needed.
 }
 
-void MotorControlCommand::onStart() {
-    // Implement start behavior if needed.
+void FingerControlCommand::onStart() {
+
 }
 
-void MotorControlCommand::onUpdate() {
+void FingerControlCommand::onUpdate() {
     // Implement update behavior if needed.
+    
 }
 
-void MotorControlCommand::onEnd() {
+void FingerControlCommand::onEnd() {
     // Implement end behavior if needed.
 }

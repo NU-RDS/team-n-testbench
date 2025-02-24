@@ -61,18 +61,18 @@ void MessageHandlers::onHeartbeatMessage(const rdscom::Message &msg) {
 
 /// @brief Handler for MotorControl messages.
 void MessageHandlers::onMotorControlMessage(const rdscom::Message &msg) {
-    auto result = MotorControlCommand::fromMessage(msg);
+    auto result = FingerControlCommand::fromMessage(msg);
     if (!result) {
         std::cerr << "Error parsing MotorControl message\n";
         rdscom::Message response = rdscom::Message::createResponse(msg, msgs::motorControlProto());
         return;
     }
 
-    MotorControlCommand command = result.value();
-    _commandBuffer.addCommand(std::make_shared<MotorControlCommand>(command));
+    FingerControlCommand command = result.value();
+    _commandBuffer.addCommand(std::make_shared<FingerControlCommand>(command));
     rdscom::Message response = createMotorControlMessageResponse(
         msg,
-        command.motorId(),
+        command.fingerJoinID(),
         static_cast<std::uint8_t>(command.controlType()),
         command.controlValue(),
         command.simultaneous()

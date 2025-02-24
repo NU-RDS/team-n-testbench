@@ -132,7 +132,7 @@ class UserCommandBuffer {
 };
 
 /// @brief Enumeration for motor control types.
-enum MotorControlType : std::uint8_t {
+enum FingerControlType : std::uint8_t {
     POSITION = 0,  ///< Position control.
     VELOCITY = 1,  ///< Velocity control.
     TORQUE = 2     ///< Torque control.
@@ -140,34 +140,34 @@ enum MotorControlType : std::uint8_t {
 
 /// @brief Command to control a motor.
 /// This command is used to control motors and is created from rdscom messages.
-class MotorControlCommand : public UserCommand {
+class FingerControlCommand : public UserCommand {
    public:
     /// @brief Constructs a MotorControlCommand.
-    /// @param motorId The motor ID.
+    /// @param fingerJoinID The finter joint ID.
     /// @param controlType The type of control.
     /// @param controlValue The value for control.
     /// @param simultaneous Whether the command is simultaneous.
-    MotorControlCommand(std::uint8_t motorId, MotorControlType controlType, float controlValue, bool simultaneous);
+    FingerControlCommand(std::uint8_t fingerJoinID, FingerControlType controlType, float controlValue, bool simultaneous);
 
-    MotorControlCommand() : MotorControlCommand(255, MotorControlType::POSITION, 0.0f, false) {}
+    FingerControlCommand() : FingerControlCommand(255, FingerControlType::POSITION, 0.0f, false) {}
 
     /// @brief Creates a MotorControlCommand from an rdscom message.
     /// @param msg The message containing command data.
     /// @return A Result wrapping the MotorControlCommand.
-    static rdscom::Result<MotorControlCommand> fromMessage(const rdscom::Message &msg);
+    static rdscom::Result<FingerControlCommand> fromMessage(const rdscom::Message &msg);
 
     /// @brief Checks whether the command is done.
     /// @return true if the command has completed.
     bool isDone() override;
 
-    std::uint8_t motorId() const { return _motorId; }
-    MotorControlType controlType() const { return _controlType; }
+    std::uint8_t fingerJoinID() const { return _fingerID; }
+    FingerControlType controlType() const { return _controlType; }
     float controlValue() const { return _controlValue; }
     bool simultaneous() const { return _simultaneous; }
 
    private:
-    std::uint8_t _motorId;          ///< The motor identifier.
-    MotorControlType _controlType;  ///< The control type.
+    std::uint8_t _fingerID;          ///< The motor identifier.
+    FingerControlType _controlType;  ///< The control type.
     float _controlValue;            ///< The control value.
     bool _simultaneous;             ///< Whether the command is simultaneous.
 
