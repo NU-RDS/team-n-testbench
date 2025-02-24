@@ -14,6 +14,7 @@ ODriveManager<CAN2> odrive0 = ODriveManager<CAN2>(canbus0, ODRIVE0_ID, odrive0_u
 /// @brief: Odrive manager object for the second motor
 ODriveManager<CAN3> odrive1 = ODriveManager<CAN3>(canbus1, ODRIVE1_ID, odrive1_user_data);
 
+FingerData finger_data{};
 
 // Called for every message that arrives on the CAN bus
 void callback_odrive0(const CanMsg &msg)
@@ -25,6 +26,13 @@ void callback_odrive1(const CanMsg &msg)
 {
     onReceive(msg, odrive1.odrive_);
 }
+
+/// @brief Reboot the Teensy
+void reboot()
+{
+    SCB_AIRCR = 0x05FA0004;
+}
+
 
 /// @brief  Finger manager object for N demo
 FingerManager finger_manager{canbus0, canbus1, odrive0, odrive1, callback_odrive0, callback_odrive1};
@@ -45,7 +53,8 @@ void setup() {
 
     if (!finger_manager.initialize())
     {
-        Serial.println("CAN failed to initialize: reset required");
+        Serial.println("CAN failed to initialize: Rebooting the teensy");
+        reboot();
     }
 
     Serial.println("Setup complete");
@@ -54,15 +63,12 @@ void setup() {
 
 void loop() {
 
+    // finger_manager.move_js({0.0f, 0.0f});
+    finger_data = finger_manager.get_finger_data();
 
-    if (odrive0_user_data.received_feedback) {
-        Get_Encoder_Estimates_msg_t feedback = odrive0_user_data.last_feedback;
-        odrive0_user_data.received_feedback = false;
-        Serial.println("odrv0-pos:");
-        Serial.println(feedback.Pos_Estimate);
-        Serial.println("odrv0-vel:");
-        Serial.println(feedback.Vel_Estimate);
+    Serial.println("Joint 0 - " + String(finger_data.estimated_joint_angles[0]));
+    Serial.println("Joint 1 - " + String(finger_data.estimated_joint_angles[0]));
 
-      }
+    delay(5);
 
 }

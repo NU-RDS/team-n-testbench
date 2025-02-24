@@ -44,7 +44,7 @@ struct FingerData
      * @brief Computed joint angles
      * @details Stores the calculated joint angles based on encoder readings
      */
-    float joint_angles[2];
+    float estimated_joint_angles[2];
 };
 
 /**
@@ -326,7 +326,7 @@ bool FingerManager::zero()
         } else if (!motor1_zeroed) {
             odrive1_.set_torque(-zeroing_motor_torque_limit);
         }
-        
+
         // Small delay to allow ODrive feedback updates
         delay(10);
     }
@@ -353,8 +353,8 @@ FingerData FingerManager::get_finger_data() {
 
     // Store joint angle estimates
     std::vector<float> phi = theta_to_phi({finger_data.motor_pos_estimates[0], finger_data.motor_pos_estimates[1]});
-    finger_data.joint_angles[0] = phi[0]; 
-    finger_data.joint_angles[1] = phi[1]; 
+    finger_data.estimated_joint_angles[0] = phi[0]; 
+    finger_data.estimated_joint_angles[1] = phi[1]; 
 
     return finger_data;
 }
