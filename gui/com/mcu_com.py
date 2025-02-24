@@ -31,6 +31,8 @@ class MCUCom:
         self.timer_group = TimerGroup()
         self.on_send_callbacks = []  # listof func(message)
         self.command_buffer = CommandBuffer()
+        self.message_history = []
+        self.message_event_callbacks = []  # listof func(message)
 
         # now add all of the prototypes
         for proto in MessageDefinitions.all_protos():
@@ -41,10 +43,9 @@ class MCUCom:
             self.comm_interface.add_callback(proto_id, MessageType.REQUEST, self.handle_message_event)
             self.comm_interface.add_callback(proto_id, MessageType.ERROR, self.handle_message_event)
 
-        self.timer_group.add_task(50000, self.send_hearbeat)
+        self.command_buffer.add_callback_on_send(self.handle_message_event)
 
-    def add_message_event_callback(self, callback):
-        self.message_event_callbacks.append(callback)
+        self.timer_group.add_task(50000, self.send_hearbeat)
 
     def handle_message_event(self, message: Message):
         self.message_history.append(message)
@@ -65,13 +66,10 @@ class MCUCom:
         self.command_buffer.add_command(message)
 
     def send_buffer(self):
-        for message in self.tx_message_buffer:
-            self.send_message(message)
-
-        self.tx_message_buffer = []
+        self.command_buffer.send_command_buffer_async(self.comm_interface)
 
     def get_buffered_messages(self):
-        return self.tx_message_buffer
+        return self.command_buffer.get_buffer()
     
     def on_heartbeat_failure(self):
         print("Heartbeat failure")

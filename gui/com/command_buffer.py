@@ -1,4 +1,4 @@
-from rdscom.rdscom import CommunicationChannel, Message, MessageType
+from rdscom.rdscom import CommunicationChannel, Message, MessageType, CommunicationInterface
 from com.message_definitions import MessageDefinitions
 
 import threading
@@ -9,6 +9,7 @@ class CommandBuffer:
         self._successfully_sent = False
         self._is_waiting = False
         self._is_sending_buffer = False
+        self.callbacks_on_send = []
 
     def add_command(self, message: Message):
         self.buffer.append(message)
@@ -16,7 +17,14 @@ class CommandBuffer:
     def is_sending_buffer(self):
         return self._is_sending_buffer
     
-    def clear_buffer(self, channel : CommunicationChannel):
+    def add_callback_on_send(self, callback):
+        self.callbacks_on_send.append(callback)
+    
+    def get_buffer(self):
+        # return a copy of the buffer
+        return self.buffer.copy()
+    
+    def clear_buffer(self, channel : CommunicationInterface):
         if self._is_sending_buffer:
             print("Cannot clear buffer while sending buffer")
             return
@@ -24,9 +32,12 @@ class CommandBuffer:
         # send a request to clear the buffer
         clear_buffer_message = MessageDefinitions.create_clear_buffer_message()
         on_success = lambda response_message : self._clear_buffer_on_success(clear_buffer_message, response_message)
-        on_failure = lambda response_message : self._clear_buffer_on_failure(clear_buffer_message, response_message)
+        on_failure = lambda response_message : self._clear_buffer_on_failure(clear_buffer_message)
         
-        channel.send(clear_buffer_message, ack_required=True, on_success=on_success, on_failure=on_failure)
+        channel.send_message(clear_buffer_message, ack_required=True, on_success=on_success, on_failure=on_failure)
+
+        for callback in self.callbacks_on_send:
+            callback(clear_buffer_message)
 
     def _clear_buffer_on_success(self, request_message : Message, response_message : Message):        
         if response_message.data().type().identifier() != MessageDefinitions.CLEAR_BUFFER_MESSAGE:
@@ -35,10 +46,10 @@ class CommandBuffer:
         
         self.buffer = []
 
-    def _clear_buffer_on_failure(self, request_message : Message, response_message : Message):
+    def _clear_buffer_on_failure(self, request_message : Message):
         print("Failed to clear buffer message")
 
-    def execute_buffer(self, channel: CommunicationChannel):
+    def execute_buffer(self, channel: CommunicationInterface):
         if self._is_sending_buffer:
             print("Cannot execute buffer while sending buffer")
             return
@@ -46,8 +57,11 @@ class CommandBuffer:
         random_value = 0
         control_go_message = MessageDefinitions.create_control_go_message(MessageType.REQUEST, random_value)
         on_success = lambda response_message : self._execute_buffer_on_success(control_go_message, response_message)
-        on_failure = lambda response_message : self._execute_buffer_on_failure(control_go_message, response_message)
-        channel.send(control_go_message, ack_required=True, on_success=on_success, on_failure=on_failure)
+        on_failure = lambda response_message : self._execute_buffer_on_failure(control_go_message)
+        channel.send_message(control_go_message, ack_required=True, on_success=on_success, on_failure=on_failure)
+
+        for callback in self.callbacks_on_send:
+            callback(control_go_message)
 
 
     def _execute_buffer_on_success(self, request_message : Message, response_message : Message):
@@ -58,23 +72,25 @@ class CommandBuffer:
         print("Buffer executed successfully")
         self.buffer = []
 
-    def _execute_buffer_on_failure(self, request_message : Message, response_message : Message):
+    def _execute_buffer_on_failure(self, request_message : Message):
         print("Failed to execute buffer message")
 
 
-
-    def send_command_buffer(self, channel: CommunicationChannel):
+    def send_command_buffer(self, channel: CommunicationInterface):
         self._is_sending_buffer = True
         for message in self.buffer:
             # curry the message into the lambda function
             on_success_curry = lambda response_message : self._command_msg_on_success(message, response_message)
-            on_failure_curry = lambda response_message : self._command_msg_on_failure(message, response_message)
+            on_failure_curry = lambda response_message : self._command_msg_on_failure(message)
 
             self._is_waiting = True
-            channel.send(message, ack_required=True, on_success=on_success_curry, on_failure=on_failure_curry)
+            channel.send_message(message, ack_required=True, on_success=on_success_curry, on_failure=on_failure_curry)
             
             while self._is_waiting:
                 pass # wait for the message to be sent
+
+            for callback in self.callbacks_on_send:
+                callback(message)
 
 
         if not self._successfully_sent:
@@ -83,12 +99,12 @@ class CommandBuffer:
             self.clear_buffer(channel)
             return
         else:
+            print("Buffer was successfully sent")
+            self.execute_buffer(channel) # will clear the buffer once the buffer is executed
         
         self._is_sending_buffer = False
 
-        self.buffer = []
-
-    def send_command_buffer_async(self, channel: CommunicationChannel):
+    def send_command_buffer_async(self, channel: CommunicationInterface):
         if self._is_sending_buffer:
             print("Buffer is already being sent")
             return
@@ -96,7 +112,6 @@ class CommandBuffer:
         self._is_sending_buffer = True
         thread = threading.Thread(target=self.send_command_buffer, args=(channel,))
         thread.start()
-
 
 
     def _command_msg_on_success(self, request_message : Message, response_message : Message):
@@ -124,7 +139,7 @@ class CommandBuffer:
 
 
 
-    def _command_msg_on_failure(self, request_message : Message, response_message : Message):
+    def _command_msg_on_failure(self, request_message : Message):
         self._successfully_sent = False
         self._is_waiting = False
 
