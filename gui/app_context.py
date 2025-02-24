@@ -4,6 +4,7 @@ class ApplicationContext:
     mcu_com = None
     app_interface = None
     error_manager = None
+    telemetry = None
 
     @staticmethod
     def initialize(args):
@@ -17,11 +18,13 @@ class ApplicationContext:
         from interface.error_manager import ErrorManager
         from interface.app import AppInterface
         from com.mcu_com import MCUCom
+        from interface.telemetry import Telemetry
 
 
         ApplicationContext.mcu_com = MCUCom(args.port, args.baudrate)
-        ApplicationContext.app_interface = AppInterface()
+        ApplicationContext.telemetry = Telemetry()
         ApplicationContext.error_manager = ErrorManager()
+        ApplicationContext.app_interface = AppInterface()
 
     @staticmethod
     def tick():

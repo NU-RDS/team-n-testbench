@@ -147,11 +147,11 @@ class MessageDefinitions:
         Creates the StartSensorDatastream DataPrototype (ID: 5).
 
         Fields:
-        - "sensor_id": UINT8
+        - "joint_id": UINT8
         - "frequency": UINT8
         """
         proto = DataPrototype(MessageDefinitions.start_sensor_datastream_id())
-        proto.add_field("sensor_id", DataFieldType.UINT8)
+        proto.add_field("joint_id", DataFieldType.UINT8)
         proto.add_field("frequency", DataFieldType.UINT8)
         return proto
 
@@ -161,11 +161,11 @@ class MessageDefinitions:
         Creates the SensorDatastream DataPrototype (ID: 6).
 
         Fields:
-        - "sensor_id": UINT8
+        - "joint_id": UINT8
         - "data": FLOAT
         """
         proto = DataPrototype(MessageDefinitions.sensor_datastream_id())
-        proto.add_field("sensor_id", DataFieldType.UINT8)
+        proto.add_field("joint_id", DataFieldType.UINT8)
         proto.add_field("data", DataFieldType.FLOAT)
         return proto
 
@@ -175,10 +175,10 @@ class MessageDefinitions:
         Creates the StopSensorDatastream DataPrototype (ID: 7).
 
         Fields:
-        - "sensor_id": UINT8
+        - "joint_id": UINT8
         """
         proto = DataPrototype(MessageDefinitions.stop_sensor_datastream_id())
-        proto.add_field("sensor_id", DataFieldType.UINT8)
+        proto.add_field("joint_id", DataFieldType.UINT8)
         return proto
 
     @staticmethod
@@ -396,60 +396,60 @@ class MessageDefinitions:
 
     @staticmethod
     def create_start_sensor_datastream_message(
-        msg_type: MessageType, sensor_id: int, frequency: int
+        msg_type: MessageType, joint_id: int, frequency: int
     ) -> Message:
         """
         Creates a StartSensorDatastream message.
 
         Args:
         msg_type: The MessageType.
-        sensor_id: The sensor identifier (UINT8).
+        joint_id: The sensor identifier (UINT8).
         frequency: Frequency in Hz (UINT8).
 
         Returns:
         A Message object.
         """
         msg = Message.from_type_and_proto(msg_type, MessageDefinitions.start_sensor_datastream_proto())
-        msg.set_field("sensor_id", sensor_id)
+        msg.set_field("joint_id", joint_id)
         msg.set_field("frequency", frequency)
         return msg
 
     @staticmethod
     def create_sensor_datastream_message(
-        msg_type: MessageType, sensor_id: int, data: float
+        msg_type: MessageType, joint_id: int, data: float
     ) -> Message:
         """
         Creates a SensorDatastream message.
 
         Args:
         msg_type: The MessageType.
-        sensor_id: The sensor identifier (UINT8).
+        joint_id: The sensor identifier (UINT8).
         data: The sensor data (FLOAT).
 
         Returns:
         A Message object.
         """
         msg = Message.from_type_and_proto(msg_type, MessageDefinitions.sensor_datastream_proto())
-        msg.set_field("sensor_id", sensor_id)
+        msg.set_field("joint_id", joint_id)
         msg.set_field("data", data)
         return msg
 
     @staticmethod
     def create_stop_sensor_datastream_message(
-        msg_type: MessageType, sensor_id: int
+        msg_type: MessageType, joint_id: int
     ) -> Message:
         """
         Creates a StopSensorDatastream message.
 
         Args:
         msg_type: The MessageType.
-        sensor_id: The sensor identifier (UINT8).
+        joint_id: The sensor identifier (UINT8).
 
         Returns:
         A Message object.
         """
         msg = Message.from_type_and_proto(msg_type, MessageDefinitions.stop_sensor_datastream_proto())
-        msg.set_field("sensor_id", sensor_id)
+        msg.set_field("joint_id", joint_id)
         return msg
 
     @staticmethod

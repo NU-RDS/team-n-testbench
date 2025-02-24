@@ -5,6 +5,7 @@ from com.message_definitions import MessageDefinitions
 from com.mcu_com import MCUCom
 from app_context import ApplicationContext
 from rdscom.rdscom import MessageType
+from interface.telemetry import Telemetry
 
 
 class ControlModes:
@@ -51,6 +52,17 @@ class ControlDock(ImmediateInspectorDock):
 
         ApplicationContext.mcu_com.send_buffer_message(message)
 
+    def send_datastream_start(self, joint_number: int):
+        ApplicationContext.telemetry.enable_sensor_datastream(joint_number, 100)
+
+    def send_datastream_stop(self, joint_number: int):
+        ApplicationContext.telemetry.disable_sensor_datastream(joint_number)
+        
+
+    def send_datastream_stop(self, joint_number: int):
+        message = MessageDefinitions.create_stop_sensor_datastream_message(MessageType.REQUEST, joint_number)
+        ApplicationContext.mcu_com.send_message(message, ack_required=True)
+
 
     def draw_control_value(self, type : str, label: str, default_value: int) -> ControlValues:
         self.builder.label(label, font_style=FontStyle.BOLD)
@@ -58,8 +70,8 @@ class ControlDock(ImmediateInspectorDock):
         simultaneous = self.builder.toggle("Simultaneous", initial_value=False)
         return ControlValues(value, simultaneous)
         
-    def draw_motor_control(self, motor_num: int):
-        self.builder.label(f"Motor {motor_num}", font_style=FontStyle.BOLD)
+    def draw_joint_control(self, joint_number: int):
+        self.builder.label(f"Joint {joint_number}", font_style=FontStyle.BOLD)
 
         self.builder.begin_vertical()
         mode = self.builder.dropdown(
@@ -72,7 +84,13 @@ class ControlDock(ImmediateInspectorDock):
         # button to submit control
         if self.builder.button("Submit Control"):
             control_mode = ControlModes.all_modes()[mode]
-            self.send_control_command(motor_num, control_mode, control_values.control_value, control_values.simultaneous)
+            self.send_control_command(joint_number, control_mode, control_values.control_value, control_values.simultaneous)
+
+        data_stream =  self.builder.toggle("Enable Datastream", initial_value=False)
+        if data_stream and not ApplicationContext.telemetry.is_active(joint_number):
+            self.send_datastream_start(joint_number)
+        elif not data_stream and ApplicationContext.telemetry.is_active(joint_number):
+            self.send_datastream_stop(joint_number)
 
         self.builder.end_vertical()
 
@@ -80,7 +98,7 @@ class ControlDock(ImmediateInspectorDock):
         self.builder.begin_horizontal()
         for motor_num in range(2):
             self.builder.begin_vertical(alignment=LayoutAlignment.CENTER)
-            self.draw_motor_control(motor_num)
+            self.draw_joint_control(motor_num)
             self.builder.end_vertical()
         self.builder.end_horizontal()
 

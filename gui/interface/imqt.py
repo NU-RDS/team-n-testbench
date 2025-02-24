@@ -145,6 +145,8 @@ class LayoutUtility:
     # --------------------------------------------------------------------------
     def label(self, text, text_color=None, bg_color=None, font_size=None, extra_styles="", font_style=FontStyle.NORMAL):
         widget_id = self._get_key(text)
+        # make sure the label is not bytes
+        text = str(text)
         lbl = QLabel(text)
         apply_style(lbl, text_color, bg_color, font_size, extra_styles, font_style=font_style)
         self._current_layout.addWidget(lbl)
