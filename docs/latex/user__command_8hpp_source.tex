@@ -1,0 +1,152 @@
+\doxysection{user\+\_\+command.\+hpp}
+\hypertarget{user__command_8hpp_source}{}\label{user__command_8hpp_source}\index{testbench-\/mcu/include/user\_command.hpp@{testbench-\/mcu/include/user\_command.hpp}}
+\mbox{\hyperlink{user__command_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ \_\_USER\_COMMAND\_H\_\_}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ \_\_USER\_COMMAND\_H\_\_}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ <Arduino.h>}}
+\DoxyCodeLine{00005\ }
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ <memory>}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ <rdscom.hpp>}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ <vector>}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00012\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_user_command_af0233e9ab7d6d0af74e42ddd3d066eb0}{UserCommand}}\ \{}
+\DoxyCodeLine{00013\ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00014\ \ \ \ \ \mbox{\hyperlink{class_user_command_af0233e9ab7d6d0af74e42ddd3d066eb0}{UserCommand}}();}
+\DoxyCodeLine{00015\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{class_user_command_a4f2c785c0fe6bdeb3899f7c088b616e1}{\string~UserCommand}}();}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00018\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_user_command_a44c031c5e3ce341de5364b7801fec4b3}{reset}}();}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00021\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_user_command_ac397eff82c8cef55309c3bc19a8a30c1}{start}}();}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00024\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_user_command_a1addfe19d242d9d5f37a0d4edd6e73f3}{update}}();}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00027\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_user_command_aeb0933876b0d6993fea1750aefca6642}{end}}();}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00031\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_user_command_a61c9b01208426239360e115ba116e929}{isDone}}()\ =\ 0;}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00035\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_user_command_a418eb20235071974d306dc732d619d87}{isParralelizable}}();}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00039\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_user_command_a4ba158db84a91cb118c53899528c147f}{hasStarted}}();}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00043\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_user_command_a4334cf219154321e3234212ac0227e05}{hasEnded}}();}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \ \ \ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00046\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_user_command_a0abcb67688c88011b402b22563309019}{\_parralelizable}};\ \ \ \ \ \ }
+\DoxyCodeLine{00047\ \ \ \ \ std::uint32\_t\ \mbox{\hyperlink{class_user_command_a066bbaf8e705c67e2503e2862d176b23}{\_startTime}};\ \ }
+\DoxyCodeLine{00048\ \ \ \ \ std::uint32\_t\ \mbox{\hyperlink{class_user_command_a1a2fc35c37c37b16041c6b8e29a1e576}{\_endTime}};\ \ \ \ }
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00051\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_user_command_ab6be4a1cf1e1200fda25e42e86ab2361}{onReset}}()\ =\ 0;}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00054\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_user_command_a08556a59c5d47ff895fe7fe7bcbfa0ad}{onStart}}()\ =\ 0;}
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00057\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_user_command_a72db79de26917ec7f6845045562ae541}{onUpdate}}()\ =\ 0;}
+\DoxyCodeLine{00058\ }
+\DoxyCodeLine{00060\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_user_command_a86e6152c1cfea153d5880e174e496c88}{onEnd}}()\ =\ 0;}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00062\ \ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00063\ \ \ \ \ \textcolor{keywordtype}{bool}\ \_hasStarted;\ \ }
+\DoxyCodeLine{00064\ \ \ \ \ \textcolor{keywordtype}{bool}\ \_hasEnded;\ \ \ \ }
+\DoxyCodeLine{00065\ \};}
+\DoxyCodeLine{00066\ }
+\DoxyCodeLine{00069\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_user_command_buffer_a6aa9caaeaddbbc1b3cb856dd8f6c4942}{UserCommandBuffer}}\ \{}
+\DoxyCodeLine{00070\ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00071\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_user_command_buffer_1_1_execution_stats}{ExecutionStats}}\ \{}
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ std::uint32\_t\ \mbox{\hyperlink{struct_user_command_buffer_1_1_execution_stats_a892d878ebf913bdbb50846285685c082}{time}};\ \ \ \ \ }
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ std::uint8\_t\ \mbox{\hyperlink{struct_user_command_buffer_1_1_execution_stats_a71f29bd9fa68d1bb437479917a434ed3}{executed}};\ \ }
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{struct_user_command_buffer_1_1_execution_stats_ad425c843a92eabd7676b355fb44be237}{success}};\ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00075\ \ \ \ \ \};}
+\DoxyCodeLine{00076\ }
+\DoxyCodeLine{00078\ \ \ \ \ \mbox{\hyperlink{class_user_command_buffer_a6aa9caaeaddbbc1b3cb856dd8f6c4942}{UserCommandBuffer}}();}
+\DoxyCodeLine{00079\ }
+\DoxyCodeLine{00082\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_user_command_buffer_a75f4e17d011503fb0d3ff720818942a7}{addCommand}}(std::shared\_ptr<UserCommand>\ command);}
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00085\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_user_command_buffer_a9cd70e1e3b69c3304c253edd32eba2cd}{clear}}();}
+\DoxyCodeLine{00086\ }
+\DoxyCodeLine{00088\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_user_command_buffer_a6b6d2d6e6e6ac13fdcf7892670903d03}{reset}}();}
+\DoxyCodeLine{00089\ }
+\DoxyCodeLine{00091\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_user_command_buffer_af2c5e5833f4012e55d745c060c801500}{tick}}();}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00094\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_user_command_buffer_aa0b5fa2493eae6202be74821dc5b10ad}{startExecution}}();}
+\DoxyCodeLine{00095\ }
+\DoxyCodeLine{00098\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_user_command_buffer_a7b28d02b8e99009e5e04c8573a04b70b}{onExecutionComplete}}(std::function<\textcolor{keywordtype}{void}(\mbox{\hyperlink{struct_user_command_buffer_1_1_execution_stats}{ExecutionStats}})>\ callback);}
+\DoxyCodeLine{00099\ }
+\DoxyCodeLine{00102\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_user_command_buffer_aa7d6a1acb43493171b6f2eb53671d5d2}{onCalibrationComplete}}(std::function<\textcolor{keywordtype}{void}()>\ callback);}
+\DoxyCodeLine{00103\ }
+\DoxyCodeLine{00105\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_user_command_buffer_a47267bc9eca5d17f673eca9c0ce1cff7}{calibrateFinger}}();}
+\DoxyCodeLine{00106\ }
+\DoxyCodeLine{00107\ \ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00109\ \ \ \ \ \textcolor{keyword}{class\ }CommandSlice\ \{}
+\DoxyCodeLine{00110\ \ \ \ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00114\ \ \ \ \ \ \ \ \ CommandSlice(std::size\_t\ start,\ std::size\_t\ end);}
+\DoxyCodeLine{00115\ }
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ std::size\_t\ start()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00119\ }
+\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ std::size\_t\ end()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00123\ }
+\DoxyCodeLine{00126\ \ \ \ \ \ \ \ \ std::size\_t\ size()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00127\ }
+\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ CommandSlice\ empty();}
+\DoxyCodeLine{00131\ }
+\DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{bool}\ isEmpty(\textcolor{keyword}{const}\ CommandSlice\ \&slice);}
+\DoxyCodeLine{00136\ }
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00138\ \ \ \ \ \ \ \ \ std::size\_t\ \_start;\ \ }
+\DoxyCodeLine{00139\ \ \ \ \ \ \ \ \ std::size\_t\ \_end;\ \ \ \ }
+\DoxyCodeLine{00140\ \ \ \ \ \};}
+\DoxyCodeLine{00141\ }
+\DoxyCodeLine{00142\ \ \ \ \ std::vector<std::shared\_ptr<UserCommand>>\ \_commands;\ \ }
+\DoxyCodeLine{00143\ \ \ \ \ CommandSlice\ \_currentSlice;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00144\ \ \ \ \ std::size\_t\ \_numCompletedCommands;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00145\ \ \ \ \ \textcolor{keywordtype}{bool}\ \_isExecuting;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00146\ \ \ \ \ std::uint32\_t\ \_startTime;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00147\ \ \ \ \ \textcolor{keywordtype}{bool}\ \_isCalibrating;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00148\ }
+\DoxyCodeLine{00149\ \ \ \ \ std::vector<std::function<void(ExecutionStats)>>\ \_onExecutionCompleteCallbacks;\ \ }
+\DoxyCodeLine{00150\ \ \ \ \ std::vector<std::function<void()>>\ \_onCalibrationCompleteCallbacks;\ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00151\ }
+\DoxyCodeLine{00155\ \ \ \ \ CommandSlice\ findNextSlice(\textcolor{keyword}{const}\ CommandSlice\ \&currentSlice);}
+\DoxyCodeLine{00156\ }
+\DoxyCodeLine{00158\ \ \ \ \ \textcolor{keywordtype}{void}\ calibrateFingerTick();}
+\DoxyCodeLine{00159\ }
+\DoxyCodeLine{00162\ \ \ \ \ \textcolor{keywordtype}{bool}\ isDoneCalibrating();}
+\DoxyCodeLine{00163\ \};}
+\DoxyCodeLine{00164\ }
+\DoxyCodeLine{00166\ \textcolor{keyword}{enum}\ \mbox{\hyperlink{user__command_8hpp_a70b12b8660dd3a38026dc9a8ddea272b}{FingerControlType}}\ :\ std::uint8\_t\ \{}
+\DoxyCodeLine{00167\ \ \ \ \ \mbox{\hyperlink{user__command_8hpp_a70b12b8660dd3a38026dc9a8ddea272bad34d5395053a1781444508e570283be1}{POSITION}}\ =\ 0,\ \ }
+\DoxyCodeLine{00168\ \ \ \ \ \mbox{\hyperlink{user__command_8hpp_a70b12b8660dd3a38026dc9a8ddea272ba06e15744a8bd69fceeeb39ab3614b3f6}{VELOCITY}}\ =\ 1,\ \ }
+\DoxyCodeLine{00169\ \ \ \ \ \mbox{\hyperlink{user__command_8hpp_a70b12b8660dd3a38026dc9a8ddea272bab14fe26ae2d673af2927fd2a8a1eb91f}{TORQUE}}\ =\ 2\ \ \ \ \ }
+\DoxyCodeLine{00170\ \};}
+\DoxyCodeLine{00171\ }
+\DoxyCodeLine{00174\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_finger_control_command_aefc1a994cfa31f2ec762d380ac89c415}{FingerControlCommand}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{class_user_command_af0233e9ab7d6d0af74e42ddd3d066eb0}{UserCommand}}\ \{}
+\DoxyCodeLine{00175\ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00181\ \ \ \ \ \mbox{\hyperlink{class_finger_control_command_a21c6014e9a0fe2f29d5dad7aec28c382}{FingerControlCommand}}(std::uint8\_t\ \mbox{\hyperlink{class_finger_control_command_af14923172f485221258cb243dbc28178}{fingerJoinID}},\ \mbox{\hyperlink{user__command_8hpp_a70b12b8660dd3a38026dc9a8ddea272b}{FingerControlType}}\ \mbox{\hyperlink{class_finger_control_command_a7d53a5094829459d51e8b702ccd149fe}{controlType}},\ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{class_finger_control_command_a14d658c6e62e696d2c6bdd798a872a29}{controlValue}},\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_finger_control_command_ab44f50631e8624ee5880e73e47e43a65}{simultaneous}});}
+\DoxyCodeLine{00182\ }
+\DoxyCodeLine{00183\ \ \ \ \ \mbox{\hyperlink{class_finger_control_command_a21c6014e9a0fe2f29d5dad7aec28c382}{FingerControlCommand}}()\ :\ \mbox{\hyperlink{class_finger_control_command_aefc1a994cfa31f2ec762d380ac89c415}{FingerControlCommand}}(255,\ \mbox{\hyperlink{user__command_8hpp_a70b12b8660dd3a38026dc9a8ddea272b}{FingerControlType}}::\mbox{\hyperlink{user__command_8hpp_a70b12b8660dd3a38026dc9a8ddea272bad34d5395053a1781444508e570283be1}{POSITION}},\ 0.0f,\ false)\ \{\}}
+\DoxyCodeLine{00184\ }
+\DoxyCodeLine{00188\ \ \ \ \ \textcolor{keyword}{static}\ rdscom::Result<FingerControlCommand>\ \mbox{\hyperlink{class_finger_control_command_a9300cc10eaf1e614d9233a1a4cb4a695}{fromMessage}}(\textcolor{keyword}{const}\ rdscom::Message\ \&msg);}
+\DoxyCodeLine{00189\ }
+\DoxyCodeLine{00192\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_finger_control_command_a11ec55f6bee7b7f941080960e308ef0a}{isDone}}()\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00193\ }
+\DoxyCodeLine{00194\ \ \ \ \ std::uint8\_t\ \mbox{\hyperlink{class_finger_control_command_af14923172f485221258cb243dbc28178}{fingerJoinID}}()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ \_fingerID;\ \}}
+\DoxyCodeLine{00195\ \ \ \ \ \mbox{\hyperlink{user__command_8hpp_a70b12b8660dd3a38026dc9a8ddea272b}{FingerControlType}}\ \mbox{\hyperlink{class_finger_control_command_a7d53a5094829459d51e8b702ccd149fe}{controlType}}()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ \_controlType;\ \}}
+\DoxyCodeLine{00196\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{class_finger_control_command_a14d658c6e62e696d2c6bdd798a872a29}{controlValue}}()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ \_controlValue;\ \}}
+\DoxyCodeLine{00197\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_finger_control_command_ab44f50631e8624ee5880e73e47e43a65}{simultaneous}}()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ \_simultaneous;\ \}}
+\DoxyCodeLine{00198\ }
+\DoxyCodeLine{00199\ \ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00200\ \ \ \ \ std::uint8\_t\ \_fingerID;\ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00201\ \ \ \ \ \mbox{\hyperlink{user__command_8hpp_a70b12b8660dd3a38026dc9a8ddea272b}{FingerControlType}}\ \_controlType;\ \ }
+\DoxyCodeLine{00202\ \ \ \ \ \textcolor{keywordtype}{float}\ \_controlValue;\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00203\ \ \ \ \ \textcolor{keywordtype}{bool}\ \_simultaneous;\ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00204\ }
+\DoxyCodeLine{00205\ \ \ \ \ \textcolor{comment}{//\ Implementation\ of\ virtual\ methods.}}
+\DoxyCodeLine{00206\ \ \ \ \ \textcolor{keywordtype}{void}\ onReset()\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00207\ \ \ \ \ \textcolor{keywordtype}{void}\ onStart()\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00208\ \ \ \ \ \textcolor{keywordtype}{void}\ onUpdate()\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00209\ \ \ \ \ \textcolor{keywordtype}{void}\ onEnd()\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00210\ \};}
+\DoxyCodeLine{00211\ }
+\DoxyCodeLine{00212\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//\ \_\_USER\_COMMAND\_H\_\_}}
+
+\end{DoxyCode}

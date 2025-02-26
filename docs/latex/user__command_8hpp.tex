@@ -1,0 +1,68 @@
+\doxysection{testbench-\/mcu/include/user\+\_\+command.hpp File Reference}
+\hypertarget{user__command_8hpp}{}\label{user__command_8hpp}\index{testbench-\/mcu/include/user\_command.hpp@{testbench-\/mcu/include/user\_command.hpp}}
+{\ttfamily \#include $<$Arduino.\+h$>$}\newline
+{\ttfamily \#include $<$memory$>$}\newline
+{\ttfamily \#include $<$rdscom.\+hpp$>$}\newline
+{\ttfamily \#include $<$vector$>$}\newline
+Include dependency graph for user\+\_\+command.\+hpp\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{user__command_8hpp__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=346pt]{user__command_8hpp__dep__incl}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \mbox{\hyperlink{class_user_command}{User\+Command}}
+\begin{DoxyCompactList}\small\item\em Base class for user commands sent from the GUI to the Teensy. This abstract class defines the interface for a command. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{class_user_command_buffer}{User\+Command\+Buffer}}
+\begin{DoxyCompactList}\small\item\em A buffer that manages user commands. This class collects user commands and executes them in slices. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{struct_user_command_buffer_1_1_execution_stats}{User\+Command\+Buffer\+::\+Execution\+Stats}}
+\item 
+class \mbox{\hyperlink{class_finger_control_command}{Finger\+Control\+Command}}
+\begin{DoxyCompactList}\small\item\em Command to control a motor. This command is used to control motors and is created from rdscom messages. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \mbox{\hyperlink{user__command_8hpp_a70b12b8660dd3a38026dc9a8ddea272b}{Finger\+Control\+Type}} \+: std\+::uint8\+\_\+t \{ \mbox{\hyperlink{user__command_8hpp_a70b12b8660dd3a38026dc9a8ddea272bad34d5395053a1781444508e570283be1}{POSITION}} = 0
+, \mbox{\hyperlink{user__command_8hpp_a70b12b8660dd3a38026dc9a8ddea272ba06e15744a8bd69fceeeb39ab3614b3f6}{VELOCITY}} = 1
+, \mbox{\hyperlink{user__command_8hpp_a70b12b8660dd3a38026dc9a8ddea272bab14fe26ae2d673af2927fd2a8a1eb91f}{TORQUE}} = 2
+ \}
+\begin{DoxyCompactList}\small\item\em Enumeration for motor control types. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Enumeration Type Documentation}
+\Hypertarget{user__command_8hpp_a70b12b8660dd3a38026dc9a8ddea272b}\index{user\_command.hpp@{user\_command.hpp}!FingerControlType@{FingerControlType}}
+\index{FingerControlType@{FingerControlType}!user\_command.hpp@{user\_command.hpp}}
+\doxysubsubsection{\texorpdfstring{FingerControlType}{FingerControlType}}
+{\footnotesize\ttfamily \label{user__command_8hpp_a70b12b8660dd3a38026dc9a8ddea272b} 
+enum \mbox{\hyperlink{user__command_8hpp_a70b12b8660dd3a38026dc9a8ddea272b}{Finger\+Control\+Type}} \+: std\+::uint8\+\_\+t}
+
+
+
+Enumeration for motor control types. 
+
+\begin{DoxyEnumFields}[2]{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{POSITION@{POSITION}!user\_command.hpp@{user\_command.hpp}}\index{user\_command.hpp@{user\_command.hpp}!POSITION@{POSITION}}}\Hypertarget{user__command_8hpp_a70b12b8660dd3a38026dc9a8ddea272bad34d5395053a1781444508e570283be1}\label{user__command_8hpp_a70b12b8660dd3a38026dc9a8ddea272bad34d5395053a1781444508e570283be1} 
+POSITION&Position control. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{VELOCITY@{VELOCITY}!user\_command.hpp@{user\_command.hpp}}\index{user\_command.hpp@{user\_command.hpp}!VELOCITY@{VELOCITY}}}\Hypertarget{user__command_8hpp_a70b12b8660dd3a38026dc9a8ddea272ba06e15744a8bd69fceeeb39ab3614b3f6}\label{user__command_8hpp_a70b12b8660dd3a38026dc9a8ddea272ba06e15744a8bd69fceeeb39ab3614b3f6} 
+VELOCITY&Velocity control. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{TORQUE@{TORQUE}!user\_command.hpp@{user\_command.hpp}}\index{user\_command.hpp@{user\_command.hpp}!TORQUE@{TORQUE}}}\Hypertarget{user__command_8hpp_a70b12b8660dd3a38026dc9a8ddea272bab14fe26ae2d673af2927fd2a8a1eb91f}\label{user__command_8hpp_a70b12b8660dd3a38026dc9a8ddea272bab14fe26ae2d673af2927fd2a8a1eb91f} 
+TORQUE&Torque control. \\
+\hline
+
+\end{DoxyEnumFields}

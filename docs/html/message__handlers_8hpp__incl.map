@@ -1,0 +1,17 @@
+<map id="testbench&#45;mcu/include/message_handlers.hpp" name="testbench&#45;mcu/include/message_handlers.hpp">
+<area shape="rect" id="Node000001" title=" " alt="" coords="25,5,184,46"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="45,168,134,193"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="61,49,33,69,12,95,9,113,17,129,32,145,52,158,49,162,29,149,13,132,4,114,7,93,30,65,58,44"/>
+<area shape="rect" id="Node000003" href="$message__definitions_8hpp.html" title=" " alt="" coords="22,94,187,120"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="107,46,107,78,102,78,102,46"/>
+<area shape="rect" id="Node000004" href="$user__command_8hpp.html" title=" " alt="" coords="211,94,347,120"/>
+<area shape="poly" id="edge4_Node000001_Node000004" title=" " alt="" coords="149,44,239,85,237,90,147,49"/>
+<area shape="poly" id="edge3_Node000003_Node000002" title=" " alt="" coords="104,120,98,153,92,152,99,119"/>
+<area shape="poly" id="edge7_Node000004_Node000002" title=" " alt="" coords="248,123,137,164,135,159,246,118"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="158,168,234,193"/>
+<area shape="poly" id="edge5_Node000004_Node000005" title=" " alt="" coords="267,122,223,159,220,155,263,118"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="258,168,326,193"/>
+<area shape="poly" id="edge6_Node000004_Node000006" title=" " alt="" coords="284,119,290,152,285,153,278,120"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="350,168,408,193"/>
+<area shape="poly" id="edge8_Node000004_Node000007" title=" " alt="" coords="297,118,351,156,348,160,294,122"/>
+</map>

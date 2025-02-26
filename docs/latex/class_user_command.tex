@@ -1,0 +1,262 @@
+\doxysection{User\+Command Class Reference}
+\hypertarget{class_user_command}{}\label{class_user_command}\index{UserCommand@{UserCommand}}
+
+
+Base class for user commands sent from the GUI to the Teensy. This abstract class defines the interface for a command.  
+
+
+
+
+{\ttfamily \#include $<$user\+\_\+command.\+hpp$>$}
+
+
+
+Inheritance diagram for User\+Command\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=200pt]{class_user_command__inherit__graph}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_user_command_af0233e9ab7d6d0af74e42ddd3d066eb0}{User\+Command}} ()
+\item 
+virtual \mbox{\hyperlink{class_user_command_a4f2c785c0fe6bdeb3899f7c088b616e1}{\texorpdfstring{$\sim$}{\string~}\+User\+Command}} ()
+\item 
+void \mbox{\hyperlink{class_user_command_a44c031c5e3ce341de5364b7801fec4b3}{reset}} ()
+\begin{DoxyCompactList}\small\item\em Resets the command to its initial state. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_user_command_ac397eff82c8cef55309c3bc19a8a30c1}{start}} ()
+\begin{DoxyCompactList}\small\item\em Starts the command. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_user_command_a1addfe19d242d9d5f37a0d4edd6e73f3}{update}} ()
+\begin{DoxyCompactList}\small\item\em Updates the command. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_user_command_aeb0933876b0d6993fea1750aefca6642}{end}} ()
+\begin{DoxyCompactList}\small\item\em Ends the command. \end{DoxyCompactList}\item 
+virtual bool \mbox{\hyperlink{class_user_command_a61c9b01208426239360e115ba116e929}{is\+Done}} ()=0
+\begin{DoxyCompactList}\small\item\em Checks whether the command is done. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{class_user_command_a418eb20235071974d306dc732d619d87}{is\+Parralelizable}} ()
+\begin{DoxyCompactList}\small\item\em Checks if the command is parallelizable. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{class_user_command_a4ba158db84a91cb118c53899528c147f}{has\+Started}} ()
+\begin{DoxyCompactList}\small\item\em Checks if the command has started. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{class_user_command_a4334cf219154321e3234212ac0227e05}{has\+Ended}} ()
+\begin{DoxyCompactList}\small\item\em Checks if the command has ended. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+virtual void \mbox{\hyperlink{class_user_command_ab6be4a1cf1e1200fda25e42e86ab2361}{on\+Reset}} ()=0
+\begin{DoxyCompactList}\small\item\em Called during reset. \end{DoxyCompactList}\item 
+virtual void \mbox{\hyperlink{class_user_command_a08556a59c5d47ff895fe7fe7bcbfa0ad}{on\+Start}} ()=0
+\begin{DoxyCompactList}\small\item\em Called when starting the command. \end{DoxyCompactList}\item 
+virtual void \mbox{\hyperlink{class_user_command_a72db79de26917ec7f6845045562ae541}{on\+Update}} ()=0
+\begin{DoxyCompactList}\small\item\em Called on command update. \end{DoxyCompactList}\item 
+virtual void \mbox{\hyperlink{class_user_command_a86e6152c1cfea153d5880e174e496c88}{on\+End}} ()=0
+\begin{DoxyCompactList}\small\item\em Called when ending the command. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+bool \mbox{\hyperlink{class_user_command_a0abcb67688c88011b402b22563309019}{\+\_\+parralelizable}}
+\begin{DoxyCompactList}\small\item\em Whether the command is parallelizable. \end{DoxyCompactList}\item 
+std\+::uint32\+\_\+t \mbox{\hyperlink{class_user_command_a066bbaf8e705c67e2503e2862d176b23}{\+\_\+start\+Time}}
+\begin{DoxyCompactList}\small\item\em Time when the command started. \end{DoxyCompactList}\item 
+std\+::uint32\+\_\+t \mbox{\hyperlink{class_user_command_a1a2fc35c37c37b16041c6b8e29a1e576}{\+\_\+end\+Time}}
+\begin{DoxyCompactList}\small\item\em Time when the command ended. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Base class for user commands sent from the GUI to the Teensy. This abstract class defines the interface for a command. 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_user_command_af0233e9ab7d6d0af74e42ddd3d066eb0}\index{UserCommand@{UserCommand}!UserCommand@{UserCommand}}
+\index{UserCommand@{UserCommand}!UserCommand@{UserCommand}}
+\doxysubsubsection{\texorpdfstring{UserCommand()}{UserCommand()}}
+{\footnotesize\ttfamily \label{class_user_command_af0233e9ab7d6d0af74e42ddd3d066eb0} 
+User\+Command\+::\+User\+Command (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+\DoxyHorRuler{0}
+ \hypertarget{class_user_command_autotoc_md0}{}\doxysubsubsection{\texorpdfstring{User\+Command Implementation}{User\+Command Implementation}}\label{class_user_command_autotoc_md0}
+\Hypertarget{class_user_command_a4f2c785c0fe6bdeb3899f7c088b616e1}\index{UserCommand@{UserCommand}!````~UserCommand@{\texorpdfstring{$\sim$}{\string~}UserCommand}}
+\index{````~UserCommand@{\texorpdfstring{$\sim$}{\string~}UserCommand}!UserCommand@{UserCommand}}
+\doxysubsubsection{\texorpdfstring{\texorpdfstring{$\sim$}{\string~}UserCommand()}{\string~UserCommand()}}
+{\footnotesize\ttfamily \label{class_user_command_a4f2c785c0fe6bdeb3899f7c088b616e1} 
+User\+Command\+::\texorpdfstring{$\sim$}{\string~}\+User\+Command (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_user_command_aeb0933876b0d6993fea1750aefca6642}\index{UserCommand@{UserCommand}!end@{end}}
+\index{end@{end}!UserCommand@{UserCommand}}
+\doxysubsubsection{\texorpdfstring{end()}{end()}}
+{\footnotesize\ttfamily \label{class_user_command_aeb0933876b0d6993fea1750aefca6642} 
+void User\+Command\+::end (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Ends the command. 
+
+\Hypertarget{class_user_command_a4334cf219154321e3234212ac0227e05}\index{UserCommand@{UserCommand}!hasEnded@{hasEnded}}
+\index{hasEnded@{hasEnded}!UserCommand@{UserCommand}}
+\doxysubsubsection{\texorpdfstring{hasEnded()}{hasEnded()}}
+{\footnotesize\ttfamily \label{class_user_command_a4334cf219154321e3234212ac0227e05} 
+bool User\+Command\+::has\+Ended (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Checks if the command has ended. 
+
+\begin{DoxyReturn}{Returns}
+true if the command has ended. 
+\end{DoxyReturn}
+\Hypertarget{class_user_command_a4ba158db84a91cb118c53899528c147f}\index{UserCommand@{UserCommand}!hasStarted@{hasStarted}}
+\index{hasStarted@{hasStarted}!UserCommand@{UserCommand}}
+\doxysubsubsection{\texorpdfstring{hasStarted()}{hasStarted()}}
+{\footnotesize\ttfamily \label{class_user_command_a4ba158db84a91cb118c53899528c147f} 
+bool User\+Command\+::has\+Started (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Checks if the command has started. 
+
+\begin{DoxyReturn}{Returns}
+true if the command has started. 
+\end{DoxyReturn}
+\Hypertarget{class_user_command_a61c9b01208426239360e115ba116e929}\index{UserCommand@{UserCommand}!isDone@{isDone}}
+\index{isDone@{isDone}!UserCommand@{UserCommand}}
+\doxysubsubsection{\texorpdfstring{isDone()}{isDone()}}
+{\footnotesize\ttfamily \label{class_user_command_a61c9b01208426239360e115ba116e929} 
+virtual bool User\+Command\+::is\+Done (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Checks whether the command is done. 
+
+\begin{DoxyReturn}{Returns}
+true if the command is complete. 
+\end{DoxyReturn}
+
+
+Implemented in \mbox{\hyperlink{class_finger_control_command_a11ec55f6bee7b7f941080960e308ef0a}{Finger\+Control\+Command}}.
+
+\Hypertarget{class_user_command_a418eb20235071974d306dc732d619d87}\index{UserCommand@{UserCommand}!isParralelizable@{isParralelizable}}
+\index{isParralelizable@{isParralelizable}!UserCommand@{UserCommand}}
+\doxysubsubsection{\texorpdfstring{isParralelizable()}{isParralelizable()}}
+{\footnotesize\ttfamily \label{class_user_command_a418eb20235071974d306dc732d619d87} 
+bool User\+Command\+::is\+Parralelizable (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Checks if the command is parallelizable. 
+
+\begin{DoxyReturn}{Returns}
+true if the command can be run in parallel. 
+\end{DoxyReturn}
+\Hypertarget{class_user_command_a86e6152c1cfea153d5880e174e496c88}\index{UserCommand@{UserCommand}!onEnd@{onEnd}}
+\index{onEnd@{onEnd}!UserCommand@{UserCommand}}
+\doxysubsubsection{\texorpdfstring{onEnd()}{onEnd()}}
+{\footnotesize\ttfamily \label{class_user_command_a86e6152c1cfea153d5880e174e496c88} 
+virtual void User\+Command\+::on\+End (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}, {\ttfamily [pure virtual]}}
+
+
+
+Called when ending the command. 
+
+\Hypertarget{class_user_command_ab6be4a1cf1e1200fda25e42e86ab2361}\index{UserCommand@{UserCommand}!onReset@{onReset}}
+\index{onReset@{onReset}!UserCommand@{UserCommand}}
+\doxysubsubsection{\texorpdfstring{onReset()}{onReset()}}
+{\footnotesize\ttfamily \label{class_user_command_ab6be4a1cf1e1200fda25e42e86ab2361} 
+virtual void User\+Command\+::on\+Reset (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}, {\ttfamily [pure virtual]}}
+
+
+
+Called during reset. 
+
+\Hypertarget{class_user_command_a08556a59c5d47ff895fe7fe7bcbfa0ad}\index{UserCommand@{UserCommand}!onStart@{onStart}}
+\index{onStart@{onStart}!UserCommand@{UserCommand}}
+\doxysubsubsection{\texorpdfstring{onStart()}{onStart()}}
+{\footnotesize\ttfamily \label{class_user_command_a08556a59c5d47ff895fe7fe7bcbfa0ad} 
+virtual void User\+Command\+::on\+Start (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}, {\ttfamily [pure virtual]}}
+
+
+
+Called when starting the command. 
+
+\Hypertarget{class_user_command_a72db79de26917ec7f6845045562ae541}\index{UserCommand@{UserCommand}!onUpdate@{onUpdate}}
+\index{onUpdate@{onUpdate}!UserCommand@{UserCommand}}
+\doxysubsubsection{\texorpdfstring{onUpdate()}{onUpdate()}}
+{\footnotesize\ttfamily \label{class_user_command_a72db79de26917ec7f6845045562ae541} 
+virtual void User\+Command\+::on\+Update (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}, {\ttfamily [pure virtual]}}
+
+
+
+Called on command update. 
+
+\Hypertarget{class_user_command_a44c031c5e3ce341de5364b7801fec4b3}\index{UserCommand@{UserCommand}!reset@{reset}}
+\index{reset@{reset}!UserCommand@{UserCommand}}
+\doxysubsubsection{\texorpdfstring{reset()}{reset()}}
+{\footnotesize\ttfamily \label{class_user_command_a44c031c5e3ce341de5364b7801fec4b3} 
+void User\+Command\+::reset (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Resets the command to its initial state. 
+
+\Hypertarget{class_user_command_ac397eff82c8cef55309c3bc19a8a30c1}\index{UserCommand@{UserCommand}!start@{start}}
+\index{start@{start}!UserCommand@{UserCommand}}
+\doxysubsubsection{\texorpdfstring{start()}{start()}}
+{\footnotesize\ttfamily \label{class_user_command_ac397eff82c8cef55309c3bc19a8a30c1} 
+void User\+Command\+::start (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Starts the command. 
+
+\Hypertarget{class_user_command_a1addfe19d242d9d5f37a0d4edd6e73f3}\index{UserCommand@{UserCommand}!update@{update}}
+\index{update@{update}!UserCommand@{UserCommand}}
+\doxysubsubsection{\texorpdfstring{update()}{update()}}
+{\footnotesize\ttfamily \label{class_user_command_a1addfe19d242d9d5f37a0d4edd6e73f3} 
+void User\+Command\+::update (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Updates the command. 
+
+
+
+\doxysubsection{Member Data Documentation}
+\Hypertarget{class_user_command_a1a2fc35c37c37b16041c6b8e29a1e576}\index{UserCommand@{UserCommand}!\_endTime@{\_endTime}}
+\index{\_endTime@{\_endTime}!UserCommand@{UserCommand}}
+\doxysubsubsection{\texorpdfstring{\_endTime}{\_endTime}}
+{\footnotesize\ttfamily \label{class_user_command_a1a2fc35c37c37b16041c6b8e29a1e576} 
+std\+::uint32\+\_\+t User\+Command\+::\+\_\+end\+Time\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+
+Time when the command ended. 
+
+\Hypertarget{class_user_command_a0abcb67688c88011b402b22563309019}\index{UserCommand@{UserCommand}!\_parralelizable@{\_parralelizable}}
+\index{\_parralelizable@{\_parralelizable}!UserCommand@{UserCommand}}
+\doxysubsubsection{\texorpdfstring{\_parralelizable}{\_parralelizable}}
+{\footnotesize\ttfamily \label{class_user_command_a0abcb67688c88011b402b22563309019} 
+bool User\+Command\+::\+\_\+parralelizable\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+
+Whether the command is parallelizable. 
+
+\Hypertarget{class_user_command_a066bbaf8e705c67e2503e2862d176b23}\index{UserCommand@{UserCommand}!\_startTime@{\_startTime}}
+\index{\_startTime@{\_startTime}!UserCommand@{UserCommand}}
+\doxysubsubsection{\texorpdfstring{\_startTime}{\_startTime}}
+{\footnotesize\ttfamily \label{class_user_command_a066bbaf8e705c67e2503e2862d176b23} 
+std\+::uint32\+\_\+t User\+Command\+::\+\_\+start\+Time\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+
+Time when the command started. 
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+testbench-\/mcu/include/\mbox{\hyperlink{user__command_8hpp}{user\+\_\+command.\+hpp}}\item 
+testbench-\/mcu/src/\mbox{\hyperlink{user__command_8cpp}{user\+\_\+command.\+cpp}}\end{DoxyCompactItemize}

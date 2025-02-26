@@ -1,0 +1,159 @@
+\doxysection{User\+Command\+Buffer Class Reference}
+\hypertarget{class_user_command_buffer}{}\label{class_user_command_buffer}\index{UserCommandBuffer@{UserCommandBuffer}}
+
+
+A buffer that manages user commands. This class collects user commands and executes them in slices.  
+
+
+
+
+{\ttfamily \#include $<$user\+\_\+command.\+hpp$>$}
+
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{struct_user_command_buffer_1_1_execution_stats}{Execution\+Stats}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_user_command_buffer_a6aa9caaeaddbbc1b3cb856dd8f6c4942}{User\+Command\+Buffer}} ()
+\begin{DoxyCompactList}\small\item\em Constructor. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_user_command_buffer_a75f4e17d011503fb0d3ff720818942a7}{add\+Command}} (std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{class_user_command}{User\+Command}} $>$ command)
+\begin{DoxyCompactList}\small\item\em Adds a command to the buffer. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_user_command_buffer_a9cd70e1e3b69c3304c253edd32eba2cd}{clear}} ()
+\begin{DoxyCompactList}\small\item\em Clears the command buffer. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_user_command_buffer_a6b6d2d6e6e6ac13fdcf7892670903d03}{reset}} ()
+\begin{DoxyCompactList}\small\item\em Resets all commands in the buffer. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_user_command_buffer_af2c5e5833f4012e55d745c060c801500}{tick}} ()
+\begin{DoxyCompactList}\small\item\em Continues executing the current slice of commands. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_user_command_buffer_aa0b5fa2493eae6202be74821dc5b10ad}{start\+Execution}} ()
+\begin{DoxyCompactList}\small\item\em Executes the current slice of commands. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_user_command_buffer_a7b28d02b8e99009e5e04c8573a04b70b}{on\+Execution\+Complete}} (std\+::function$<$ void(\mbox{\hyperlink{struct_user_command_buffer_1_1_execution_stats}{Execution\+Stats}})$>$ callback)
+\begin{DoxyCompactList}\small\item\em Registers a callback to be called when execution is complete. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_user_command_buffer_aa7d6a1acb43493171b6f2eb53671d5d2}{on\+Calibration\+Complete}} (std\+::function$<$ void()$>$ callback)
+\begin{DoxyCompactList}\small\item\em Registers a callback to be called when calibration is complete. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_user_command_buffer_a47267bc9eca5d17f673eca9c0ce1cff7}{calibrate\+Finger}} ()
+\begin{DoxyCompactList}\small\item\em Calibrates the finger. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+A buffer that manages user commands. This class collects user commands and executes them in slices. 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_user_command_buffer_a6aa9caaeaddbbc1b3cb856dd8f6c4942}\index{UserCommandBuffer@{UserCommandBuffer}!UserCommandBuffer@{UserCommandBuffer}}
+\index{UserCommandBuffer@{UserCommandBuffer}!UserCommandBuffer@{UserCommandBuffer}}
+\doxysubsubsection{\texorpdfstring{UserCommandBuffer()}{UserCommandBuffer()}}
+{\footnotesize\ttfamily \label{class_user_command_buffer_a6aa9caaeaddbbc1b3cb856dd8f6c4942} 
+User\+Command\+Buffer\+::\+User\+Command\+Buffer (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Constructor. 
+
+\DoxyHorRuler{0}
+ \hypertarget{class_user_command_buffer_autotoc_md1}{}\doxysubsubsection{\texorpdfstring{User\+Command\+Buffer Implementation}{User\+Command\+Buffer Implementation}}\label{class_user_command_buffer_autotoc_md1}
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_user_command_buffer_a75f4e17d011503fb0d3ff720818942a7}\index{UserCommandBuffer@{UserCommandBuffer}!addCommand@{addCommand}}
+\index{addCommand@{addCommand}!UserCommandBuffer@{UserCommandBuffer}}
+\doxysubsubsection{\texorpdfstring{addCommand()}{addCommand()}}
+{\footnotesize\ttfamily \label{class_user_command_buffer_a75f4e17d011503fb0d3ff720818942a7} 
+void User\+Command\+Buffer\+::add\+Command (\begin{DoxyParamCaption}\item[{std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{class_user_command}{User\+Command}} $>$}]{command}{}\end{DoxyParamCaption})}
+
+
+
+Adds a command to the buffer. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em command} & Shared pointer to a \doxylink{class_user_command}{User\+Command}. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_user_command_buffer_a47267bc9eca5d17f673eca9c0ce1cff7}\index{UserCommandBuffer@{UserCommandBuffer}!calibrateFinger@{calibrateFinger}}
+\index{calibrateFinger@{calibrateFinger}!UserCommandBuffer@{UserCommandBuffer}}
+\doxysubsubsection{\texorpdfstring{calibrateFinger()}{calibrateFinger()}}
+{\footnotesize\ttfamily \label{class_user_command_buffer_a47267bc9eca5d17f673eca9c0ce1cff7} 
+void User\+Command\+Buffer\+::calibrate\+Finger (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Calibrates the finger. 
+
+\Hypertarget{class_user_command_buffer_a9cd70e1e3b69c3304c253edd32eba2cd}\index{UserCommandBuffer@{UserCommandBuffer}!clear@{clear}}
+\index{clear@{clear}!UserCommandBuffer@{UserCommandBuffer}}
+\doxysubsubsection{\texorpdfstring{clear()}{clear()}}
+{\footnotesize\ttfamily \label{class_user_command_buffer_a9cd70e1e3b69c3304c253edd32eba2cd} 
+void User\+Command\+Buffer\+::clear (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Clears the command buffer. 
+
+\Hypertarget{class_user_command_buffer_aa7d6a1acb43493171b6f2eb53671d5d2}\index{UserCommandBuffer@{UserCommandBuffer}!onCalibrationComplete@{onCalibrationComplete}}
+\index{onCalibrationComplete@{onCalibrationComplete}!UserCommandBuffer@{UserCommandBuffer}}
+\doxysubsubsection{\texorpdfstring{onCalibrationComplete()}{onCalibrationComplete()}}
+{\footnotesize\ttfamily \label{class_user_command_buffer_aa7d6a1acb43493171b6f2eb53671d5d2} 
+void User\+Command\+Buffer\+::on\+Calibration\+Complete (\begin{DoxyParamCaption}\item[{std\+::function$<$ void()$>$}]{callback}{}\end{DoxyParamCaption})}
+
+
+
+Registers a callback to be called when calibration is complete. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em callback} & The callback to register. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_user_command_buffer_a7b28d02b8e99009e5e04c8573a04b70b}\index{UserCommandBuffer@{UserCommandBuffer}!onExecutionComplete@{onExecutionComplete}}
+\index{onExecutionComplete@{onExecutionComplete}!UserCommandBuffer@{UserCommandBuffer}}
+\doxysubsubsection{\texorpdfstring{onExecutionComplete()}{onExecutionComplete()}}
+{\footnotesize\ttfamily \label{class_user_command_buffer_a7b28d02b8e99009e5e04c8573a04b70b} 
+void User\+Command\+Buffer\+::on\+Execution\+Complete (\begin{DoxyParamCaption}\item[{std\+::function$<$ void(\mbox{\hyperlink{struct_user_command_buffer_1_1_execution_stats}{Execution\+Stats}})$>$}]{callback}{}\end{DoxyParamCaption})}
+
+
+
+Registers a callback to be called when execution is complete. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em callback} & The callback to register. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_user_command_buffer_a6b6d2d6e6e6ac13fdcf7892670903d03}\index{UserCommandBuffer@{UserCommandBuffer}!reset@{reset}}
+\index{reset@{reset}!UserCommandBuffer@{UserCommandBuffer}}
+\doxysubsubsection{\texorpdfstring{reset()}{reset()}}
+{\footnotesize\ttfamily \label{class_user_command_buffer_a6b6d2d6e6e6ac13fdcf7892670903d03} 
+void User\+Command\+Buffer\+::reset (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Resets all commands in the buffer. 
+
+\Hypertarget{class_user_command_buffer_aa0b5fa2493eae6202be74821dc5b10ad}\index{UserCommandBuffer@{UserCommandBuffer}!startExecution@{startExecution}}
+\index{startExecution@{startExecution}!UserCommandBuffer@{UserCommandBuffer}}
+\doxysubsubsection{\texorpdfstring{startExecution()}{startExecution()}}
+{\footnotesize\ttfamily \label{class_user_command_buffer_aa0b5fa2493eae6202be74821dc5b10ad} 
+void User\+Command\+Buffer\+::start\+Execution (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Executes the current slice of commands. 
+
+\Hypertarget{class_user_command_buffer_af2c5e5833f4012e55d745c060c801500}\index{UserCommandBuffer@{UserCommandBuffer}!tick@{tick}}
+\index{tick@{tick}!UserCommandBuffer@{UserCommandBuffer}}
+\doxysubsubsection{\texorpdfstring{tick()}{tick()}}
+{\footnotesize\ttfamily \label{class_user_command_buffer_af2c5e5833f4012e55d745c060c801500} 
+void User\+Command\+Buffer\+::tick (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Continues executing the current slice of commands. 
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+testbench-\/mcu/include/\mbox{\hyperlink{user__command_8hpp}{user\+\_\+command.\+hpp}}\item 
+testbench-\/mcu/src/\mbox{\hyperlink{user__command_8cpp}{user\+\_\+command.\+cpp}}\end{DoxyCompactItemize}

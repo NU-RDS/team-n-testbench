@@ -1,0 +1,187 @@
+\doxysection{Finger\+Control\+Command Class Reference}
+\hypertarget{class_finger_control_command}{}\label{class_finger_control_command}\index{FingerControlCommand@{FingerControlCommand}}
+
+
+Command to control a motor. This command is used to control motors and is created from rdscom messages.  
+
+
+
+
+{\ttfamily \#include $<$user\+\_\+command.\+hpp$>$}
+
+
+
+Inheritance diagram for Finger\+Control\+Command\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=200pt]{class_finger_control_command__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Finger\+Control\+Command\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=200pt]{class_finger_control_command__coll__graph}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_finger_control_command_aefc1a994cfa31f2ec762d380ac89c415}{Finger\+Control\+Command}} (std\+::uint8\+\_\+t \mbox{\hyperlink{class_finger_control_command_af14923172f485221258cb243dbc28178}{finger\+Join\+ID}}, \mbox{\hyperlink{user__command_8hpp_a70b12b8660dd3a38026dc9a8ddea272b}{Finger\+Control\+Type}} \mbox{\hyperlink{class_finger_control_command_a7d53a5094829459d51e8b702ccd149fe}{control\+Type}}, float \mbox{\hyperlink{class_finger_control_command_a14d658c6e62e696d2c6bdd798a872a29}{control\+Value}}, bool \mbox{\hyperlink{class_finger_control_command_ab44f50631e8624ee5880e73e47e43a65}{simultaneous}})
+\begin{DoxyCompactList}\small\item\em Constructs a Motor\+Control\+Command. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_finger_control_command_a21c6014e9a0fe2f29d5dad7aec28c382}{Finger\+Control\+Command}} ()
+\item 
+bool \mbox{\hyperlink{class_finger_control_command_a11ec55f6bee7b7f941080960e308ef0a}{is\+Done}} () override
+\begin{DoxyCompactList}\small\item\em Checks whether the command is done. \end{DoxyCompactList}\item 
+std\+::uint8\+\_\+t \mbox{\hyperlink{class_finger_control_command_af14923172f485221258cb243dbc28178}{finger\+Join\+ID}} () const
+\item 
+\mbox{\hyperlink{user__command_8hpp_a70b12b8660dd3a38026dc9a8ddea272b}{Finger\+Control\+Type}} \mbox{\hyperlink{class_finger_control_command_a7d53a5094829459d51e8b702ccd149fe}{control\+Type}} () const
+\item 
+float \mbox{\hyperlink{class_finger_control_command_a14d658c6e62e696d2c6bdd798a872a29}{control\+Value}} () const
+\item 
+bool \mbox{\hyperlink{class_finger_control_command_ab44f50631e8624ee5880e73e47e43a65}{simultaneous}} () const
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions inherited from \mbox{\hyperlink{class_user_command}{User\+Command}}}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_user_command_af0233e9ab7d6d0af74e42ddd3d066eb0}{User\+Command}} ()
+\item 
+virtual \mbox{\hyperlink{class_user_command_a4f2c785c0fe6bdeb3899f7c088b616e1}{\texorpdfstring{$\sim$}{\string~}\+User\+Command}} ()
+\item 
+void \mbox{\hyperlink{class_user_command_a44c031c5e3ce341de5364b7801fec4b3}{reset}} ()
+\begin{DoxyCompactList}\small\item\em Resets the command to its initial state. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_user_command_ac397eff82c8cef55309c3bc19a8a30c1}{start}} ()
+\begin{DoxyCompactList}\small\item\em Starts the command. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_user_command_a1addfe19d242d9d5f37a0d4edd6e73f3}{update}} ()
+\begin{DoxyCompactList}\small\item\em Updates the command. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_user_command_aeb0933876b0d6993fea1750aefca6642}{end}} ()
+\begin{DoxyCompactList}\small\item\em Ends the command. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{class_user_command_a418eb20235071974d306dc732d619d87}{is\+Parralelizable}} ()
+\begin{DoxyCompactList}\small\item\em Checks if the command is parallelizable. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{class_user_command_a4ba158db84a91cb118c53899528c147f}{has\+Started}} ()
+\begin{DoxyCompactList}\small\item\em Checks if the command has started. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{class_user_command_a4334cf219154321e3234212ac0227e05}{has\+Ended}} ()
+\begin{DoxyCompactList}\small\item\em Checks if the command has ended. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static rdscom\+::\+Result$<$ \mbox{\hyperlink{class_finger_control_command}{Finger\+Control\+Command}} $>$ \mbox{\hyperlink{class_finger_control_command_a9300cc10eaf1e614d9233a1a4cb4a695}{from\+Message}} (const rdscom\+::\+Message \&msg)
+\begin{DoxyCompactList}\small\item\em Creates a Motor\+Control\+Command from an rdscom message. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Additional Inherited Members}
+\doxysubsection*{Protected Attributes inherited from \mbox{\hyperlink{class_user_command}{User\+Command}}}
+\begin{DoxyCompactItemize}
+\item 
+bool \mbox{\hyperlink{class_user_command_a0abcb67688c88011b402b22563309019}{\+\_\+parralelizable}}
+\begin{DoxyCompactList}\small\item\em Whether the command is parallelizable. \end{DoxyCompactList}\item 
+std\+::uint32\+\_\+t \mbox{\hyperlink{class_user_command_a066bbaf8e705c67e2503e2862d176b23}{\+\_\+start\+Time}}
+\begin{DoxyCompactList}\small\item\em Time when the command started. \end{DoxyCompactList}\item 
+std\+::uint32\+\_\+t \mbox{\hyperlink{class_user_command_a1a2fc35c37c37b16041c6b8e29a1e576}{\+\_\+end\+Time}}
+\begin{DoxyCompactList}\small\item\em Time when the command ended. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Command to control a motor. This command is used to control motors and is created from rdscom messages. 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_finger_control_command_aefc1a994cfa31f2ec762d380ac89c415}\index{FingerControlCommand@{FingerControlCommand}!FingerControlCommand@{FingerControlCommand}}
+\index{FingerControlCommand@{FingerControlCommand}!FingerControlCommand@{FingerControlCommand}}
+\doxysubsubsection{\texorpdfstring{FingerControlCommand()}{FingerControlCommand()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \label{class_finger_control_command_aefc1a994cfa31f2ec762d380ac89c415} 
+Finger\+Control\+Command\+::\+Finger\+Control\+Command (\begin{DoxyParamCaption}\item[{std\+::uint8\+\_\+t}]{finger\+Join\+ID}{, }\item[{\mbox{\hyperlink{user__command_8hpp_a70b12b8660dd3a38026dc9a8ddea272b}{Finger\+Control\+Type}}}]{control\+Type}{, }\item[{float}]{control\+Value}{, }\item[{bool}]{simultaneous}{}\end{DoxyParamCaption})}
+
+
+
+Constructs a Motor\+Control\+Command. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em finger\+Join\+ID} & The finter joint ID. \\
+\hline
+{\em control\+Type} & The type of control. \\
+\hline
+{\em control\+Value} & The value for control. \\
+\hline
+{\em simultaneous} & Whether the command is simultaneous.\\
+\hline
+\end{DoxyParams}
+\DoxyHorRuler{0}
+ \hypertarget{class_finger_control_command_autotoc_md3}{}\doxysubsubsection{\texorpdfstring{Finger\+Control\+Command Implementation}{Finger\+Control\+Command Implementation}}\label{class_finger_control_command_autotoc_md3}
+\Hypertarget{class_finger_control_command_a21c6014e9a0fe2f29d5dad7aec28c382}\index{FingerControlCommand@{FingerControlCommand}!FingerControlCommand@{FingerControlCommand}}
+\index{FingerControlCommand@{FingerControlCommand}!FingerControlCommand@{FingerControlCommand}}
+\doxysubsubsection{\texorpdfstring{FingerControlCommand()}{FingerControlCommand()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \label{class_finger_control_command_a21c6014e9a0fe2f29d5dad7aec28c382} 
+Finger\+Control\+Command\+::\+Finger\+Control\+Command (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_finger_control_command_a7d53a5094829459d51e8b702ccd149fe}\index{FingerControlCommand@{FingerControlCommand}!controlType@{controlType}}
+\index{controlType@{controlType}!FingerControlCommand@{FingerControlCommand}}
+\doxysubsubsection{\texorpdfstring{controlType()}{controlType()}}
+{\footnotesize\ttfamily \label{class_finger_control_command_a7d53a5094829459d51e8b702ccd149fe} 
+\mbox{\hyperlink{user__command_8hpp_a70b12b8660dd3a38026dc9a8ddea272b}{Finger\+Control\+Type}} Finger\+Control\+Command\+::control\+Type (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+\Hypertarget{class_finger_control_command_a14d658c6e62e696d2c6bdd798a872a29}\index{FingerControlCommand@{FingerControlCommand}!controlValue@{controlValue}}
+\index{controlValue@{controlValue}!FingerControlCommand@{FingerControlCommand}}
+\doxysubsubsection{\texorpdfstring{controlValue()}{controlValue()}}
+{\footnotesize\ttfamily \label{class_finger_control_command_a14d658c6e62e696d2c6bdd798a872a29} 
+float Finger\+Control\+Command\+::control\+Value (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+\Hypertarget{class_finger_control_command_af14923172f485221258cb243dbc28178}\index{FingerControlCommand@{FingerControlCommand}!fingerJoinID@{fingerJoinID}}
+\index{fingerJoinID@{fingerJoinID}!FingerControlCommand@{FingerControlCommand}}
+\doxysubsubsection{\texorpdfstring{fingerJoinID()}{fingerJoinID()}}
+{\footnotesize\ttfamily \label{class_finger_control_command_af14923172f485221258cb243dbc28178} 
+std\+::uint8\+\_\+t Finger\+Control\+Command\+::finger\+Join\+ID (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+\Hypertarget{class_finger_control_command_a9300cc10eaf1e614d9233a1a4cb4a695}\index{FingerControlCommand@{FingerControlCommand}!fromMessage@{fromMessage}}
+\index{fromMessage@{fromMessage}!FingerControlCommand@{FingerControlCommand}}
+\doxysubsubsection{\texorpdfstring{fromMessage()}{fromMessage()}}
+{\footnotesize\ttfamily \label{class_finger_control_command_a9300cc10eaf1e614d9233a1a4cb4a695} 
+rdscom\+::\+Result$<$ \mbox{\hyperlink{class_finger_control_command}{Finger\+Control\+Command}} $>$ Finger\+Control\+Command\+::from\+Message (\begin{DoxyParamCaption}\item[{const rdscom\+::\+Message \&}]{msg}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Creates a Motor\+Control\+Command from an rdscom message. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em msg} & The message containing command data. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A Result wrapping the Motor\+Control\+Command. 
+\end{DoxyReturn}
+\Hypertarget{class_finger_control_command_a11ec55f6bee7b7f941080960e308ef0a}\index{FingerControlCommand@{FingerControlCommand}!isDone@{isDone}}
+\index{isDone@{isDone}!FingerControlCommand@{FingerControlCommand}}
+\doxysubsubsection{\texorpdfstring{isDone()}{isDone()}}
+{\footnotesize\ttfamily \label{class_finger_control_command_a11ec55f6bee7b7f941080960e308ef0a} 
+bool Finger\+Control\+Command\+::is\+Done (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Checks whether the command is done. 
+
+\begin{DoxyReturn}{Returns}
+true if the command has completed. 
+\end{DoxyReturn}
+
+
+Implements \mbox{\hyperlink{class_user_command_a61c9b01208426239360e115ba116e929}{User\+Command}}.
+
+\Hypertarget{class_finger_control_command_ab44f50631e8624ee5880e73e47e43a65}\index{FingerControlCommand@{FingerControlCommand}!simultaneous@{simultaneous}}
+\index{simultaneous@{simultaneous}!FingerControlCommand@{FingerControlCommand}}
+\doxysubsubsection{\texorpdfstring{simultaneous()}{simultaneous()}}
+{\footnotesize\ttfamily \label{class_finger_control_command_ab44f50631e8624ee5880e73e47e43a65} 
+bool Finger\+Control\+Command\+::simultaneous (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+testbench-\/mcu/include/\mbox{\hyperlink{user__command_8hpp}{user\+\_\+command.\+hpp}}\item 
+testbench-\/mcu/src/\mbox{\hyperlink{user__command_8cpp}{user\+\_\+command.\+cpp}}\end{DoxyCompactItemize}

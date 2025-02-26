@@ -1,0 +1,356 @@
+\doxysection{message\+\_\+definitions.\+hpp}
+\hypertarget{message__definitions_8hpp_source}{}\label{message__definitions_8hpp_source}\index{testbench-\/mcu/include/message\_definitions.hpp@{testbench-\/mcu/include/message\_definitions.hpp}}
+\mbox{\hyperlink{message__definitions_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ MESSAGE\_DEFINITIONS\_HPP}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ MESSAGE\_DEFINITIONS\_HPP}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ "{}rdscom.hpp"{}}}
+\DoxyCodeLine{00005\ }
+\DoxyCodeLine{00006\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespacemsgs}{msgs}}\ \{}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ \textcolor{comment}{//\ -\/-\/-\/\ DataPrototypes\ -\/-\/-\/}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00011\ \textcolor{keyword}{inline}\ rdscom::DataPrototype\ \mbox{\hyperlink{namespacemsgs_a0fbf26b1dcb8fe5a03007808c3160078}{heartbeatProto}}()\ \{}
+\DoxyCodeLine{00012\ \ \ \ \ rdscom::DataPrototype\ proto(0);}
+\DoxyCodeLine{00013\ \ \ \ \ proto.addField(\textcolor{stringliteral}{"{}rand"{}},\ rdscom::DataFieldType::INT8);}
+\DoxyCodeLine{00014\ \ \ \ \ \textcolor{keywordflow}{return}\ proto;}
+\DoxyCodeLine{00015\ \}}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00018\ \textcolor{keyword}{inline}\ rdscom::DataPrototype\ \mbox{\hyperlink{namespacemsgs_a8d7e09ea6dc9591a7435e0247328f5f2}{motorControlProto}}()\ \{}
+\DoxyCodeLine{00019\ \ \ \ \ rdscom::DataPrototype\ proto(1);}
+\DoxyCodeLine{00020\ \ \ \ \ proto.addField(\textcolor{stringliteral}{"{}motor\_id"{}},\ rdscom::DataFieldType::UINT8);}
+\DoxyCodeLine{00021\ \ \ \ \ proto.addField(\textcolor{stringliteral}{"{}control\_mode"{}},\ rdscom::DataFieldType::UINT8);}
+\DoxyCodeLine{00022\ \ \ \ \ proto.addField(\textcolor{stringliteral}{"{}control\_value"{}},\ rdscom::DataFieldType::FLOAT);}
+\DoxyCodeLine{00023\ \ \ \ \ proto.addField(\textcolor{stringliteral}{"{}simultaneous"{}},\ rdscom::DataFieldType::BOOL);}
+\DoxyCodeLine{00024\ \ \ \ \ \textcolor{keywordflow}{return}\ proto;}
+\DoxyCodeLine{00025\ \}}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00028\ \textcolor{keyword}{inline}\ rdscom::DataPrototype\ \mbox{\hyperlink{namespacemsgs_ad89f36b09a5d2dc25666ac06e338bab4}{motorEventProto}}()\ \{}
+\DoxyCodeLine{00029\ \ \ \ \ rdscom::DataPrototype\ proto(2);}
+\DoxyCodeLine{00030\ \ \ \ \ proto.addField(\textcolor{stringliteral}{"{}motor\_id"{}},\ rdscom::DataFieldType::UINT8);}
+\DoxyCodeLine{00031\ \ \ \ \ proto.addField(\textcolor{stringliteral}{"{}success"{}},\ rdscom::DataFieldType::BOOL);}
+\DoxyCodeLine{00032\ \ \ \ \ proto.addField(\textcolor{stringliteral}{"{}event\_type"{}},\ rdscom::DataFieldType::UINT8);}
+\DoxyCodeLine{00033\ \ \ \ \ proto.addField(\textcolor{stringliteral}{"{}event\_value"{}},\ rdscom::DataFieldType::FLOAT);}
+\DoxyCodeLine{00034\ \ \ \ \ proto.addField(\textcolor{stringliteral}{"{}num\_in\_queue"{}},\ rdscom::DataFieldType::UINT8);}
+\DoxyCodeLine{00035\ \ \ \ \ proto.addField(\textcolor{stringliteral}{"{}executed\_with\_count"{}},\ rdscom::DataFieldType::UINT8);}
+\DoxyCodeLine{00036\ \ \ \ \ \textcolor{keywordflow}{return}\ proto;}
+\DoxyCodeLine{00037\ \}}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00040\ \textcolor{keyword}{inline}\ rdscom::DataPrototype\ \mbox{\hyperlink{namespacemsgs_a502248700bb48514d0e1a61d7a243565}{controlGoProto}}()\ \{}
+\DoxyCodeLine{00041\ \ \ \ \ rdscom::DataPrototype\ proto(3);}
+\DoxyCodeLine{00042\ \ \ \ \ proto.addField(\textcolor{stringliteral}{"{}rand"{}},\ rdscom::DataFieldType::INT8);}
+\DoxyCodeLine{00043\ \ \ \ \ \textcolor{keywordflow}{return}\ proto;}
+\DoxyCodeLine{00044\ \}}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00047\ \textcolor{keyword}{inline}\ rdscom::DataPrototype\ \mbox{\hyperlink{namespacemsgs_ad65af5a2dd931af88ecf11838cd2c1fa}{controlDoneProto}}()\ \{}
+\DoxyCodeLine{00048\ \ \ \ \ rdscom::DataPrototype\ proto(4);}
+\DoxyCodeLine{00049\ \ \ \ \ proto.addField(\textcolor{stringliteral}{"{}success"{}},\ rdscom::DataFieldType::BOOL);}
+\DoxyCodeLine{00050\ \ \ \ \ proto.addField(\textcolor{stringliteral}{"{}time"{}},\ rdscom::DataFieldType::UINT32);}
+\DoxyCodeLine{00051\ \ \ \ \ proto.addField(\textcolor{stringliteral}{"{}executed"{}},\ rdscom::DataFieldType::UINT8);}
+\DoxyCodeLine{00052\ \ \ \ \ \textcolor{keywordflow}{return}\ proto;}
+\DoxyCodeLine{00053\ \}}
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00056\ \textcolor{keyword}{inline}\ rdscom::DataPrototype\ \mbox{\hyperlink{namespacemsgs_a7ed4d2fecbeaa997d7561a9af8e544ff}{startSensorDataStreamProto}}()\ \{}
+\DoxyCodeLine{00057\ \ \ \ \ rdscom::DataPrototype\ proto(5);}
+\DoxyCodeLine{00058\ \ \ \ \ proto.addField(\textcolor{stringliteral}{"{}joint\_id"{}},\ rdscom::DataFieldType::UINT8);}
+\DoxyCodeLine{00059\ \ \ \ \ proto.addField(\textcolor{stringliteral}{"{}frequency"{}},\ rdscom::DataFieldType::UINT8);}
+\DoxyCodeLine{00060\ \ \ \ \ \textcolor{keywordflow}{return}\ proto;}
+\DoxyCodeLine{00061\ \}}
+\DoxyCodeLine{00062\ }
+\DoxyCodeLine{00064\ \textcolor{keyword}{inline}\ rdscom::DataPrototype\ \mbox{\hyperlink{namespacemsgs_af5d48732d0be12fd6e875a7fdfb0ba6f}{sensorDataStreamProto}}()\ \{}
+\DoxyCodeLine{00065\ \ \ \ \ rdscom::DataPrototype\ proto(6);}
+\DoxyCodeLine{00066\ \ \ \ \ proto.addField(\textcolor{stringliteral}{"{}joint\_id"{}},\ rdscom::DataFieldType::UINT8);}
+\DoxyCodeLine{00067\ \ \ \ \ proto.addField(\textcolor{stringliteral}{"{}motor\_pos"{}},\ rdscom::DataFieldType::FLOAT);}
+\DoxyCodeLine{00068\ \ \ \ \ proto.addField(\textcolor{stringliteral}{"{}motor\_vel"{}},\ rdscom::DataFieldType::FLOAT);}
+\DoxyCodeLine{00069\ \ \ \ \ proto.addField(\textcolor{stringliteral}{"{}motor\_temp"{}},\ rdscom::DataFieldType::FLOAT);}
+\DoxyCodeLine{00070\ \ \ \ \ proto.addField(\textcolor{stringliteral}{"{}joint\_pos"{}},\ rdscom::DataFieldType::FLOAT);}
+\DoxyCodeLine{00071\ \ \ \ \ \textcolor{keywordflow}{return}\ proto;}
+\DoxyCodeLine{00072\ \}}
+\DoxyCodeLine{00073\ }
+\DoxyCodeLine{00075\ \textcolor{keyword}{inline}\ rdscom::DataPrototype\ \mbox{\hyperlink{namespacemsgs_a51eb40725ad6dac3e4225bfd17237337}{stopSensorDataStreamProto}}()\ \{}
+\DoxyCodeLine{00076\ \ \ \ \ rdscom::DataPrototype\ proto(7);}
+\DoxyCodeLine{00077\ \ \ \ \ proto.addField(\textcolor{stringliteral}{"{}joint\_id"{}},\ rdscom::DataFieldType::UINT8);}
+\DoxyCodeLine{00078\ \ \ \ \ \textcolor{keywordflow}{return}\ proto;}
+\DoxyCodeLine{00079\ \}}
+\DoxyCodeLine{00080\ }
+\DoxyCodeLine{00082\ \textcolor{keyword}{inline}\ rdscom::DataPrototype\ \mbox{\hyperlink{namespacemsgs_ad9690229843dbf5d8b591b7b1b70e3a8}{clearControlQueueProto}}()\ \{}
+\DoxyCodeLine{00083\ \ \ \ \ rdscom::DataPrototype\ proto(8);}
+\DoxyCodeLine{00084\ \ \ \ \ proto.addField(\textcolor{stringliteral}{"{}rand"{}},\ rdscom::DataFieldType::INT8);}
+\DoxyCodeLine{00085\ \ \ \ \ \textcolor{keywordflow}{return}\ proto;}
+\DoxyCodeLine{00086\ \}}
+\DoxyCodeLine{00087\ }
+\DoxyCodeLine{00089\ \textcolor{keyword}{inline}\ rdscom::DataPrototype\ \mbox{\hyperlink{namespacemsgs_ae8bf21f94acb5e9baa2b110b9f8af101}{errorProto}}()\ \{}
+\DoxyCodeLine{00090\ \ \ \ \ rdscom::DataPrototype\ proto(9);}
+\DoxyCodeLine{00091\ \ \ \ \ proto.addField(\textcolor{stringliteral}{"{}error\_code"{}},\ rdscom::DataFieldType::UINT8);}
+\DoxyCodeLine{00092\ \ \ \ \ \textcolor{keywordflow}{return}\ proto;}
+\DoxyCodeLine{00093\ \}}
+\DoxyCodeLine{00094\ }
+\DoxyCodeLine{00096\ \textcolor{keyword}{inline}\ rdscom::DataPrototype\ \mbox{\hyperlink{namespacemsgs_a2bed9e6b3819463047fba4023964f608}{stopProto}}()\ \{}
+\DoxyCodeLine{00097\ \ \ \ \ rdscom::DataPrototype\ proto(10);}
+\DoxyCodeLine{00098\ \ \ \ \ proto.addField(\textcolor{stringliteral}{"{}rand"{}},\ rdscom::DataFieldType::INT8);}
+\DoxyCodeLine{00099\ \ \ \ \ \textcolor{keywordflow}{return}\ proto;}
+\DoxyCodeLine{00100\ \}}
+\DoxyCodeLine{00101\ }
+\DoxyCodeLine{00102\ \textcolor{keyword}{inline}\ rdscom::DataPrototype\ \mbox{\hyperlink{namespacemsgs_abe2a4edabbe9968ff232095dbe8a8a8e}{zeroCommandProto}}()\ \{}
+\DoxyCodeLine{00103\ \ \ \ \ rdscom::DataPrototype\ proto(11);}
+\DoxyCodeLine{00104\ \ \ \ \ proto.addField(\textcolor{stringliteral}{"{}rand"{}},\ rdscom::DataFieldType::UINT8);}
+\DoxyCodeLine{00105\ \ \ \ \ \textcolor{keywordflow}{return}\ proto;}
+\DoxyCodeLine{00106\ \}}
+\DoxyCodeLine{00107\ }
+\DoxyCodeLine{00108\ \textcolor{keyword}{inline}\ rdscom::DataPrototype\ \mbox{\hyperlink{namespacemsgs_af3ef51b87b51589514ffbd64467e0b41}{zeroDoneProto}}()\ \{}
+\DoxyCodeLine{00109\ \ \ \ \ rdscom::DataPrototype\ proto(12);}
+\DoxyCodeLine{00110\ \ \ \ \ proto.addField(\textcolor{stringliteral}{"{}success"{}},\ rdscom::DataFieldType::UINT8);}
+\DoxyCodeLine{00111\ \ \ \ \ \textcolor{keywordflow}{return}\ proto;}
+\DoxyCodeLine{00112\ \}}
+\DoxyCodeLine{00113\ }
+\DoxyCodeLine{00114\ \textcolor{comment}{//\ -\/-\/-\/\ Utility\ Functions\ for\ Getting\ Message\ IDs\ (thisTypeOfCase)\ -\/-\/-\/}}
+\DoxyCodeLine{00115\ }
+\DoxyCodeLine{00116\ \textcolor{keyword}{inline}\ std::uint8\_t\ \mbox{\hyperlink{namespacemsgs_a61818fec89de602dc2ea60e69afc6de0}{heartbeatId}}()\ \{\ \textcolor{keywordflow}{return}\ 0;\ \}}
+\DoxyCodeLine{00117\ \textcolor{keyword}{inline}\ std::uint8\_t\ \mbox{\hyperlink{namespacemsgs_a347ae45034e36c1623b362268c29e158}{motorControlId}}()\ \{\ \textcolor{keywordflow}{return}\ 1;\ \}}
+\DoxyCodeLine{00118\ \textcolor{keyword}{inline}\ std::uint8\_t\ \mbox{\hyperlink{namespacemsgs_a20b8426b84e84f0ab48e28f393fe1280}{motorEventId}}()\ \{\ \textcolor{keywordflow}{return}\ 2;\ \}}
+\DoxyCodeLine{00119\ \textcolor{keyword}{inline}\ std::uint8\_t\ \mbox{\hyperlink{namespacemsgs_a8cbfb2a71fabe10d2eddca2a7632734a}{controlGoId}}()\ \{\ \textcolor{keywordflow}{return}\ 3;\ \}}
+\DoxyCodeLine{00120\ \textcolor{keyword}{inline}\ std::uint8\_t\ \mbox{\hyperlink{namespacemsgs_adafa9da0fc4f8aa50338e14505b023a1}{controlDoneId}}()\ \{\ \textcolor{keywordflow}{return}\ 4;\ \}}
+\DoxyCodeLine{00121\ \textcolor{keyword}{inline}\ std::uint8\_t\ \mbox{\hyperlink{namespacemsgs_a278ef3e5a87d832a99709034df3b9379}{startSensorDatastreamId}}()\ \{\ \textcolor{keywordflow}{return}\ 5;\ \}}
+\DoxyCodeLine{00122\ \textcolor{keyword}{inline}\ std::uint8\_t\ \mbox{\hyperlink{namespacemsgs_ab92c9efbbef936fd1619d89587a0640c}{sensorDatastreamId}}()\ \{\ \textcolor{keywordflow}{return}\ 6;\ \}}
+\DoxyCodeLine{00123\ \textcolor{keyword}{inline}\ std::uint8\_t\ \mbox{\hyperlink{namespacemsgs_ab96d9429fe52f9a2ef724ce999ccf86f}{stopSensorDatastreamId}}()\ \{\ \textcolor{keywordflow}{return}\ 7;\ \}}
+\DoxyCodeLine{00124\ \textcolor{keyword}{inline}\ std::uint8\_t\ \mbox{\hyperlink{namespacemsgs_af79d0bd3859aeb9b87eecd16baa0e1e3}{clearControlQueueId}}()\ \{\ \textcolor{keywordflow}{return}\ 8;\ \}}
+\DoxyCodeLine{00125\ \textcolor{keyword}{inline}\ std::uint8\_t\ \mbox{\hyperlink{namespacemsgs_aaa0d98bb29703ac92f7ac03741fa9261}{errorId}}()\ \{\ \textcolor{keywordflow}{return}\ 9;\ \}}
+\DoxyCodeLine{00126\ \textcolor{keyword}{inline}\ std::uint8\_t\ \mbox{\hyperlink{namespacemsgs_adae8800d3613a392850a3cc74a6707ed}{stopId}}()\ \{\ \textcolor{keywordflow}{return}\ 10;\ \}}
+\DoxyCodeLine{00127\ \textcolor{keyword}{inline}\ std::uint8\_t\ \mbox{\hyperlink{namespacemsgs_a81e34d114234f7b6c3d988ea641a4b68}{zeroCommandID}}()\ \{\ \textcolor{keywordflow}{return}\ 11;\ \}}
+\DoxyCodeLine{00128\ \textcolor{keyword}{inline}\ std::uint8\_t\ \mbox{\hyperlink{namespacemsgs_aa8644d39b6b7d3d0f586f1095709cf70}{zeroDoneID}}()\ \{\ \textcolor{keywordflow}{return}\ 12;\ \}}
+\DoxyCodeLine{00129\ }
+\DoxyCodeLine{00130\ \textcolor{comment}{//\ -\/-\/-\/\ Factory\ Methods\ to\ Build\ Request\ Messages\ -\/-\/-\/}}
+\DoxyCodeLine{00131\ \textcolor{comment}{//\ Request\ functions\ no\ longer\ take\ a\ MessageType\ parameter,}}
+\DoxyCodeLine{00132\ \textcolor{comment}{//\ always\ using\ rdscom::MessageType::REQUEST.}}
+\DoxyCodeLine{00133\ }
+\DoxyCodeLine{00137\ \textcolor{keyword}{inline}\ rdscom::Message\ \mbox{\hyperlink{namespacemsgs_a998fbfef19928aabe7e368369246a1da}{createHeartbeatMessageRequest}}(std::int8\_t\ randVal)\ \{}
+\DoxyCodeLine{00138\ \ \ \ \ rdscom::Message\ msg(rdscom::MessageType::REQUEST,\ \mbox{\hyperlink{namespacemsgs_a0fbf26b1dcb8fe5a03007808c3160078}{heartbeatProto}}());}
+\DoxyCodeLine{00139\ \ \ \ \ msg.setField<std::int8\_t>(\textcolor{stringliteral}{"{}rand"{}},\ randVal);}
+\DoxyCodeLine{00140\ \ \ \ \ \textcolor{keywordflow}{return}\ msg;}
+\DoxyCodeLine{00141\ \}}
+\DoxyCodeLine{00142\ }
+\DoxyCodeLine{00149\ \textcolor{keyword}{inline}\ rdscom::Message\ \mbox{\hyperlink{namespacemsgs_a992a02e6d9563c7059e0aa85437b2b5a}{createMotorControlMessageRequest}}(std::uint8\_t\ motor\_id,}
+\DoxyCodeLine{00150\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::uint8\_t\ control\_mode,}
+\DoxyCodeLine{00151\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ control\_value,}
+\DoxyCodeLine{00152\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ simultaneous)\ \{}
+\DoxyCodeLine{00153\ \ \ \ \ rdscom::Message\ msg(rdscom::MessageType::REQUEST,\ \mbox{\hyperlink{namespacemsgs_a8d7e09ea6dc9591a7435e0247328f5f2}{motorControlProto}}());}
+\DoxyCodeLine{00154\ \ \ \ \ msg.setField<std::uint8\_t>(\textcolor{stringliteral}{"{}motor\_id"{}},\ motor\_id);}
+\DoxyCodeLine{00155\ \ \ \ \ msg.setField<std::uint8\_t>(\textcolor{stringliteral}{"{}control\_mode"{}},\ control\_mode);}
+\DoxyCodeLine{00156\ \ \ \ \ msg.setField<\textcolor{keywordtype}{float}>(\textcolor{stringliteral}{"{}control\_value"{}},\ control\_value);}
+\DoxyCodeLine{00157\ \ \ \ \ msg.setField<std::uint8\_t>(\textcolor{stringliteral}{"{}simultaneous"{}},\ simultaneous\ ?\ 1\ :\ 0);}
+\DoxyCodeLine{00158\ \ \ \ \ \textcolor{keywordflow}{return}\ msg;}
+\DoxyCodeLine{00159\ \}}
+\DoxyCodeLine{00160\ }
+\DoxyCodeLine{00169\ \textcolor{keyword}{inline}\ rdscom::Message\ \mbox{\hyperlink{namespacemsgs_a43bb495ef7d7bd68324f5e4b1db3eb2d}{createMotorEventMessageRequest}}(std::uint8\_t\ motor\_id,}
+\DoxyCodeLine{00170\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ success,}
+\DoxyCodeLine{00171\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::uint8\_t\ event\_type,}
+\DoxyCodeLine{00172\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ event\_value,}
+\DoxyCodeLine{00173\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::uint8\_t\ num\_in\_queue,}
+\DoxyCodeLine{00174\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::uint8\_t\ executed\_with\_count)\ \{}
+\DoxyCodeLine{00175\ \ \ \ \ rdscom::Message\ msg(rdscom::MessageType::REQUEST,\ \mbox{\hyperlink{namespacemsgs_ad89f36b09a5d2dc25666ac06e338bab4}{motorEventProto}}());}
+\DoxyCodeLine{00176\ \ \ \ \ msg.setField<std::uint8\_t>(\textcolor{stringliteral}{"{}motor\_id"{}},\ motor\_id);}
+\DoxyCodeLine{00177\ \ \ \ \ msg.setField<std::uint8\_t>(\textcolor{stringliteral}{"{}success"{}},\ success\ ?\ 1\ :\ 0);}
+\DoxyCodeLine{00178\ \ \ \ \ msg.setField<std::uint8\_t>(\textcolor{stringliteral}{"{}event\_type"{}},\ event\_type);}
+\DoxyCodeLine{00179\ \ \ \ \ msg.setField<\textcolor{keywordtype}{float}>(\textcolor{stringliteral}{"{}event\_value"{}},\ event\_value);}
+\DoxyCodeLine{00180\ \ \ \ \ msg.setField<std::uint8\_t>(\textcolor{stringliteral}{"{}num\_in\_queue"{}},\ num\_in\_queue);}
+\DoxyCodeLine{00181\ \ \ \ \ msg.setField<std::uint8\_t>(\textcolor{stringliteral}{"{}executed\_with\_count"{}},\ executed\_with\_count);}
+\DoxyCodeLine{00182\ \ \ \ \ \textcolor{keywordflow}{return}\ msg;}
+\DoxyCodeLine{00183\ \}}
+\DoxyCodeLine{00184\ }
+\DoxyCodeLine{00188\ \textcolor{keyword}{inline}\ rdscom::Message\ \mbox{\hyperlink{namespacemsgs_ad2e43cd6370d6e8174badd4d7a040e4d}{createControlGoMessageRequest}}(std::int8\_t\ randVal)\ \{}
+\DoxyCodeLine{00189\ \ \ \ \ rdscom::Message\ msg(rdscom::MessageType::REQUEST,\ \mbox{\hyperlink{namespacemsgs_a502248700bb48514d0e1a61d7a243565}{controlGoProto}}());}
+\DoxyCodeLine{00190\ \ \ \ \ msg.setField<std::int8\_t>(\textcolor{stringliteral}{"{}rand"{}},\ randVal);}
+\DoxyCodeLine{00191\ \ \ \ \ \textcolor{keywordflow}{return}\ msg;}
+\DoxyCodeLine{00192\ \}}
+\DoxyCodeLine{00193\ }
+\DoxyCodeLine{00199\ \textcolor{keyword}{inline}\ rdscom::Message\ \mbox{\hyperlink{namespacemsgs_a8d69ee25588eef4c7388b465ed6b0080}{createControlDoneMessageRequest}}(\textcolor{keywordtype}{bool}\ success,}
+\DoxyCodeLine{00200\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::uint32\_t\ time,}
+\DoxyCodeLine{00201\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::uint8\_t\ executed)\ \{}
+\DoxyCodeLine{00202\ \ \ \ \ rdscom::Message\ msg(rdscom::MessageType::REQUEST,\ \mbox{\hyperlink{namespacemsgs_ad65af5a2dd931af88ecf11838cd2c1fa}{controlDoneProto}}());}
+\DoxyCodeLine{00203\ \ \ \ \ msg.setField<std::uint8\_t>(\textcolor{stringliteral}{"{}success"{}},\ success\ ?\ 1\ :\ 0);}
+\DoxyCodeLine{00204\ \ \ \ \ msg.setField<std::uint32\_t>(\textcolor{stringliteral}{"{}time"{}},\ time);}
+\DoxyCodeLine{00205\ \ \ \ \ msg.setField<std::uint8\_t>(\textcolor{stringliteral}{"{}executed"{}},\ executed);}
+\DoxyCodeLine{00206\ \ \ \ \ \textcolor{keywordflow}{return}\ msg;}
+\DoxyCodeLine{00207\ \}}
+\DoxyCodeLine{00208\ }
+\DoxyCodeLine{00213\ \textcolor{keyword}{inline}\ rdscom::Message\ \mbox{\hyperlink{namespacemsgs_a7af54e86e954533f72b34a2762e3861d}{createStartSensorDatastreamMessageRequest}}(std::uint8\_t\ joint\_id,}
+\DoxyCodeLine{00214\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::uint8\_t\ frequency)\ \{}
+\DoxyCodeLine{00215\ \ \ \ \ rdscom::Message\ msg(rdscom::MessageType::REQUEST,\ \mbox{\hyperlink{namespacemsgs_a7ed4d2fecbeaa997d7561a9af8e544ff}{startSensorDataStreamProto}}());}
+\DoxyCodeLine{00216\ \ \ \ \ msg.setField<std::uint8\_t>(\textcolor{stringliteral}{"{}joint\_id"{}},\ joint\_id);}
+\DoxyCodeLine{00217\ \ \ \ \ msg.setField<std::uint8\_t>(\textcolor{stringliteral}{"{}frequency"{}},\ frequency);}
+\DoxyCodeLine{00218\ \ \ \ \ \textcolor{keywordflow}{return}\ msg;}
+\DoxyCodeLine{00219\ \}}
+\DoxyCodeLine{00220\ }
+\DoxyCodeLine{00228\ \textcolor{keyword}{inline}\ rdscom::Message\ \mbox{\hyperlink{namespacemsgs_a16b2c5e9c56b624425f7453f008beaf0}{createSensorDatastreamMessageRequest}}(std::uint8\_t\ joint\_id,}
+\DoxyCodeLine{00229\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ motor\_pos,}
+\DoxyCodeLine{00230\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ motor\_vel,}
+\DoxyCodeLine{00231\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ motor\_temp,}
+\DoxyCodeLine{00232\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ joint\_pos)\ \{}
+\DoxyCodeLine{00233\ \ \ \ \ rdscom::Message\ msg(rdscom::MessageType::REQUEST,\ \mbox{\hyperlink{namespacemsgs_af5d48732d0be12fd6e875a7fdfb0ba6f}{sensorDataStreamProto}}());}
+\DoxyCodeLine{00234\ \ \ \ \ msg.setField<std::uint8\_t>(\textcolor{stringliteral}{"{}joint\_id"{}},\ joint\_id);}
+\DoxyCodeLine{00235\ \ \ \ \ msg.setField<\textcolor{keywordtype}{float}>(\textcolor{stringliteral}{"{}motor\_pos"{}},\ motor\_pos);}
+\DoxyCodeLine{00236\ \ \ \ \ msg.setField<\textcolor{keywordtype}{float}>(\textcolor{stringliteral}{"{}motor\_vel"{}},\ motor\_vel);}
+\DoxyCodeLine{00237\ \ \ \ \ msg.setField<\textcolor{keywordtype}{float}>(\textcolor{stringliteral}{"{}motor\_temp"{}},\ motor\_temp);}
+\DoxyCodeLine{00238\ \ \ \ \ msg.setField<\textcolor{keywordtype}{float}>(\textcolor{stringliteral}{"{}joint\_pos"{}},\ joint\_pos);}
+\DoxyCodeLine{00239\ \ \ \ \ \textcolor{keywordflow}{return}\ msg;}
+\DoxyCodeLine{00240\ \}}
+\DoxyCodeLine{00241\ }
+\DoxyCodeLine{00245\ \textcolor{keyword}{inline}\ rdscom::Message\ \mbox{\hyperlink{namespacemsgs_aff580c8c5ef00d9889a53caa05b9839b}{createStopSensorDatastreamMessageRequest}}(std::uint8\_t\ joint\_id)\ \{}
+\DoxyCodeLine{00246\ \ \ \ \ rdscom::Message\ msg(rdscom::MessageType::REQUEST,\ \mbox{\hyperlink{namespacemsgs_a51eb40725ad6dac3e4225bfd17237337}{stopSensorDataStreamProto}}());}
+\DoxyCodeLine{00247\ \ \ \ \ msg.setField<std::uint8\_t>(\textcolor{stringliteral}{"{}joint\_id"{}},\ joint\_id);}
+\DoxyCodeLine{00248\ \ \ \ \ \textcolor{keywordflow}{return}\ msg;}
+\DoxyCodeLine{00249\ \}}
+\DoxyCodeLine{00250\ }
+\DoxyCodeLine{00254\ \textcolor{keyword}{inline}\ rdscom::Message\ \mbox{\hyperlink{namespacemsgs_a5a924b222ab0b4adf7d7a24afef041a3}{createClearControlQueueMessageRequest}}(std::int8\_t\ randVal)\ \{}
+\DoxyCodeLine{00255\ \ \ \ \ rdscom::Message\ msg(rdscom::MessageType::REQUEST,\ \mbox{\hyperlink{namespacemsgs_ad9690229843dbf5d8b591b7b1b70e3a8}{clearControlQueueProto}}());}
+\DoxyCodeLine{00256\ \ \ \ \ msg.setField<std::int8\_t>(\textcolor{stringliteral}{"{}rand"{}},\ randVal);}
+\DoxyCodeLine{00257\ \ \ \ \ \textcolor{keywordflow}{return}\ msg;}
+\DoxyCodeLine{00258\ \}}
+\DoxyCodeLine{00259\ }
+\DoxyCodeLine{00263\ \textcolor{keyword}{inline}\ rdscom::Message\ \mbox{\hyperlink{namespacemsgs_a563d7f5aa20c40ab44193729ae9f058b}{createErrorMessageRequest}}(std::uint8\_t\ error\_code)\ \{}
+\DoxyCodeLine{00264\ \ \ \ \ rdscom::Message\ msg(rdscom::MessageType::REQUEST,\ \mbox{\hyperlink{namespacemsgs_ae8bf21f94acb5e9baa2b110b9f8af101}{errorProto}}());}
+\DoxyCodeLine{00265\ \ \ \ \ msg.setField<std::uint8\_t>(\textcolor{stringliteral}{"{}error\_code"{}},\ error\_code);}
+\DoxyCodeLine{00266\ \ \ \ \ \textcolor{keywordflow}{return}\ msg;}
+\DoxyCodeLine{00267\ \}}
+\DoxyCodeLine{00268\ }
+\DoxyCodeLine{00272\ \textcolor{keyword}{inline}\ rdscom::Message\ \mbox{\hyperlink{namespacemsgs_abc859d5c7d8da503fad86fa23d68b93d}{createStopMessageRequest}}(std::int8\_t\ randVal)\ \{}
+\DoxyCodeLine{00273\ \ \ \ \ rdscom::Message\ msg(rdscom::MessageType::REQUEST,\ \mbox{\hyperlink{namespacemsgs_a2bed9e6b3819463047fba4023964f608}{stopProto}}());}
+\DoxyCodeLine{00274\ \ \ \ \ msg.setField<std::int8\_t>(\textcolor{stringliteral}{"{}rand"{}},\ randVal);}
+\DoxyCodeLine{00275\ \ \ \ \ \textcolor{keywordflow}{return}\ msg;}
+\DoxyCodeLine{00276\ \}}
+\DoxyCodeLine{00277\ }
+\DoxyCodeLine{00278\ \textcolor{keyword}{inline}\ rdscom::Message\ \mbox{\hyperlink{namespacemsgs_a9ed36b29a520e242c1d272f0ce7fc70d}{createZeroCommandRequest}}(std::uint8\_t\ randVal)\ \{}
+\DoxyCodeLine{00279\ \ \ \ \ rdscom::Message\ msg(rdscom::MessageType::REQUEST,\ \mbox{\hyperlink{namespacemsgs_abe2a4edabbe9968ff232095dbe8a8a8e}{zeroCommandProto}}());}
+\DoxyCodeLine{00280\ \ \ \ \ msg.setField<std::uint8\_t>(\textcolor{stringliteral}{"{}rand"{}},\ randVal);}
+\DoxyCodeLine{00281\ \ \ \ \ \textcolor{keywordflow}{return}\ msg;}
+\DoxyCodeLine{00282\ \}}
+\DoxyCodeLine{00283\ }
+\DoxyCodeLine{00284\ \textcolor{keyword}{inline}\ rdscom::Message\ \mbox{\hyperlink{namespacemsgs_a39eb9d94fc25dbdc183e7eacb4e479ab}{createZeroDoneRequest}}(std::uint8\_t\ success)\ \{}
+\DoxyCodeLine{00285\ \ \ \ \ rdscom::Message\ msg(rdscom::MessageType::REQUEST,\ \mbox{\hyperlink{namespacemsgs_af3ef51b87b51589514ffbd64467e0b41}{zeroDoneProto}}());}
+\DoxyCodeLine{00286\ \ \ \ \ msg.setField<std::uint8\_t>(\textcolor{stringliteral}{"{}success"{}},\ success);}
+\DoxyCodeLine{00287\ \ \ \ \ \textcolor{keywordflow}{return}\ msg;}
+\DoxyCodeLine{00288\ \}}
+\DoxyCodeLine{00289\ }
+\DoxyCodeLine{00290\ \textcolor{comment}{//\ -\/-\/-\/\ Factory\ Methods\ to\ Build\ Response\ Messages\ -\/-\/-\/}}
+\DoxyCodeLine{00291\ \textcolor{comment}{//\ Each\ function\ creates\ a\ response\ message\ using\ Message::createResponse().}}
+\DoxyCodeLine{00292\ }
+\DoxyCodeLine{00297\ \textcolor{keyword}{inline}\ rdscom::Message\ \mbox{\hyperlink{namespacemsgs_a300bf84ff2c67ba6d4cc5d52a20a2c95}{createHeartbeatMessageResponse}}(\textcolor{keyword}{const}\ rdscom::Message\ \&request,\ std::int8\_t\ randVal)\ \{}
+\DoxyCodeLine{00298\ \ \ \ \ rdscom::Message\ response\ =\ rdscom::Message::createResponse(request,\ \mbox{\hyperlink{namespacemsgs_a0fbf26b1dcb8fe5a03007808c3160078}{heartbeatProto}}());}
+\DoxyCodeLine{00299\ \ \ \ \ response.setField<std::int8\_t>(\textcolor{stringliteral}{"{}rand"{}},\ randVal);}
+\DoxyCodeLine{00300\ \ \ \ \ \textcolor{keywordflow}{return}\ response;}
+\DoxyCodeLine{00301\ \}}
+\DoxyCodeLine{00302\ }
+\DoxyCodeLine{00310\ \textcolor{keyword}{inline}\ rdscom::Message\ \mbox{\hyperlink{namespacemsgs_a8653005f68a9d61e7bba8c97e97b1a93}{createMotorControlMessageResponse}}(\textcolor{keyword}{const}\ rdscom::Message\ \&request,}
+\DoxyCodeLine{00311\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::uint8\_t\ motor\_id,}
+\DoxyCodeLine{00312\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::uint8\_t\ control\_mode,}
+\DoxyCodeLine{00313\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ control\_value,}
+\DoxyCodeLine{00314\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ simultaneous)\ \{}
+\DoxyCodeLine{00315\ \ \ \ \ rdscom::Message\ response\ =\ rdscom::Message::createResponse(request,\ \mbox{\hyperlink{namespacemsgs_a8d7e09ea6dc9591a7435e0247328f5f2}{motorControlProto}}());}
+\DoxyCodeLine{00316\ \ \ \ \ response.setField<std::uint8\_t>(\textcolor{stringliteral}{"{}motor\_id"{}},\ motor\_id);}
+\DoxyCodeLine{00317\ \ \ \ \ response.setField<std::uint8\_t>(\textcolor{stringliteral}{"{}control\_mode"{}},\ control\_mode);}
+\DoxyCodeLine{00318\ \ \ \ \ response.setField<\textcolor{keywordtype}{float}>(\textcolor{stringliteral}{"{}control\_value"{}},\ control\_value);}
+\DoxyCodeLine{00319\ \ \ \ \ response.setField<std::int8\_t>(\textcolor{stringliteral}{"{}simultaneous"{}},\ simultaneous\ ?\ 1\ :\ 0);}
+\DoxyCodeLine{00320\ \ \ \ \ \textcolor{keywordflow}{return}\ response;}
+\DoxyCodeLine{00321\ \}}
+\DoxyCodeLine{00322\ }
+\DoxyCodeLine{00332\ \textcolor{keyword}{inline}\ rdscom::Message\ \mbox{\hyperlink{namespacemsgs_af32a2a8fb18a46b8b012a5d6016461c5}{createMotorEventMessageResponse}}(\textcolor{keyword}{const}\ rdscom::Message\ \&request,}
+\DoxyCodeLine{00333\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::uint8\_t\ motor\_id,}
+\DoxyCodeLine{00334\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ success,}
+\DoxyCodeLine{00335\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::uint8\_t\ event\_type,}
+\DoxyCodeLine{00336\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ event\_value,}
+\DoxyCodeLine{00337\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::uint8\_t\ num\_in\_queue,}
+\DoxyCodeLine{00338\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::uint8\_t\ executed\_with\_count)\ \{}
+\DoxyCodeLine{00339\ \ \ \ \ rdscom::Message\ response\ =\ rdscom::Message::createResponse(request,\ \mbox{\hyperlink{namespacemsgs_ad89f36b09a5d2dc25666ac06e338bab4}{motorEventProto}}());}
+\DoxyCodeLine{00340\ \ \ \ \ response.setField<std::uint8\_t>(\textcolor{stringliteral}{"{}motor\_id"{}},\ motor\_id);}
+\DoxyCodeLine{00341\ \ \ \ \ response.setField<std::uint8\_t>(\textcolor{stringliteral}{"{}success"{}},\ success\ ?\ 1\ :\ 0);}
+\DoxyCodeLine{00342\ \ \ \ \ response.setField<std::uint8\_t>(\textcolor{stringliteral}{"{}event\_type"{}},\ event\_type);}
+\DoxyCodeLine{00343\ \ \ \ \ response.setField<\textcolor{keywordtype}{float}>(\textcolor{stringliteral}{"{}event\_value"{}},\ event\_value);}
+\DoxyCodeLine{00344\ \ \ \ \ response.setField<std::uint8\_t>(\textcolor{stringliteral}{"{}num\_in\_queue"{}},\ num\_in\_queue);}
+\DoxyCodeLine{00345\ \ \ \ \ response.setField<std::uint8\_t>(\textcolor{stringliteral}{"{}executed\_with\_count"{}},\ executed\_with\_count);}
+\DoxyCodeLine{00346\ \ \ \ \ \textcolor{keywordflow}{return}\ response;}
+\DoxyCodeLine{00347\ \}}
+\DoxyCodeLine{00348\ }
+\DoxyCodeLine{00353\ \textcolor{keyword}{inline}\ rdscom::Message\ \mbox{\hyperlink{namespacemsgs_a749e8f87459823a21a2c557d251c79f5}{createControlGoMessageResponse}}(\textcolor{keyword}{const}\ rdscom::Message\ \&request,\ std::int8\_t\ randVal)\ \{}
+\DoxyCodeLine{00354\ \ \ \ \ rdscom::Message\ response\ =\ rdscom::Message::createResponse(request,\ \mbox{\hyperlink{namespacemsgs_a502248700bb48514d0e1a61d7a243565}{controlGoProto}}());}
+\DoxyCodeLine{00355\ \ \ \ \ response.setField<std::int8\_t>(\textcolor{stringliteral}{"{}rand"{}},\ randVal);}
+\DoxyCodeLine{00356\ \ \ \ \ \textcolor{keywordflow}{return}\ response;}
+\DoxyCodeLine{00357\ \}}
+\DoxyCodeLine{00358\ }
+\DoxyCodeLine{00365\ \textcolor{keyword}{inline}\ rdscom::Message\ \mbox{\hyperlink{namespacemsgs_aab6cb2267bc988b47dc5e29d5d5c28bb}{createControlDoneMessageResponse}}(\textcolor{keyword}{const}\ rdscom::Message\ \&request,}
+\DoxyCodeLine{00366\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ success,}
+\DoxyCodeLine{00367\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::uint32\_t\ time\_val,}
+\DoxyCodeLine{00368\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::uint8\_t\ executed)\ \{}
+\DoxyCodeLine{00369\ \ \ \ \ rdscom::Message\ response\ =\ rdscom::Message::createResponse(request,\ \mbox{\hyperlink{namespacemsgs_ad65af5a2dd931af88ecf11838cd2c1fa}{controlDoneProto}}());}
+\DoxyCodeLine{00370\ \ \ \ \ response.setField<std::uint8\_t>(\textcolor{stringliteral}{"{}success"{}},\ success\ ?\ 1\ :\ 0);}
+\DoxyCodeLine{00371\ \ \ \ \ response.setField<std::uint32\_t>(\textcolor{stringliteral}{"{}time"{}},\ time\_val);}
+\DoxyCodeLine{00372\ \ \ \ \ response.setField<std::uint8\_t>(\textcolor{stringliteral}{"{}executed"{}},\ executed);}
+\DoxyCodeLine{00373\ \ \ \ \ \textcolor{keywordflow}{return}\ response;}
+\DoxyCodeLine{00374\ \}}
+\DoxyCodeLine{00375\ }
+\DoxyCodeLine{00381\ \textcolor{keyword}{inline}\ rdscom::Message\ \mbox{\hyperlink{namespacemsgs_adbf9966b6761aa4568465f14bd594d88}{createStartSensorDatastreamMessageResponse}}(\textcolor{keyword}{const}\ rdscom::Message\ \&request,}
+\DoxyCodeLine{00382\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::uint8\_t\ joint\_id,}
+\DoxyCodeLine{00383\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::uint8\_t\ frequency)\ \{}
+\DoxyCodeLine{00384\ \ \ \ \ rdscom::Message\ response\ =\ rdscom::Message::createResponse(request,\ \mbox{\hyperlink{namespacemsgs_a7ed4d2fecbeaa997d7561a9af8e544ff}{startSensorDataStreamProto}}());}
+\DoxyCodeLine{00385\ \ \ \ \ response.setField<std::uint8\_t>(\textcolor{stringliteral}{"{}joint\_id"{}},\ joint\_id);}
+\DoxyCodeLine{00386\ \ \ \ \ response.setField<std::uint8\_t>(\textcolor{stringliteral}{"{}frequency"{}},\ frequency);}
+\DoxyCodeLine{00387\ \ \ \ \ \textcolor{keywordflow}{return}\ response;}
+\DoxyCodeLine{00388\ \}}
+\DoxyCodeLine{00389\ }
+\DoxyCodeLine{00398\ \textcolor{keyword}{inline}\ rdscom::Message\ \mbox{\hyperlink{namespacemsgs_a7cfe460a9e0746c184e03e8f73d5769a}{createSensorDatastreamMessageResponse}}(\textcolor{keyword}{const}\ rdscom::Message\ \&request,}
+\DoxyCodeLine{00399\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::uint8\_t\ joint\_id,}
+\DoxyCodeLine{00400\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ motor\_pos,}
+\DoxyCodeLine{00401\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ motor\_vel,}
+\DoxyCodeLine{00402\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ motor\_temp,}
+\DoxyCodeLine{00403\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ joint\_pos)\ \{}
+\DoxyCodeLine{00404\ \ \ \ \ rdscom::Message\ response\ =\ rdscom::Message::createResponse(request,\ \mbox{\hyperlink{namespacemsgs_af5d48732d0be12fd6e875a7fdfb0ba6f}{sensorDataStreamProto}}());}
+\DoxyCodeLine{00405\ \ \ \ \ response.setField<std::uint8\_t>(\textcolor{stringliteral}{"{}joint\_id"{}},\ joint\_id);}
+\DoxyCodeLine{00406\ \ \ \ \ response.setField<\textcolor{keywordtype}{float}>(\textcolor{stringliteral}{"{}motor\_pos"{}},\ motor\_pos);}
+\DoxyCodeLine{00407\ \ \ \ \ response.setField<\textcolor{keywordtype}{float}>(\textcolor{stringliteral}{"{}motor\_vel"{}},\ motor\_vel);}
+\DoxyCodeLine{00408\ \ \ \ \ response.setField<\textcolor{keywordtype}{float}>(\textcolor{stringliteral}{"{}motor\_temp"{}},\ motor\_temp);}
+\DoxyCodeLine{00409\ \ \ \ \ response.setField<\textcolor{keywordtype}{float}>(\textcolor{stringliteral}{"{}joint\_pos"{}},\ joint\_pos);}
+\DoxyCodeLine{00410\ \ \ \ \ \textcolor{keywordflow}{return}\ response;}
+\DoxyCodeLine{00411\ \}}
+\DoxyCodeLine{00412\ }
+\DoxyCodeLine{00417\ \textcolor{keyword}{inline}\ rdscom::Message\ \mbox{\hyperlink{namespacemsgs_a23b3d52ab432269dab07f6667903a10f}{createStopSensorDatastreamMessageResponse}}(\textcolor{keyword}{const}\ rdscom::Message\ \&request,}
+\DoxyCodeLine{00418\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::uint8\_t\ joint\_id)\ \{}
+\DoxyCodeLine{00419\ \ \ \ \ rdscom::Message\ response\ =\ rdscom::Message::createResponse(request,\ \mbox{\hyperlink{namespacemsgs_a51eb40725ad6dac3e4225bfd17237337}{stopSensorDataStreamProto}}());}
+\DoxyCodeLine{00420\ \ \ \ \ response.setField<std::uint8\_t>(\textcolor{stringliteral}{"{}joint\_id"{}},\ joint\_id);}
+\DoxyCodeLine{00421\ \ \ \ \ \textcolor{keywordflow}{return}\ response;}
+\DoxyCodeLine{00422\ \}}
+\DoxyCodeLine{00423\ }
+\DoxyCodeLine{00428\ \textcolor{keyword}{inline}\ rdscom::Message\ \mbox{\hyperlink{namespacemsgs_a8ed2af1065c9ba9568e6c5986ad55eb0}{createClearControlQueueMessageResponse}}(\textcolor{keyword}{const}\ rdscom::Message\ \&request,\ std::int8\_t\ randVal)\ \{}
+\DoxyCodeLine{00429\ \ \ \ \ rdscom::Message\ response\ =\ rdscom::Message::createResponse(request,\ \mbox{\hyperlink{namespacemsgs_ad9690229843dbf5d8b591b7b1b70e3a8}{clearControlQueueProto}}());}
+\DoxyCodeLine{00430\ \ \ \ \ response.setField<std::int8\_t>(\textcolor{stringliteral}{"{}rand"{}},\ randVal);}
+\DoxyCodeLine{00431\ \ \ \ \ \textcolor{keywordflow}{return}\ response;}
+\DoxyCodeLine{00432\ \}}
+\DoxyCodeLine{00433\ }
+\DoxyCodeLine{00438\ \textcolor{keyword}{inline}\ rdscom::Message\ \mbox{\hyperlink{namespacemsgs_a964e74f08aeecd3b45cfc4386cc6a707}{createErrorMessageResponse}}(\textcolor{keyword}{const}\ rdscom::Message\ \&request,\ std::uint8\_t\ error\_code)\ \{}
+\DoxyCodeLine{00439\ \ \ \ \ rdscom::Message\ response\ =\ rdscom::Message::createResponse(request,\ \mbox{\hyperlink{namespacemsgs_ae8bf21f94acb5e9baa2b110b9f8af101}{errorProto}}());}
+\DoxyCodeLine{00440\ \ \ \ \ response.setField<std::uint8\_t>(\textcolor{stringliteral}{"{}error\_code"{}},\ error\_code);}
+\DoxyCodeLine{00441\ \ \ \ \ \textcolor{keywordflow}{return}\ response;}
+\DoxyCodeLine{00442\ \}}
+\DoxyCodeLine{00443\ }
+\DoxyCodeLine{00448\ \textcolor{keyword}{inline}\ rdscom::Message\ \mbox{\hyperlink{namespacemsgs_acf5f1c71344390a457f940f2d6af3da7}{createStopMessageResponse}}(\textcolor{keyword}{const}\ rdscom::Message\ \&request,\ std::int8\_t\ randVal)\ \{}
+\DoxyCodeLine{00449\ \ \ \ \ rdscom::Message\ response\ =\ rdscom::Message::createResponse(request,\ \mbox{\hyperlink{namespacemsgs_a2bed9e6b3819463047fba4023964f608}{stopProto}}());}
+\DoxyCodeLine{00450\ \ \ \ \ response.setField<std::int8\_t>(\textcolor{stringliteral}{"{}rand"{}},\ randVal);}
+\DoxyCodeLine{00451\ \ \ \ \ \textcolor{keywordflow}{return}\ response;}
+\DoxyCodeLine{00452\ \}}
+\DoxyCodeLine{00453\ }
+\DoxyCodeLine{00454\ \textcolor{keyword}{inline}\ rdscom::Message\ \mbox{\hyperlink{namespacemsgs_aa06274bcad6cc11558a264560da2bf00}{createZeroCommandResponse}}(\textcolor{keyword}{const}\ rdscom::Message\ \&request,\ std::uint8\_t\ randVal)\ \{}
+\DoxyCodeLine{00455\ \ \ \ \ rdscom::Message\ response\ =\ rdscom::Message::createResponse(request,\ \mbox{\hyperlink{namespacemsgs_abe2a4edabbe9968ff232095dbe8a8a8e}{zeroCommandProto}}());}
+\DoxyCodeLine{00456\ \ \ \ \ response.setField<std::uint8\_t>(\textcolor{stringliteral}{"{}rand"{}},\ randVal);}
+\DoxyCodeLine{00457\ \ \ \ \ \textcolor{keywordflow}{return}\ response;}
+\DoxyCodeLine{00458\ \}}
+\DoxyCodeLine{00459\ }
+\DoxyCodeLine{00460\ \textcolor{keyword}{inline}\ rdscom::Message\ \mbox{\hyperlink{namespacemsgs_a2b509069d829c9b31c43febb2ac64647}{createZeroDoneResponse}}(\textcolor{keyword}{const}\ rdscom::Message\ \&request,\ \textcolor{keywordtype}{bool}\ success)\ \{}
+\DoxyCodeLine{00461\ \ \ \ \ rdscom::Message\ response\ =\ rdscom::Message::createResponse(request,\ \mbox{\hyperlink{namespacemsgs_af3ef51b87b51589514ffbd64467e0b41}{zeroDoneProto}}());}
+\DoxyCodeLine{00462\ \ \ \ \ response.setField<std::uint8\_t>(\textcolor{stringliteral}{"{}success"{}},\ success\ ==\ \textcolor{keyword}{true}\ ?\ 1\ :\ 0);}
+\DoxyCodeLine{00463\ \ \ \ \ \textcolor{keywordflow}{return}\ response;}
+\DoxyCodeLine{00464\ \}}
+\DoxyCodeLine{00465\ }
+\DoxyCodeLine{00466\ \}\ \ \textcolor{comment}{//\ namespace\ msgs}}
+\DoxyCodeLine{00467\ }
+\DoxyCodeLine{00468\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//\ MESSAGE\_DEFINITIONS\_HPP}}
+
+\end{DoxyCode}

@@ -1,0 +1,84 @@
+\doxysection{msgs\+::Message\+Handlers Class Reference}
+\hypertarget{classmsgs_1_1_message_handlers}{}\label{classmsgs_1_1_message_handlers}\index{msgs::MessageHandlers@{msgs::MessageHandlers}}
+
+
+Class to handle incoming messages from the communication interface. This class registers callbacks with a Communication\+Interface and dispatches incoming messages to the appropriate handler functions.  
+
+
+
+
+{\ttfamily \#include $<$message\+\_\+handlers.\+hpp$>$}
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classmsgs_1_1_message_handlers_a4d78462641dcaca3c5024ef747eb2b08}{Message\+Handlers}} (rdscom\+::\+Communication\+Interface \&com, \mbox{\hyperlink{class_user_command_buffer}{User\+Command\+Buffer}} \&command\+Buffer)
+\begin{DoxyCompactList}\small\item\em Constructs a \doxylink{classmsgs_1_1_message_handlers}{Message\+Handlers} object. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classmsgs_1_1_message_handlers_a56f0d6dc519220dd74ab970287b4c5dc}{register\+Prototypes}} ()
+\begin{DoxyCompactList}\small\item\em Register all message prototypes. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classmsgs_1_1_message_handlers_a237bd17c730486b60d554182d66ce873}{add\+Handlers}} ()
+\begin{DoxyCompactList}\small\item\em Registers all message handlers with the communication interface. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classmsgs_1_1_message_handlers_a2a59053d6513034158ef099229ee0aa3}{tick\+Datastreams}} ()
+\begin{DoxyCompactList}\small\item\em Send sensor datastream messages, if necessary. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Class to handle incoming messages from the communication interface. This class registers callbacks with a Communication\+Interface and dispatches incoming messages to the appropriate handler functions. 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{classmsgs_1_1_message_handlers_a4d78462641dcaca3c5024ef747eb2b08}\index{msgs::MessageHandlers@{msgs::MessageHandlers}!MessageHandlers@{MessageHandlers}}
+\index{MessageHandlers@{MessageHandlers}!msgs::MessageHandlers@{msgs::MessageHandlers}}
+\doxysubsubsection{\texorpdfstring{MessageHandlers()}{MessageHandlers()}}
+{\footnotesize\ttfamily \label{classmsgs_1_1_message_handlers_a4d78462641dcaca3c5024ef747eb2b08} 
+msgs\+::\+Message\+Handlers\+::\+Message\+Handlers (\begin{DoxyParamCaption}\item[{rdscom\+::\+Communication\+Interface \&}]{com}{, }\item[{\mbox{\hyperlink{class_user_command_buffer}{User\+Command\+Buffer}} \&}]{command\+Buffer}{}\end{DoxyParamCaption})}
+
+
+
+Constructs a \doxylink{classmsgs_1_1_message_handlers}{Message\+Handlers} object. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em com} & Reference to the Communication\+Interface. \\
+\hline
+{\em command\+Buffer} & Reference to the \doxylink{class_user_command_buffer}{User\+Command\+Buffer} for scheduling commands. \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classmsgs_1_1_message_handlers_a237bd17c730486b60d554182d66ce873}\index{msgs::MessageHandlers@{msgs::MessageHandlers}!addHandlers@{addHandlers}}
+\index{addHandlers@{addHandlers}!msgs::MessageHandlers@{msgs::MessageHandlers}}
+\doxysubsubsection{\texorpdfstring{addHandlers()}{addHandlers()}}
+{\footnotesize\ttfamily \label{classmsgs_1_1_message_handlers_a237bd17c730486b60d554182d66ce873} 
+void msgs\+::\+Message\+Handlers\+::add\+Handlers (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Registers all message handlers with the communication interface. 
+
+\Hypertarget{classmsgs_1_1_message_handlers_a56f0d6dc519220dd74ab970287b4c5dc}\index{msgs::MessageHandlers@{msgs::MessageHandlers}!registerPrototypes@{registerPrototypes}}
+\index{registerPrototypes@{registerPrototypes}!msgs::MessageHandlers@{msgs::MessageHandlers}}
+\doxysubsubsection{\texorpdfstring{registerPrototypes()}{registerPrototypes()}}
+{\footnotesize\ttfamily \label{classmsgs_1_1_message_handlers_a56f0d6dc519220dd74ab970287b4c5dc} 
+void msgs\+::\+Message\+Handlers\+::register\+Prototypes (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Register all message prototypes. 
+
+\Hypertarget{classmsgs_1_1_message_handlers_a2a59053d6513034158ef099229ee0aa3}\index{msgs::MessageHandlers@{msgs::MessageHandlers}!tickDatastreams@{tickDatastreams}}
+\index{tickDatastreams@{tickDatastreams}!msgs::MessageHandlers@{msgs::MessageHandlers}}
+\doxysubsubsection{\texorpdfstring{tickDatastreams()}{tickDatastreams()}}
+{\footnotesize\ttfamily \label{classmsgs_1_1_message_handlers_a2a59053d6513034158ef099229ee0aa3} 
+void msgs\+::\+Message\+Handlers\+::tick\+Datastreams (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Send sensor datastream messages, if necessary. 
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+testbench-\/mcu/include/\mbox{\hyperlink{message__handlers_8hpp}{message\+\_\+handlers.\+hpp}}\item 
+testbench-\/mcu/src/\mbox{\hyperlink{message__handlers_8cpp}{message\+\_\+handlers.\+cpp}}\end{DoxyCompactItemize}

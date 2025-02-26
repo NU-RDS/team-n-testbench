@@ -1,0 +1,117 @@
+\doxysection{defines.\+h}
+\hypertarget{defines_8h_source}{}\label{defines_8h_source}\index{testbench-\/mcu/include/defines.h@{testbench-\/mcu/include/defines.h}}
+\mbox{\hyperlink{defines_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#define\ CAN\_BAUDRATE\ 250000}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{comment}{//\ SYSTEM\ ID:\ robot\ finger\ -\/\ 0,\ robot\ thumb\ -\/\ 1,\ haptic\ finger\ -\/\ 2,\ haptic\ thumb\ -\/\ 3}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#define\ SYSTEM\_ID\ 0}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#define\ ODRIVE0\_ID\ 0}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#define\ ODRIVE1\_ID\ 1}}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#if\ SYSTEM\_ID\ ==\ 0\ ||\ SYSTEM\_ID\ ==\ 2}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#define\ FINGER}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#define\ THUMB}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#if\ SYSTEM\_ID\ ==\ 0}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#define\ HEARTBEAT\_TX\_ID\ 0x100}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#define\ HEARTBEAT\_RX\_ID\ 0x102}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#define\ END\_EFFECTOR\_POS\_TX\_ID\ 0x200}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#define\ END\_EFFECTOR\_POS\_RX\_ID\ 0x202}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#define\ END\_EFFECTOR\_VEL\_TX\_ID\ 0x300}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#define\ END\_EFFECTOR\_VEL\_RX\_ID\ 0x302}}
+\DoxyCodeLine{00021\ \textcolor{comment}{//\ \#include\ "{}robot\_description/robot\_finger.hpp"{}}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#elif\ SYSTEM\_ID\ ==\ 1}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#define\ HEARTBEAT\_TX\_ID\ 0x101}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#define\ HEARTBEAT\_RX\_ID\ 0x103}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#define\ END\_EFFECTOR\_POS\_TX\_ID\ 0x201}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#define\ END\_EFFECTOR\_POS\_RX\_ID\ 0x203}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#define\ END\_EFFECTOR\_VEL\_TX\_ID\ 0x301}}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#define\ END\_EFFECTOR\_VEL\_RX\_ID\ 0x303}}
+\DoxyCodeLine{00029\ \textcolor{comment}{//\ \#include\ "{}robot\_description/robot\_thumb.hpp"{}}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#elif\ SYSTEM\_ID\ ==\ 2}}
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#define\ HEARTBEAT\_TX\_ID\ 0x102}}
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#define\ HEARTBEAT\_RX\_ID\ 0x100}}
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{\#define\ END\_EFFECTOR\_POS\_TX\_ID\ 0x202}}
+\DoxyCodeLine{00034\ \textcolor{preprocessor}{\#define\ END\_EFFECTOR\_POS\_RX\_ID\ 0x200}}
+\DoxyCodeLine{00035\ \textcolor{preprocessor}{\#define\ END\_EFFECTOR\_VEL\_TX\_ID\ 0x302}}
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\#define\ END\_EFFECTOR\_VEL\_RX\_ID\ 0x300}}
+\DoxyCodeLine{00037\ \textcolor{comment}{//\ \#include\ "{}robot\_description/haptic\_finger.hpp"{}}}
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\#elif\ SYSTEM\_ID\ ==\ 3}}
+\DoxyCodeLine{00039\ \textcolor{preprocessor}{\#define\ HEARTBEAT\_TX\_ID\ 0x103}}
+\DoxyCodeLine{00040\ \textcolor{preprocessor}{\#define\ HEARTBEAT\_RX\_ID\ 0x101}}
+\DoxyCodeLine{00041\ \textcolor{preprocessor}{\#define\ END\_EFFECTOR\_POS\_TX\_ID\ 0x203}}
+\DoxyCodeLine{00042\ \textcolor{preprocessor}{\#define\ END\_EFFECTOR\_POS\_RX\_ID\ 0x201}}
+\DoxyCodeLine{00043\ \textcolor{preprocessor}{\#define\ END\_EFFECTOR\_VEL\_TX\_ID\ 0x303}}
+\DoxyCodeLine{00044\ \textcolor{preprocessor}{\#define\ END\_EFFECTOR\_VEL\_RX\_ID\ 0x301}}
+\DoxyCodeLine{00045\ \textcolor{comment}{//\ \#include\ "{}robot\_description/haptic\_thumb.hpp"{}}}
+\DoxyCodeLine{00046\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00047\ \textcolor{preprocessor}{\#error\ "{}Invalid\ SYSTEM\_ID"{}}}
+\DoxyCodeLine{00048\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \textcolor{preprocessor}{\#define\ ESTOP\_PIN\ 5}}
+\DoxyCodeLine{00051\ \textcolor{preprocessor}{\#define\ CLEAR\_ERROR\_BUTTON\ 2}}
+\DoxyCodeLine{00052\ \textcolor{preprocessor}{\#define\ DEADMAN\_SWITCH\ 3}}
+\DoxyCodeLine{00053\ \textcolor{preprocessor}{\#define\ RELAY\_PIN\_OUTPUT\ 4\ }\textcolor{comment}{//\ there\ are\ 6\ of\ these\ apparently}}
+\DoxyCodeLine{00054\ \textcolor{preprocessor}{\#define\ TEENSY\_HEARTBEAT\_TIMEOUT\ 1000}}
+\DoxyCodeLine{00055\ \textcolor{preprocessor}{\#define\ ODRIVE\_HEARTBEAT\_TIMEOUT\ 1000}}
+\DoxyCodeLine{00056\ \textcolor{preprocessor}{\#define\ LED\_R1\ 41}}
+\DoxyCodeLine{00057\ \textcolor{preprocessor}{\#define\ LED\_G1\ 40}}
+\DoxyCodeLine{00058\ \textcolor{preprocessor}{\#define\ LED\_B1\ 39}}
+\DoxyCodeLine{00059\ }
+\DoxyCodeLine{00060\ \textcolor{preprocessor}{\#define\ LED\_R2\ 38}}
+\DoxyCodeLine{00061\ \textcolor{preprocessor}{\#define\ LED\_G2\ 37}}
+\DoxyCodeLine{00062\ \textcolor{preprocessor}{\#define\ LED\_B2\ 36}}
+\DoxyCodeLine{00063\ }
+\DoxyCodeLine{00064\ \textcolor{preprocessor}{\#define\ LED\_R3\ 35}}
+\DoxyCodeLine{00065\ \textcolor{preprocessor}{\#define\ LED\_G3\ 34}}
+\DoxyCodeLine{00066\ \textcolor{preprocessor}{\#define\ LED\_B3\ 33}}
+\DoxyCodeLine{00067\ }
+\DoxyCodeLine{00068\ \textcolor{comment}{//\ Debugging\ settings}}
+\DoxyCodeLine{00069\ \textcolor{preprocessor}{\#define\ DEBUG}}
+\DoxyCodeLine{00070\ \textcolor{comment}{//\ \#define\ PROFILE}}
+\DoxyCodeLine{00071\ \textcolor{comment}{//\ \#define\ TESTING}}
+\DoxyCodeLine{00072\ }
+\DoxyCodeLine{00073\ \textcolor{preprocessor}{\#define\ DEBUG\_PIN\ 10}}
+\DoxyCodeLine{00074\ }
+\DoxyCodeLine{00075\ \textcolor{preprocessor}{\#ifdef\ DEBUG}}
+\DoxyCodeLine{00076\ \textcolor{preprocessor}{\#define\ db\_print(X)\ Serial.print(X)}}
+\DoxyCodeLine{00077\ \textcolor{preprocessor}{\#define\ db\_println(X)\ Serial.println(X)}}
+\DoxyCodeLine{00078\ \textcolor{preprocessor}{\#define\ db\_printVal(X)\ \ \(\backslash\)}}
+\DoxyCodeLine{00079\ \textcolor{preprocessor}{\ \ \ \ Serial.print(\#X);\ \ \ \(\backslash\)}}
+\DoxyCodeLine{00080\ \textcolor{preprocessor}{\ \ \ \ Serial.print("{}:\ "{});\ \(\backslash\)}}
+\DoxyCodeLine{00081\ \textcolor{preprocessor}{\ \ \ \ Serial.println(X,\ 8)}}
+\DoxyCodeLine{00082\ \textcolor{preprocessor}{\#define\ db\_pinHigh()\ digitalWrite(DEBUG\_PIN,\ HIGH)}}
+\DoxyCodeLine{00083\ \textcolor{preprocessor}{\#define\ db\_pinLow()\ digitalWrite(DEBUG\_PIN,\ LOW)}}
+\DoxyCodeLine{00084\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00085\ \textcolor{preprocessor}{\#define\ db\_print(X)}}
+\DoxyCodeLine{00086\ \textcolor{preprocessor}{\#define\ db\_println(X)}}
+\DoxyCodeLine{00087\ \textcolor{preprocessor}{\#define\ db\_printVal(X)}}
+\DoxyCodeLine{00088\ \textcolor{preprocessor}{\#define\ db\_pinHigh()}}
+\DoxyCodeLine{00089\ \textcolor{preprocessor}{\#define\ db\_pinLow()}}
+\DoxyCodeLine{00090\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00091\ }
+\DoxyCodeLine{00092\ \textcolor{preprocessor}{\#ifdef\ PROFILE}}
+\DoxyCodeLine{00093\ \textcolor{preprocessor}{\#define\ db\_startTiming(X)\ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00094\ \textcolor{preprocessor}{\ \ \ \ Serial.print(\#X);\ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00095\ \textcolor{preprocessor}{\ \ \ \ Serial.print("{}\ START\ "{});\ \(\backslash\)}}
+\DoxyCodeLine{00096\ \textcolor{preprocessor}{\ \ \ \ Serial.println(micros())}}
+\DoxyCodeLine{00097\ \textcolor{preprocessor}{\#define\ db\_endTiming(X)\ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00098\ \textcolor{preprocessor}{\ \ \ \ Serial.print(\#X);\ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00099\ \textcolor{preprocessor}{\ \ \ \ Serial.print("{}\ END\ "{});\ \(\backslash\)}}
+\DoxyCodeLine{00100\ \textcolor{preprocessor}{\ \ \ \ Serial.println(micros())}}
+\DoxyCodeLine{00101\ \textcolor{preprocessor}{\#define\ db\_timeFunction(X)\ \(\backslash\)}}
+\DoxyCodeLine{00102\ \textcolor{preprocessor}{\ \ \ \ db\_startTiming(X);\ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00103\ \textcolor{preprocessor}{\ \ \ \ X;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00104\ \textcolor{preprocessor}{\ \ \ \ db\_endTiming(X)}}
+\DoxyCodeLine{00105\ \textcolor{preprocessor}{\#define\ db\_startProfiling()\ Serial.println("{}START\ OF\ PROFILE"{})}}
+\DoxyCodeLine{00106\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{00107\ \textcolor{preprocessor}{\#define\ db\_startTiming(X)}}
+\DoxyCodeLine{00108\ \textcolor{preprocessor}{\#define\ db\_endTiming(X)}}
+\DoxyCodeLine{00109\ \textcolor{preprocessor}{\#define\ db\_timeFunction(X)\ X}}
+\DoxyCodeLine{00110\ \textcolor{preprocessor}{\#define\ db\_startProfiling()}}
+\DoxyCodeLine{00111\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

@@ -1,0 +1,145 @@
+\doxysection{testbench-\/mcu/src/main.cpp File Reference}
+\hypertarget{main_8cpp}{}\label{main_8cpp}\index{testbench-\/mcu/src/main.cpp@{testbench-\/mcu/src/main.cpp}}
+{\ttfamily \#include "{}teensy\+\_\+can.\+h"{}}\newline
+{\ttfamily \#include "{}finger\+\_\+manager/finger\+\_\+manager.\+hpp"{}}\newline
+{\ttfamily \#include "{}odrive\+\_\+manager/odrive\+\_\+manager.\+hpp"{}}\newline
+Include dependency graph for main.\+cpp\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{main_8cpp__incl}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{main_8cpp_a293bb7b0c7a302e75dfa4fd8819c11ac}{callback\+\_\+odrive0}} (const Can\+Msg \&msg)
+\item 
+void \mbox{\hyperlink{main_8cpp_a99c422a5cc728ab4e147d5d6f600da26}{callback\+\_\+odrive1}} (const Can\+Msg \&msg)
+\item 
+void \mbox{\hyperlink{main_8cpp_ac0a43b99fdf8950fb14112fd963881c3}{reboot}} ()
+\begin{DoxyCompactList}\small\item\em Reboot the Teensy. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{main_8cpp_a4fc01d736fe50cf5b977f755b675f11d}{setup}} ()
+\item 
+void \mbox{\hyperlink{main_8cpp_afe461d27b9c48d5921c00d521181f12f}{loop}} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+Flex\+CAN\+\_\+\+T4$<$ CAN2, RX\+\_\+\+SIZE\+\_\+256, TX\+\_\+\+SIZE\+\_\+256 $>$ \mbox{\hyperlink{main_8cpp_a16aaa88b1deaea6581863b4c5d95e3b5}{canbus0}}
+\item 
+Flex\+CAN\+\_\+\+T4$<$ CAN3, RX\+\_\+\+SIZE\+\_\+256, TX\+\_\+\+SIZE\+\_\+256 $>$ \mbox{\hyperlink{main_8cpp_a8bb83c824cd208e8c6896c597764bc1f}{canbus1}}
+\item 
+ODrive\+User\+Data \mbox{\hyperlink{main_8cpp_ab71f4f71f48211ddb0e3fa40a9ad9a20}{odrive0\+\_\+user\+\_\+data}} \{\}
+\item 
+ODrive\+User\+Data \mbox{\hyperlink{main_8cpp_a1e71dd774dcb5a38c33ae77c1388ba8c}{odrive1\+\_\+user\+\_\+data}} \{\}
+\item 
+ODrive\+Manager$<$ CAN2 $>$ \mbox{\hyperlink{main_8cpp_aa68919e974bcc7ed6e8bdb50d6b1ef5b}{odrive0}} = ODrive\+Manager$<$CAN2$>$(\mbox{\hyperlink{main_8cpp_a16aaa88b1deaea6581863b4c5d95e3b5}{canbus0}}, \mbox{\hyperlink{defines_8h_a566abad6e1e632aef706617a8bf0bea0}{ODRIVE0\+\_\+\+ID}}, \mbox{\hyperlink{main_8cpp_ab71f4f71f48211ddb0e3fa40a9ad9a20}{odrive0\+\_\+user\+\_\+data}})
+\begin{DoxyCompactList}\small\item\em \+: Odrive manager object for the first motor \end{DoxyCompactList}\item 
+ODrive\+Manager$<$ CAN3 $>$ \mbox{\hyperlink{main_8cpp_ad1ba3f7316dad6f38d99d81654819e1d}{odrive1}} = ODrive\+Manager$<$CAN3$>$(\mbox{\hyperlink{main_8cpp_a8bb83c824cd208e8c6896c597764bc1f}{canbus1}}, \mbox{\hyperlink{defines_8h_a996686b03ccf9765424c270b0f72164b}{ODRIVE1\+\_\+\+ID}}, \mbox{\hyperlink{main_8cpp_a1e71dd774dcb5a38c33ae77c1388ba8c}{odrive1\+\_\+user\+\_\+data}})
+\begin{DoxyCompactList}\small\item\em \+: Odrive manager object for the second motor \end{DoxyCompactList}\item 
+Finger\+Data \mbox{\hyperlink{main_8cpp_a3dc514a289842627c036b6d517c20a69}{finger\+\_\+data}} \{\}
+\item 
+Finger\+Manager \mbox{\hyperlink{main_8cpp_a8ffe1173170b439991358373a807b43d}{finger\+\_\+manager}} \{\mbox{\hyperlink{main_8cpp_a16aaa88b1deaea6581863b4c5d95e3b5}{canbus0}}, \mbox{\hyperlink{main_8cpp_a8bb83c824cd208e8c6896c597764bc1f}{canbus1}}, \mbox{\hyperlink{main_8cpp_aa68919e974bcc7ed6e8bdb50d6b1ef5b}{odrive0}}, \mbox{\hyperlink{main_8cpp_ad1ba3f7316dad6f38d99d81654819e1d}{odrive1}}, \mbox{\hyperlink{main_8cpp_a293bb7b0c7a302e75dfa4fd8819c11ac}{callback\+\_\+odrive0}}, \mbox{\hyperlink{main_8cpp_a99c422a5cc728ab4e147d5d6f600da26}{callback\+\_\+odrive1}}\}
+\begin{DoxyCompactList}\small\item\em Finger manager object for N demo. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\Hypertarget{main_8cpp_a293bb7b0c7a302e75dfa4fd8819c11ac}\index{main.cpp@{main.cpp}!callback\_odrive0@{callback\_odrive0}}
+\index{callback\_odrive0@{callback\_odrive0}!main.cpp@{main.cpp}}
+\doxysubsubsection{\texorpdfstring{callback\_odrive0()}{callback\_odrive0()}}
+{\footnotesize\ttfamily \label{main_8cpp_a293bb7b0c7a302e75dfa4fd8819c11ac} 
+void callback\+\_\+odrive0 (\begin{DoxyParamCaption}\item[{const Can\+Msg \&}]{msg}{}\end{DoxyParamCaption})}
+
+\Hypertarget{main_8cpp_a99c422a5cc728ab4e147d5d6f600da26}\index{main.cpp@{main.cpp}!callback\_odrive1@{callback\_odrive1}}
+\index{callback\_odrive1@{callback\_odrive1}!main.cpp@{main.cpp}}
+\doxysubsubsection{\texorpdfstring{callback\_odrive1()}{callback\_odrive1()}}
+{\footnotesize\ttfamily \label{main_8cpp_a99c422a5cc728ab4e147d5d6f600da26} 
+void callback\+\_\+odrive1 (\begin{DoxyParamCaption}\item[{const Can\+Msg \&}]{msg}{}\end{DoxyParamCaption})}
+
+\Hypertarget{main_8cpp_afe461d27b9c48d5921c00d521181f12f}\index{main.cpp@{main.cpp}!loop@{loop}}
+\index{loop@{loop}!main.cpp@{main.cpp}}
+\doxysubsubsection{\texorpdfstring{loop()}{loop()}}
+{\footnotesize\ttfamily \label{main_8cpp_afe461d27b9c48d5921c00d521181f12f} 
+void loop (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+\Hypertarget{main_8cpp_ac0a43b99fdf8950fb14112fd963881c3}\index{main.cpp@{main.cpp}!reboot@{reboot}}
+\index{reboot@{reboot}!main.cpp@{main.cpp}}
+\doxysubsubsection{\texorpdfstring{reboot()}{reboot()}}
+{\footnotesize\ttfamily \label{main_8cpp_ac0a43b99fdf8950fb14112fd963881c3} 
+void reboot (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Reboot the Teensy. 
+
+\Hypertarget{main_8cpp_a4fc01d736fe50cf5b977f755b675f11d}\index{main.cpp@{main.cpp}!setup@{setup}}
+\index{setup@{setup}!main.cpp@{main.cpp}}
+\doxysubsubsection{\texorpdfstring{setup()}{setup()}}
+{\footnotesize\ttfamily \label{main_8cpp_a4fc01d736fe50cf5b977f755b675f11d} 
+void setup (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+\doxysubsection{Variable Documentation}
+\Hypertarget{main_8cpp_a16aaa88b1deaea6581863b4c5d95e3b5}\index{main.cpp@{main.cpp}!canbus0@{canbus0}}
+\index{canbus0@{canbus0}!main.cpp@{main.cpp}}
+\doxysubsubsection{\texorpdfstring{canbus0}{canbus0}}
+{\footnotesize\ttfamily \label{main_8cpp_a16aaa88b1deaea6581863b4c5d95e3b5} 
+Flex\+CAN\+\_\+\+T4$<$CAN2, RX\+\_\+\+SIZE\+\_\+256, TX\+\_\+\+SIZE\+\_\+256$>$ canbus0}
+
+\Hypertarget{main_8cpp_a8bb83c824cd208e8c6896c597764bc1f}\index{main.cpp@{main.cpp}!canbus1@{canbus1}}
+\index{canbus1@{canbus1}!main.cpp@{main.cpp}}
+\doxysubsubsection{\texorpdfstring{canbus1}{canbus1}}
+{\footnotesize\ttfamily \label{main_8cpp_a8bb83c824cd208e8c6896c597764bc1f} 
+Flex\+CAN\+\_\+\+T4$<$CAN3, RX\+\_\+\+SIZE\+\_\+256, TX\+\_\+\+SIZE\+\_\+256$>$ canbus1}
+
+\Hypertarget{main_8cpp_a3dc514a289842627c036b6d517c20a69}\index{main.cpp@{main.cpp}!finger\_data@{finger\_data}}
+\index{finger\_data@{finger\_data}!main.cpp@{main.cpp}}
+\doxysubsubsection{\texorpdfstring{finger\_data}{finger\_data}}
+{\footnotesize\ttfamily \label{main_8cpp_a3dc514a289842627c036b6d517c20a69} 
+Finger\+Data finger\+\_\+data \{\}}
+
+\Hypertarget{main_8cpp_a8ffe1173170b439991358373a807b43d}\index{main.cpp@{main.cpp}!finger\_manager@{finger\_manager}}
+\index{finger\_manager@{finger\_manager}!main.cpp@{main.cpp}}
+\doxysubsubsection{\texorpdfstring{finger\_manager}{finger\_manager}}
+{\footnotesize\ttfamily \label{main_8cpp_a8ffe1173170b439991358373a807b43d} 
+Finger\+Manager finger\+\_\+manager \{\mbox{\hyperlink{main_8cpp_a16aaa88b1deaea6581863b4c5d95e3b5}{canbus0}}, \mbox{\hyperlink{main_8cpp_a8bb83c824cd208e8c6896c597764bc1f}{canbus1}}, \mbox{\hyperlink{main_8cpp_aa68919e974bcc7ed6e8bdb50d6b1ef5b}{odrive0}}, \mbox{\hyperlink{main_8cpp_ad1ba3f7316dad6f38d99d81654819e1d}{odrive1}}, \mbox{\hyperlink{main_8cpp_a293bb7b0c7a302e75dfa4fd8819c11ac}{callback\+\_\+odrive0}}, \mbox{\hyperlink{main_8cpp_a99c422a5cc728ab4e147d5d6f600da26}{callback\+\_\+odrive1}}\}}
+
+
+
+Finger manager object for N demo. 
+
+\Hypertarget{main_8cpp_aa68919e974bcc7ed6e8bdb50d6b1ef5b}\index{main.cpp@{main.cpp}!odrive0@{odrive0}}
+\index{odrive0@{odrive0}!main.cpp@{main.cpp}}
+\doxysubsubsection{\texorpdfstring{odrive0}{odrive0}}
+{\footnotesize\ttfamily \label{main_8cpp_aa68919e974bcc7ed6e8bdb50d6b1ef5b} 
+ODrive\+Manager$<$CAN2$>$ odrive0 = ODrive\+Manager$<$CAN2$>$(\mbox{\hyperlink{main_8cpp_a16aaa88b1deaea6581863b4c5d95e3b5}{canbus0}}, \mbox{\hyperlink{defines_8h_a566abad6e1e632aef706617a8bf0bea0}{ODRIVE0\+\_\+\+ID}}, \mbox{\hyperlink{main_8cpp_ab71f4f71f48211ddb0e3fa40a9ad9a20}{odrive0\+\_\+user\+\_\+data}})}
+
+
+
+\+: Odrive manager object for the first motor 
+
+\Hypertarget{main_8cpp_ab71f4f71f48211ddb0e3fa40a9ad9a20}\index{main.cpp@{main.cpp}!odrive0\_user\_data@{odrive0\_user\_data}}
+\index{odrive0\_user\_data@{odrive0\_user\_data}!main.cpp@{main.cpp}}
+\doxysubsubsection{\texorpdfstring{odrive0\_user\_data}{odrive0\_user\_data}}
+{\footnotesize\ttfamily \label{main_8cpp_ab71f4f71f48211ddb0e3fa40a9ad9a20} 
+ODrive\+User\+Data odrive0\+\_\+user\+\_\+data \{\}}
+
+\Hypertarget{main_8cpp_ad1ba3f7316dad6f38d99d81654819e1d}\index{main.cpp@{main.cpp}!odrive1@{odrive1}}
+\index{odrive1@{odrive1}!main.cpp@{main.cpp}}
+\doxysubsubsection{\texorpdfstring{odrive1}{odrive1}}
+{\footnotesize\ttfamily \label{main_8cpp_ad1ba3f7316dad6f38d99d81654819e1d} 
+ODrive\+Manager$<$CAN3$>$ odrive1 = ODrive\+Manager$<$CAN3$>$(\mbox{\hyperlink{main_8cpp_a8bb83c824cd208e8c6896c597764bc1f}{canbus1}}, \mbox{\hyperlink{defines_8h_a996686b03ccf9765424c270b0f72164b}{ODRIVE1\+\_\+\+ID}}, \mbox{\hyperlink{main_8cpp_a1e71dd774dcb5a38c33ae77c1388ba8c}{odrive1\+\_\+user\+\_\+data}})}
+
+
+
+\+: Odrive manager object for the second motor 
+
+\Hypertarget{main_8cpp_a1e71dd774dcb5a38c33ae77c1388ba8c}\index{main.cpp@{main.cpp}!odrive1\_user\_data@{odrive1\_user\_data}}
+\index{odrive1\_user\_data@{odrive1\_user\_data}!main.cpp@{main.cpp}}
+\doxysubsubsection{\texorpdfstring{odrive1\_user\_data}{odrive1\_user\_data}}
+{\footnotesize\ttfamily \label{main_8cpp_a1e71dd774dcb5a38c33ae77c1388ba8c} 
+ODrive\+User\+Data odrive1\+\_\+user\+\_\+data \{\}}
+

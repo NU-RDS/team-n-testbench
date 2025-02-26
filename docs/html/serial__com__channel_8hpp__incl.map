@@ -1,0 +1,9 @@
+<map id="testbench&#45;mcu/include/serial_com_channel.hpp" name="testbench&#45;mcu/include/serial_com_channel.hpp">
+<area shape="rect" id="Node000001" title=" " alt="" coords="74,5,239,46"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,94,95,120"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="132,49,80,87,77,82,129,44"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="118,94,195,120"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="159,46,159,78,154,78,154,46"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="219,94,340,120"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="188,44,249,83,246,88,186,49"/>
+</map>

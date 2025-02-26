@@ -1,0 +1,819 @@
+\doxysection{msgs Namespace Reference}
+\hypertarget{namespacemsgs}{}\label{namespacemsgs}\index{msgs@{msgs}}
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \mbox{\hyperlink{classmsgs_1_1_message_handlers}{Message\+Handlers}}
+\begin{DoxyCompactList}\small\item\em Class to handle incoming messages from the communication interface. This class registers callbacks with a Communication\+Interface and dispatches incoming messages to the appropriate handler functions. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+rdscom\+::\+Data\+Prototype \mbox{\hyperlink{namespacemsgs_a0fbf26b1dcb8fe5a03007808c3160078}{heartbeat\+Proto}} ()
+\begin{DoxyCompactList}\small\item\em Returns the Heartbeat Data\+Prototype (ID\+: 0). \end{DoxyCompactList}\item 
+rdscom\+::\+Data\+Prototype \mbox{\hyperlink{namespacemsgs_a8d7e09ea6dc9591a7435e0247328f5f2}{motor\+Control\+Proto}} ()
+\begin{DoxyCompactList}\small\item\em Returns the Motor\+Control Data\+Prototype (ID\+: 1). \end{DoxyCompactList}\item 
+rdscom\+::\+Data\+Prototype \mbox{\hyperlink{namespacemsgs_ad89f36b09a5d2dc25666ac06e338bab4}{motor\+Event\+Proto}} ()
+\begin{DoxyCompactList}\small\item\em Returns the Motor\+Event Data\+Prototype (ID\+: 2). \end{DoxyCompactList}\item 
+rdscom\+::\+Data\+Prototype \mbox{\hyperlink{namespacemsgs_a502248700bb48514d0e1a61d7a243565}{control\+Go\+Proto}} ()
+\begin{DoxyCompactList}\small\item\em Returns the Control\+Go Data\+Prototype (ID\+: 3). \end{DoxyCompactList}\item 
+rdscom\+::\+Data\+Prototype \mbox{\hyperlink{namespacemsgs_ad65af5a2dd931af88ecf11838cd2c1fa}{control\+Done\+Proto}} ()
+\begin{DoxyCompactList}\small\item\em Returns the Control\+Done Data\+Prototype (ID\+: 4). \end{DoxyCompactList}\item 
+rdscom\+::\+Data\+Prototype \mbox{\hyperlink{namespacemsgs_a7ed4d2fecbeaa997d7561a9af8e544ff}{start\+Sensor\+Data\+Stream\+Proto}} ()
+\begin{DoxyCompactList}\small\item\em Returns the Start\+Sensor\+Datastream Data\+Prototype (ID\+: 5). \end{DoxyCompactList}\item 
+rdscom\+::\+Data\+Prototype \mbox{\hyperlink{namespacemsgs_af5d48732d0be12fd6e875a7fdfb0ba6f}{sensor\+Data\+Stream\+Proto}} ()
+\begin{DoxyCompactList}\small\item\em Returns the Sensor\+Datastream Data\+Prototype (ID\+: 6). \end{DoxyCompactList}\item 
+rdscom\+::\+Data\+Prototype \mbox{\hyperlink{namespacemsgs_a51eb40725ad6dac3e4225bfd17237337}{stop\+Sensor\+Data\+Stream\+Proto}} ()
+\begin{DoxyCompactList}\small\item\em Returns the Stop\+Sensor\+Datastream Data\+Prototype (ID\+: 7). \end{DoxyCompactList}\item 
+rdscom\+::\+Data\+Prototype \mbox{\hyperlink{namespacemsgs_ad9690229843dbf5d8b591b7b1b70e3a8}{clear\+Control\+Queue\+Proto}} ()
+\begin{DoxyCompactList}\small\item\em Returns the Clear\+Control\+Queue Data\+Prototype (ID\+: 8). \end{DoxyCompactList}\item 
+rdscom\+::\+Data\+Prototype \mbox{\hyperlink{namespacemsgs_ae8bf21f94acb5e9baa2b110b9f8af101}{error\+Proto}} ()
+\begin{DoxyCompactList}\small\item\em Returns the Error Data\+Prototype (ID\+: 9). \end{DoxyCompactList}\item 
+rdscom\+::\+Data\+Prototype \mbox{\hyperlink{namespacemsgs_a2bed9e6b3819463047fba4023964f608}{stop\+Proto}} ()
+\begin{DoxyCompactList}\small\item\em Returns the Stop Data\+Prototype (ID\+: 10). \end{DoxyCompactList}\item 
+rdscom\+::\+Data\+Prototype \mbox{\hyperlink{namespacemsgs_abe2a4edabbe9968ff232095dbe8a8a8e}{zero\+Command\+Proto}} ()
+\item 
+rdscom\+::\+Data\+Prototype \mbox{\hyperlink{namespacemsgs_af3ef51b87b51589514ffbd64467e0b41}{zero\+Done\+Proto}} ()
+\item 
+std\+::uint8\+\_\+t \mbox{\hyperlink{namespacemsgs_a61818fec89de602dc2ea60e69afc6de0}{heartbeat\+Id}} ()
+\item 
+std\+::uint8\+\_\+t \mbox{\hyperlink{namespacemsgs_a347ae45034e36c1623b362268c29e158}{motor\+Control\+Id}} ()
+\item 
+std\+::uint8\+\_\+t \mbox{\hyperlink{namespacemsgs_a20b8426b84e84f0ab48e28f393fe1280}{motor\+Event\+Id}} ()
+\item 
+std\+::uint8\+\_\+t \mbox{\hyperlink{namespacemsgs_a8cbfb2a71fabe10d2eddca2a7632734a}{control\+Go\+Id}} ()
+\item 
+std\+::uint8\+\_\+t \mbox{\hyperlink{namespacemsgs_adafa9da0fc4f8aa50338e14505b023a1}{control\+Done\+Id}} ()
+\item 
+std\+::uint8\+\_\+t \mbox{\hyperlink{namespacemsgs_a278ef3e5a87d832a99709034df3b9379}{start\+Sensor\+Datastream\+Id}} ()
+\item 
+std\+::uint8\+\_\+t \mbox{\hyperlink{namespacemsgs_ab92c9efbbef936fd1619d89587a0640c}{sensor\+Datastream\+Id}} ()
+\item 
+std\+::uint8\+\_\+t \mbox{\hyperlink{namespacemsgs_ab96d9429fe52f9a2ef724ce999ccf86f}{stop\+Sensor\+Datastream\+Id}} ()
+\item 
+std\+::uint8\+\_\+t \mbox{\hyperlink{namespacemsgs_af79d0bd3859aeb9b87eecd16baa0e1e3}{clear\+Control\+Queue\+Id}} ()
+\item 
+std\+::uint8\+\_\+t \mbox{\hyperlink{namespacemsgs_aaa0d98bb29703ac92f7ac03741fa9261}{error\+Id}} ()
+\item 
+std\+::uint8\+\_\+t \mbox{\hyperlink{namespacemsgs_adae8800d3613a392850a3cc74a6707ed}{stop\+Id}} ()
+\item 
+std\+::uint8\+\_\+t \mbox{\hyperlink{namespacemsgs_a81e34d114234f7b6c3d988ea641a4b68}{zero\+Command\+ID}} ()
+\item 
+std\+::uint8\+\_\+t \mbox{\hyperlink{namespacemsgs_aa8644d39b6b7d3d0f586f1095709cf70}{zero\+Done\+ID}} ()
+\item 
+rdscom\+::\+Message \mbox{\hyperlink{namespacemsgs_a998fbfef19928aabe7e368369246a1da}{create\+Heartbeat\+Message\+Request}} (std\+::int8\+\_\+t rand\+Val)
+\begin{DoxyCompactList}\small\item\em Creates a Heartbeat Request message. \end{DoxyCompactList}\item 
+rdscom\+::\+Message \mbox{\hyperlink{namespacemsgs_a992a02e6d9563c7059e0aa85437b2b5a}{create\+Motor\+Control\+Message\+Request}} (std\+::uint8\+\_\+t motor\+\_\+id, std\+::uint8\+\_\+t control\+\_\+mode, float control\+\_\+value, bool simultaneous)
+\begin{DoxyCompactList}\small\item\em Creates a Motor\+Control Request message. \end{DoxyCompactList}\item 
+rdscom\+::\+Message \mbox{\hyperlink{namespacemsgs_a43bb495ef7d7bd68324f5e4b1db3eb2d}{create\+Motor\+Event\+Message\+Request}} (std\+::uint8\+\_\+t motor\+\_\+id, bool success, std\+::uint8\+\_\+t event\+\_\+type, float event\+\_\+value, std\+::uint8\+\_\+t num\+\_\+in\+\_\+queue, std\+::uint8\+\_\+t executed\+\_\+with\+\_\+count)
+\begin{DoxyCompactList}\small\item\em Creates a Motor\+Event Request message. \end{DoxyCompactList}\item 
+rdscom\+::\+Message \mbox{\hyperlink{namespacemsgs_ad2e43cd6370d6e8174badd4d7a040e4d}{create\+Control\+Go\+Message\+Request}} (std\+::int8\+\_\+t rand\+Val)
+\begin{DoxyCompactList}\small\item\em Creates a Control\+Go Request message. \end{DoxyCompactList}\item 
+rdscom\+::\+Message \mbox{\hyperlink{namespacemsgs_a8d69ee25588eef4c7388b465ed6b0080}{create\+Control\+Done\+Message\+Request}} (bool success, std\+::uint32\+\_\+t time, std\+::uint8\+\_\+t executed)
+\begin{DoxyCompactList}\small\item\em Creates a Control\+Done Request message. \end{DoxyCompactList}\item 
+rdscom\+::\+Message \mbox{\hyperlink{namespacemsgs_a7af54e86e954533f72b34a2762e3861d}{create\+Start\+Sensor\+Datastream\+Message\+Request}} (std\+::uint8\+\_\+t joint\+\_\+id, std\+::uint8\+\_\+t frequency)
+\begin{DoxyCompactList}\small\item\em Creates a Start\+Sensor\+Datastream Request message. \end{DoxyCompactList}\item 
+rdscom\+::\+Message \mbox{\hyperlink{namespacemsgs_a16b2c5e9c56b624425f7453f008beaf0}{create\+Sensor\+Datastream\+Message\+Request}} (std\+::uint8\+\_\+t joint\+\_\+id, float motor\+\_\+pos, float motor\+\_\+vel, float motor\+\_\+temp, float joint\+\_\+pos)
+\begin{DoxyCompactList}\small\item\em Creates a Sensor\+Datastream Request message. \end{DoxyCompactList}\item 
+rdscom\+::\+Message \mbox{\hyperlink{namespacemsgs_aff580c8c5ef00d9889a53caa05b9839b}{create\+Stop\+Sensor\+Datastream\+Message\+Request}} (std\+::uint8\+\_\+t joint\+\_\+id)
+\begin{DoxyCompactList}\small\item\em Creates a Stop\+Sensor\+Datastream Request message. \end{DoxyCompactList}\item 
+rdscom\+::\+Message \mbox{\hyperlink{namespacemsgs_a5a924b222ab0b4adf7d7a24afef041a3}{create\+Clear\+Control\+Queue\+Message\+Request}} (std\+::int8\+\_\+t rand\+Val)
+\begin{DoxyCompactList}\small\item\em Creates a Clear\+Control\+Queue Request message. \end{DoxyCompactList}\item 
+rdscom\+::\+Message \mbox{\hyperlink{namespacemsgs_a563d7f5aa20c40ab44193729ae9f058b}{create\+Error\+Message\+Request}} (std\+::uint8\+\_\+t error\+\_\+code)
+\begin{DoxyCompactList}\small\item\em Creates an Error Request message. \end{DoxyCompactList}\item 
+rdscom\+::\+Message \mbox{\hyperlink{namespacemsgs_abc859d5c7d8da503fad86fa23d68b93d}{create\+Stop\+Message\+Request}} (std\+::int8\+\_\+t rand\+Val)
+\begin{DoxyCompactList}\small\item\em Creates a Stop Request message. \end{DoxyCompactList}\item 
+rdscom\+::\+Message \mbox{\hyperlink{namespacemsgs_a9ed36b29a520e242c1d272f0ce7fc70d}{create\+Zero\+Command\+Request}} (std\+::uint8\+\_\+t rand\+Val)
+\item 
+rdscom\+::\+Message \mbox{\hyperlink{namespacemsgs_a39eb9d94fc25dbdc183e7eacb4e479ab}{create\+Zero\+Done\+Request}} (std\+::uint8\+\_\+t success)
+\item 
+rdscom\+::\+Message \mbox{\hyperlink{namespacemsgs_a300bf84ff2c67ba6d4cc5d52a20a2c95}{create\+Heartbeat\+Message\+Response}} (const rdscom\+::\+Message \&request, std\+::int8\+\_\+t rand\+Val)
+\begin{DoxyCompactList}\small\item\em Creates a Heartbeat Response message based on a request. \end{DoxyCompactList}\item 
+rdscom\+::\+Message \mbox{\hyperlink{namespacemsgs_a8653005f68a9d61e7bba8c97e97b1a93}{create\+Motor\+Control\+Message\+Response}} (const rdscom\+::\+Message \&request, std\+::uint8\+\_\+t motor\+\_\+id, std\+::uint8\+\_\+t control\+\_\+mode, float control\+\_\+value, bool simultaneous)
+\begin{DoxyCompactList}\small\item\em Creates a Motor\+Control Response message based on a request. \end{DoxyCompactList}\item 
+rdscom\+::\+Message \mbox{\hyperlink{namespacemsgs_af32a2a8fb18a46b8b012a5d6016461c5}{create\+Motor\+Event\+Message\+Response}} (const rdscom\+::\+Message \&request, std\+::uint8\+\_\+t motor\+\_\+id, bool success, std\+::uint8\+\_\+t event\+\_\+type, float event\+\_\+value, std\+::uint8\+\_\+t num\+\_\+in\+\_\+queue, std\+::uint8\+\_\+t executed\+\_\+with\+\_\+count)
+\begin{DoxyCompactList}\small\item\em Creates a Motor\+Event Response message based on a request. \end{DoxyCompactList}\item 
+rdscom\+::\+Message \mbox{\hyperlink{namespacemsgs_a749e8f87459823a21a2c557d251c79f5}{create\+Control\+Go\+Message\+Response}} (const rdscom\+::\+Message \&request, std\+::int8\+\_\+t rand\+Val)
+\begin{DoxyCompactList}\small\item\em Creates a Control\+Go Response message based on a request. \end{DoxyCompactList}\item 
+rdscom\+::\+Message \mbox{\hyperlink{namespacemsgs_aab6cb2267bc988b47dc5e29d5d5c28bb}{create\+Control\+Done\+Message\+Response}} (const rdscom\+::\+Message \&request, bool success, std\+::uint32\+\_\+t time\+\_\+val, std\+::uint8\+\_\+t executed)
+\begin{DoxyCompactList}\small\item\em Creates a Control\+Done Response message based on a request. \end{DoxyCompactList}\item 
+rdscom\+::\+Message \mbox{\hyperlink{namespacemsgs_adbf9966b6761aa4568465f14bd594d88}{create\+Start\+Sensor\+Datastream\+Message\+Response}} (const rdscom\+::\+Message \&request, std\+::uint8\+\_\+t joint\+\_\+id, std\+::uint8\+\_\+t frequency)
+\begin{DoxyCompactList}\small\item\em Creates a Start\+Sensor\+Datastream Response message based on a request. \end{DoxyCompactList}\item 
+rdscom\+::\+Message \mbox{\hyperlink{namespacemsgs_a7cfe460a9e0746c184e03e8f73d5769a}{create\+Sensor\+Datastream\+Message\+Response}} (const rdscom\+::\+Message \&request, std\+::uint8\+\_\+t joint\+\_\+id, float motor\+\_\+pos, float motor\+\_\+vel, float motor\+\_\+temp, float joint\+\_\+pos)
+\begin{DoxyCompactList}\small\item\em Creates a Sensor\+Datastream Response message based on a request. \end{DoxyCompactList}\item 
+rdscom\+::\+Message \mbox{\hyperlink{namespacemsgs_a23b3d52ab432269dab07f6667903a10f}{create\+Stop\+Sensor\+Datastream\+Message\+Response}} (const rdscom\+::\+Message \&request, std\+::uint8\+\_\+t joint\+\_\+id)
+\begin{DoxyCompactList}\small\item\em Creates a Stop\+Sensor\+Datastream Response message based on a request. \end{DoxyCompactList}\item 
+rdscom\+::\+Message \mbox{\hyperlink{namespacemsgs_a8ed2af1065c9ba9568e6c5986ad55eb0}{create\+Clear\+Control\+Queue\+Message\+Response}} (const rdscom\+::\+Message \&request, std\+::int8\+\_\+t rand\+Val)
+\begin{DoxyCompactList}\small\item\em Creates a Clear\+Control\+Queue Response message based on a request. \end{DoxyCompactList}\item 
+rdscom\+::\+Message \mbox{\hyperlink{namespacemsgs_a964e74f08aeecd3b45cfc4386cc6a707}{create\+Error\+Message\+Response}} (const rdscom\+::\+Message \&request, std\+::uint8\+\_\+t error\+\_\+code)
+\begin{DoxyCompactList}\small\item\em Creates an Error Response message based on a request. \end{DoxyCompactList}\item 
+rdscom\+::\+Message \mbox{\hyperlink{namespacemsgs_acf5f1c71344390a457f940f2d6af3da7}{create\+Stop\+Message\+Response}} (const rdscom\+::\+Message \&request, std\+::int8\+\_\+t rand\+Val)
+\begin{DoxyCompactList}\small\item\em Creates a Stop Response message based on a request. \end{DoxyCompactList}\item 
+rdscom\+::\+Message \mbox{\hyperlink{namespacemsgs_aa06274bcad6cc11558a264560da2bf00}{create\+Zero\+Command\+Response}} (const rdscom\+::\+Message \&request, std\+::uint8\+\_\+t rand\+Val)
+\item 
+rdscom\+::\+Message \mbox{\hyperlink{namespacemsgs_a2b509069d829c9b31c43febb2ac64647}{create\+Zero\+Done\+Response}} (const rdscom\+::\+Message \&request, bool success)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\Hypertarget{namespacemsgs_af79d0bd3859aeb9b87eecd16baa0e1e3}\index{msgs@{msgs}!clearControlQueueId@{clearControlQueueId}}
+\index{clearControlQueueId@{clearControlQueueId}!msgs@{msgs}}
+\doxysubsubsection{\texorpdfstring{clearControlQueueId()}{clearControlQueueId()}}
+{\footnotesize\ttfamily \label{namespacemsgs_af79d0bd3859aeb9b87eecd16baa0e1e3} 
+std\+::uint8\+\_\+t msgs\+::clear\+Control\+Queue\+Id (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\Hypertarget{namespacemsgs_ad9690229843dbf5d8b591b7b1b70e3a8}\index{msgs@{msgs}!clearControlQueueProto@{clearControlQueueProto}}
+\index{clearControlQueueProto@{clearControlQueueProto}!msgs@{msgs}}
+\doxysubsubsection{\texorpdfstring{clearControlQueueProto()}{clearControlQueueProto()}}
+{\footnotesize\ttfamily \label{namespacemsgs_ad9690229843dbf5d8b591b7b1b70e3a8} 
+rdscom\+::\+Data\+Prototype msgs\+::clear\+Control\+Queue\+Proto (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Returns the Clear\+Control\+Queue Data\+Prototype (ID\+: 8). 
+
+\Hypertarget{namespacemsgs_adafa9da0fc4f8aa50338e14505b023a1}\index{msgs@{msgs}!controlDoneId@{controlDoneId}}
+\index{controlDoneId@{controlDoneId}!msgs@{msgs}}
+\doxysubsubsection{\texorpdfstring{controlDoneId()}{controlDoneId()}}
+{\footnotesize\ttfamily \label{namespacemsgs_adafa9da0fc4f8aa50338e14505b023a1} 
+std\+::uint8\+\_\+t msgs\+::control\+Done\+Id (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\Hypertarget{namespacemsgs_ad65af5a2dd931af88ecf11838cd2c1fa}\index{msgs@{msgs}!controlDoneProto@{controlDoneProto}}
+\index{controlDoneProto@{controlDoneProto}!msgs@{msgs}}
+\doxysubsubsection{\texorpdfstring{controlDoneProto()}{controlDoneProto()}}
+{\footnotesize\ttfamily \label{namespacemsgs_ad65af5a2dd931af88ecf11838cd2c1fa} 
+rdscom\+::\+Data\+Prototype msgs\+::control\+Done\+Proto (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Returns the Control\+Done Data\+Prototype (ID\+: 4). 
+
+\Hypertarget{namespacemsgs_a8cbfb2a71fabe10d2eddca2a7632734a}\index{msgs@{msgs}!controlGoId@{controlGoId}}
+\index{controlGoId@{controlGoId}!msgs@{msgs}}
+\doxysubsubsection{\texorpdfstring{controlGoId()}{controlGoId()}}
+{\footnotesize\ttfamily \label{namespacemsgs_a8cbfb2a71fabe10d2eddca2a7632734a} 
+std\+::uint8\+\_\+t msgs\+::control\+Go\+Id (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\Hypertarget{namespacemsgs_a502248700bb48514d0e1a61d7a243565}\index{msgs@{msgs}!controlGoProto@{controlGoProto}}
+\index{controlGoProto@{controlGoProto}!msgs@{msgs}}
+\doxysubsubsection{\texorpdfstring{controlGoProto()}{controlGoProto()}}
+{\footnotesize\ttfamily \label{namespacemsgs_a502248700bb48514d0e1a61d7a243565} 
+rdscom\+::\+Data\+Prototype msgs\+::control\+Go\+Proto (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Returns the Control\+Go Data\+Prototype (ID\+: 3). 
+
+\Hypertarget{namespacemsgs_a5a924b222ab0b4adf7d7a24afef041a3}\index{msgs@{msgs}!createClearControlQueueMessageRequest@{createClearControlQueueMessageRequest}}
+\index{createClearControlQueueMessageRequest@{createClearControlQueueMessageRequest}!msgs@{msgs}}
+\doxysubsubsection{\texorpdfstring{createClearControlQueueMessageRequest()}{createClearControlQueueMessageRequest()}}
+{\footnotesize\ttfamily \label{namespacemsgs_a5a924b222ab0b4adf7d7a24afef041a3} 
+rdscom\+::\+Message msgs\+::create\+Clear\+Control\+Queue\+Message\+Request (\begin{DoxyParamCaption}\item[{std\+::int8\+\_\+t}]{rand\+Val}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Creates a Clear\+Control\+Queue Request message. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em rand\+Val} & The INT8 random value. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A Clear\+Control\+Queue Message object. 
+\end{DoxyReturn}
+\Hypertarget{namespacemsgs_a8ed2af1065c9ba9568e6c5986ad55eb0}\index{msgs@{msgs}!createClearControlQueueMessageResponse@{createClearControlQueueMessageResponse}}
+\index{createClearControlQueueMessageResponse@{createClearControlQueueMessageResponse}!msgs@{msgs}}
+\doxysubsubsection{\texorpdfstring{createClearControlQueueMessageResponse()}{createClearControlQueueMessageResponse()}}
+{\footnotesize\ttfamily \label{namespacemsgs_a8ed2af1065c9ba9568e6c5986ad55eb0} 
+rdscom\+::\+Message msgs\+::create\+Clear\+Control\+Queue\+Message\+Response (\begin{DoxyParamCaption}\item[{const rdscom\+::\+Message \&}]{request}{, }\item[{std\+::int8\+\_\+t}]{rand\+Val}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Creates a Clear\+Control\+Queue Response message based on a request. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em request} & The original request message. \\
+\hline
+{\em rand\+Val} & The INT8 random value. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A Clear\+Control\+Queue Response message. 
+\end{DoxyReturn}
+\Hypertarget{namespacemsgs_a8d69ee25588eef4c7388b465ed6b0080}\index{msgs@{msgs}!createControlDoneMessageRequest@{createControlDoneMessageRequest}}
+\index{createControlDoneMessageRequest@{createControlDoneMessageRequest}!msgs@{msgs}}
+\doxysubsubsection{\texorpdfstring{createControlDoneMessageRequest()}{createControlDoneMessageRequest()}}
+{\footnotesize\ttfamily \label{namespacemsgs_a8d69ee25588eef4c7388b465ed6b0080} 
+rdscom\+::\+Message msgs\+::create\+Control\+Done\+Message\+Request (\begin{DoxyParamCaption}\item[{bool}]{success}{, }\item[{std\+::uint32\+\_\+t}]{time}{, }\item[{std\+::uint8\+\_\+t}]{executed}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Creates a Control\+Done Request message. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em success} & Whether the operation was successful. \\
+\hline
+{\em time} & Execution time (UINT32). \\
+\hline
+{\em executed} & Number executed (UINT8). \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A Control\+Done Message object. 
+\end{DoxyReturn}
+\Hypertarget{namespacemsgs_aab6cb2267bc988b47dc5e29d5d5c28bb}\index{msgs@{msgs}!createControlDoneMessageResponse@{createControlDoneMessageResponse}}
+\index{createControlDoneMessageResponse@{createControlDoneMessageResponse}!msgs@{msgs}}
+\doxysubsubsection{\texorpdfstring{createControlDoneMessageResponse()}{createControlDoneMessageResponse()}}
+{\footnotesize\ttfamily \label{namespacemsgs_aab6cb2267bc988b47dc5e29d5d5c28bb} 
+rdscom\+::\+Message msgs\+::create\+Control\+Done\+Message\+Response (\begin{DoxyParamCaption}\item[{const rdscom\+::\+Message \&}]{request}{, }\item[{bool}]{success}{, }\item[{std\+::uint32\+\_\+t}]{time\+\_\+val}{, }\item[{std\+::uint8\+\_\+t}]{executed}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Creates a Control\+Done Response message based on a request. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em request} & The original request message. \\
+\hline
+{\em success} & Whether the control queue executed successfully. \\
+\hline
+{\em time\+\_\+val} & Execution time (UINT32). \\
+\hline
+{\em executed} & Number executed (UINT8). \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A Control\+Done Response message. 
+\end{DoxyReturn}
+\Hypertarget{namespacemsgs_ad2e43cd6370d6e8174badd4d7a040e4d}\index{msgs@{msgs}!createControlGoMessageRequest@{createControlGoMessageRequest}}
+\index{createControlGoMessageRequest@{createControlGoMessageRequest}!msgs@{msgs}}
+\doxysubsubsection{\texorpdfstring{createControlGoMessageRequest()}{createControlGoMessageRequest()}}
+{\footnotesize\ttfamily \label{namespacemsgs_ad2e43cd6370d6e8174badd4d7a040e4d} 
+rdscom\+::\+Message msgs\+::create\+Control\+Go\+Message\+Request (\begin{DoxyParamCaption}\item[{std\+::int8\+\_\+t}]{rand\+Val}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Creates a Control\+Go Request message. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em rand\+Val} & The INT8 random value. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A Control\+Go Message object. 
+\end{DoxyReturn}
+\Hypertarget{namespacemsgs_a749e8f87459823a21a2c557d251c79f5}\index{msgs@{msgs}!createControlGoMessageResponse@{createControlGoMessageResponse}}
+\index{createControlGoMessageResponse@{createControlGoMessageResponse}!msgs@{msgs}}
+\doxysubsubsection{\texorpdfstring{createControlGoMessageResponse()}{createControlGoMessageResponse()}}
+{\footnotesize\ttfamily \label{namespacemsgs_a749e8f87459823a21a2c557d251c79f5} 
+rdscom\+::\+Message msgs\+::create\+Control\+Go\+Message\+Response (\begin{DoxyParamCaption}\item[{const rdscom\+::\+Message \&}]{request}{, }\item[{std\+::int8\+\_\+t}]{rand\+Val}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Creates a Control\+Go Response message based on a request. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em request} & The original request message. \\
+\hline
+{\em rand\+Val} & The INT8 random value. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A Control\+Go Response message. 
+\end{DoxyReturn}
+\Hypertarget{namespacemsgs_a563d7f5aa20c40ab44193729ae9f058b}\index{msgs@{msgs}!createErrorMessageRequest@{createErrorMessageRequest}}
+\index{createErrorMessageRequest@{createErrorMessageRequest}!msgs@{msgs}}
+\doxysubsubsection{\texorpdfstring{createErrorMessageRequest()}{createErrorMessageRequest()}}
+{\footnotesize\ttfamily \label{namespacemsgs_a563d7f5aa20c40ab44193729ae9f058b} 
+rdscom\+::\+Message msgs\+::create\+Error\+Message\+Request (\begin{DoxyParamCaption}\item[{std\+::uint8\+\_\+t}]{error\+\_\+code}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Creates an Error Request message. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em error\+\_\+code} & The error code (UINT8). \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+An Error Message object. 
+\end{DoxyReturn}
+\Hypertarget{namespacemsgs_a964e74f08aeecd3b45cfc4386cc6a707}\index{msgs@{msgs}!createErrorMessageResponse@{createErrorMessageResponse}}
+\index{createErrorMessageResponse@{createErrorMessageResponse}!msgs@{msgs}}
+\doxysubsubsection{\texorpdfstring{createErrorMessageResponse()}{createErrorMessageResponse()}}
+{\footnotesize\ttfamily \label{namespacemsgs_a964e74f08aeecd3b45cfc4386cc6a707} 
+rdscom\+::\+Message msgs\+::create\+Error\+Message\+Response (\begin{DoxyParamCaption}\item[{const rdscom\+::\+Message \&}]{request}{, }\item[{std\+::uint8\+\_\+t}]{error\+\_\+code}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Creates an Error Response message based on a request. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em request} & The original request message. \\
+\hline
+{\em error\+\_\+code} & The error code (UINT8). \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+An Error Response message. 
+\end{DoxyReturn}
+\Hypertarget{namespacemsgs_a998fbfef19928aabe7e368369246a1da}\index{msgs@{msgs}!createHeartbeatMessageRequest@{createHeartbeatMessageRequest}}
+\index{createHeartbeatMessageRequest@{createHeartbeatMessageRequest}!msgs@{msgs}}
+\doxysubsubsection{\texorpdfstring{createHeartbeatMessageRequest()}{createHeartbeatMessageRequest()}}
+{\footnotesize\ttfamily \label{namespacemsgs_a998fbfef19928aabe7e368369246a1da} 
+rdscom\+::\+Message msgs\+::create\+Heartbeat\+Message\+Request (\begin{DoxyParamCaption}\item[{std\+::int8\+\_\+t}]{rand\+Val}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Creates a Heartbeat Request message. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em rand\+Val} & The INT8 value for connectivity check. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A Heartbeat Message object. 
+\end{DoxyReturn}
+\Hypertarget{namespacemsgs_a300bf84ff2c67ba6d4cc5d52a20a2c95}\index{msgs@{msgs}!createHeartbeatMessageResponse@{createHeartbeatMessageResponse}}
+\index{createHeartbeatMessageResponse@{createHeartbeatMessageResponse}!msgs@{msgs}}
+\doxysubsubsection{\texorpdfstring{createHeartbeatMessageResponse()}{createHeartbeatMessageResponse()}}
+{\footnotesize\ttfamily \label{namespacemsgs_a300bf84ff2c67ba6d4cc5d52a20a2c95} 
+rdscom\+::\+Message msgs\+::create\+Heartbeat\+Message\+Response (\begin{DoxyParamCaption}\item[{const rdscom\+::\+Message \&}]{request}{, }\item[{std\+::int8\+\_\+t}]{rand\+Val}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Creates a Heartbeat Response message based on a request. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em request} & The original request message. \\
+\hline
+{\em rand\+Val} & The INT8 value to echo. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A Heartbeat Response message. 
+\end{DoxyReturn}
+\Hypertarget{namespacemsgs_a992a02e6d9563c7059e0aa85437b2b5a}\index{msgs@{msgs}!createMotorControlMessageRequest@{createMotorControlMessageRequest}}
+\index{createMotorControlMessageRequest@{createMotorControlMessageRequest}!msgs@{msgs}}
+\doxysubsubsection{\texorpdfstring{createMotorControlMessageRequest()}{createMotorControlMessageRequest()}}
+{\footnotesize\ttfamily \label{namespacemsgs_a992a02e6d9563c7059e0aa85437b2b5a} 
+rdscom\+::\+Message msgs\+::create\+Motor\+Control\+Message\+Request (\begin{DoxyParamCaption}\item[{std\+::uint8\+\_\+t}]{motor\+\_\+id}{, }\item[{std\+::uint8\+\_\+t}]{control\+\_\+mode}{, }\item[{float}]{control\+\_\+value}{, }\item[{bool}]{simultaneous}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Creates a Motor\+Control Request message. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em motor\+\_\+id} & Motor identifier (UINT8). \\
+\hline
+{\em control\+\_\+mode} & Control mode (UINT8). \\
+\hline
+{\em control\+\_\+value} & Control value (FLOAT). \\
+\hline
+{\em simultaneous} & Whether control is simultaneous. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A Motor\+Control Message object. 
+\end{DoxyReturn}
+\Hypertarget{namespacemsgs_a8653005f68a9d61e7bba8c97e97b1a93}\index{msgs@{msgs}!createMotorControlMessageResponse@{createMotorControlMessageResponse}}
+\index{createMotorControlMessageResponse@{createMotorControlMessageResponse}!msgs@{msgs}}
+\doxysubsubsection{\texorpdfstring{createMotorControlMessageResponse()}{createMotorControlMessageResponse()}}
+{\footnotesize\ttfamily \label{namespacemsgs_a8653005f68a9d61e7bba8c97e97b1a93} 
+rdscom\+::\+Message msgs\+::create\+Motor\+Control\+Message\+Response (\begin{DoxyParamCaption}\item[{const rdscom\+::\+Message \&}]{request}{, }\item[{std\+::uint8\+\_\+t}]{motor\+\_\+id}{, }\item[{std\+::uint8\+\_\+t}]{control\+\_\+mode}{, }\item[{float}]{control\+\_\+value}{, }\item[{bool}]{simultaneous}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Creates a Motor\+Control Response message based on a request. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em request} & The original request message. \\
+\hline
+{\em motor\+\_\+id} & The motor identifier (UINT8). \\
+\hline
+{\em control\+\_\+mode} & The control mode (UINT8). \\
+\hline
+{\em control\+\_\+value} & The control value (FLOAT). \\
+\hline
+{\em simultaneous} & Whether the control is simultaneous. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A Motor\+Control Response message. 
+\end{DoxyReturn}
+\Hypertarget{namespacemsgs_a43bb495ef7d7bd68324f5e4b1db3eb2d}\index{msgs@{msgs}!createMotorEventMessageRequest@{createMotorEventMessageRequest}}
+\index{createMotorEventMessageRequest@{createMotorEventMessageRequest}!msgs@{msgs}}
+\doxysubsubsection{\texorpdfstring{createMotorEventMessageRequest()}{createMotorEventMessageRequest()}}
+{\footnotesize\ttfamily \label{namespacemsgs_a43bb495ef7d7bd68324f5e4b1db3eb2d} 
+rdscom\+::\+Message msgs\+::create\+Motor\+Event\+Message\+Request (\begin{DoxyParamCaption}\item[{std\+::uint8\+\_\+t}]{motor\+\_\+id}{, }\item[{bool}]{success}{, }\item[{std\+::uint8\+\_\+t}]{event\+\_\+type}{, }\item[{float}]{event\+\_\+value}{, }\item[{std\+::uint8\+\_\+t}]{num\+\_\+in\+\_\+queue}{, }\item[{std\+::uint8\+\_\+t}]{executed\+\_\+with\+\_\+count}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Creates a Motor\+Event Request message. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em motor\+\_\+id} & Motor identifier (UINT8). \\
+\hline
+{\em success} & Whether the event was successful. \\
+\hline
+{\em event\+\_\+type} & Event type (UINT8). \\
+\hline
+{\em event\+\_\+value} & Event value (FLOAT). \\
+\hline
+{\em num\+\_\+in\+\_\+queue} & Number in queue (UINT8). \\
+\hline
+{\em executed\+\_\+with\+\_\+count} & Number executed with count (UINT8). \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A Motor\+Event Message object. 
+\end{DoxyReturn}
+\Hypertarget{namespacemsgs_af32a2a8fb18a46b8b012a5d6016461c5}\index{msgs@{msgs}!createMotorEventMessageResponse@{createMotorEventMessageResponse}}
+\index{createMotorEventMessageResponse@{createMotorEventMessageResponse}!msgs@{msgs}}
+\doxysubsubsection{\texorpdfstring{createMotorEventMessageResponse()}{createMotorEventMessageResponse()}}
+{\footnotesize\ttfamily \label{namespacemsgs_af32a2a8fb18a46b8b012a5d6016461c5} 
+rdscom\+::\+Message msgs\+::create\+Motor\+Event\+Message\+Response (\begin{DoxyParamCaption}\item[{const rdscom\+::\+Message \&}]{request}{, }\item[{std\+::uint8\+\_\+t}]{motor\+\_\+id}{, }\item[{bool}]{success}{, }\item[{std\+::uint8\+\_\+t}]{event\+\_\+type}{, }\item[{float}]{event\+\_\+value}{, }\item[{std\+::uint8\+\_\+t}]{num\+\_\+in\+\_\+queue}{, }\item[{std\+::uint8\+\_\+t}]{executed\+\_\+with\+\_\+count}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Creates a Motor\+Event Response message based on a request. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em request} & The original request message. \\
+\hline
+{\em motor\+\_\+id} & The motor identifier (UINT8). \\
+\hline
+{\em success} & Whether the event was successful. \\
+\hline
+{\em event\+\_\+type} & The event type (UINT8). \\
+\hline
+{\em event\+\_\+value} & The event value (FLOAT). \\
+\hline
+{\em num\+\_\+in\+\_\+queue} & Number in queue (UINT8). \\
+\hline
+{\em executed\+\_\+with\+\_\+count} & Number executed with count (UINT8). \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A Motor\+Event Response message. 
+\end{DoxyReturn}
+\Hypertarget{namespacemsgs_a16b2c5e9c56b624425f7453f008beaf0}\index{msgs@{msgs}!createSensorDatastreamMessageRequest@{createSensorDatastreamMessageRequest}}
+\index{createSensorDatastreamMessageRequest@{createSensorDatastreamMessageRequest}!msgs@{msgs}}
+\doxysubsubsection{\texorpdfstring{createSensorDatastreamMessageRequest()}{createSensorDatastreamMessageRequest()}}
+{\footnotesize\ttfamily \label{namespacemsgs_a16b2c5e9c56b624425f7453f008beaf0} 
+rdscom\+::\+Message msgs\+::create\+Sensor\+Datastream\+Message\+Request (\begin{DoxyParamCaption}\item[{std\+::uint8\+\_\+t}]{joint\+\_\+id}{, }\item[{float}]{motor\+\_\+pos}{, }\item[{float}]{motor\+\_\+vel}{, }\item[{float}]{motor\+\_\+temp}{, }\item[{float}]{joint\+\_\+pos}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Creates a Sensor\+Datastream Request message. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em joint\+\_\+id} & Sensor identifier (UINT8). \\
+\hline
+{\em motor\+\_\+pos} & Motor position (FLOAT). \\
+\hline
+{\em motor\+\_\+vel} & Motor velocity (FLOAT). \\
+\hline
+{\em motor\+\_\+temp} & Motor temperature (FLOAT). \\
+\hline
+{\em joint\+\_\+pos} & Joint position (FLOAT). \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A Sensor\+Datastream Message object. 
+\end{DoxyReturn}
+\Hypertarget{namespacemsgs_a7cfe460a9e0746c184e03e8f73d5769a}\index{msgs@{msgs}!createSensorDatastreamMessageResponse@{createSensorDatastreamMessageResponse}}
+\index{createSensorDatastreamMessageResponse@{createSensorDatastreamMessageResponse}!msgs@{msgs}}
+\doxysubsubsection{\texorpdfstring{createSensorDatastreamMessageResponse()}{createSensorDatastreamMessageResponse()}}
+{\footnotesize\ttfamily \label{namespacemsgs_a7cfe460a9e0746c184e03e8f73d5769a} 
+rdscom\+::\+Message msgs\+::create\+Sensor\+Datastream\+Message\+Response (\begin{DoxyParamCaption}\item[{const rdscom\+::\+Message \&}]{request}{, }\item[{std\+::uint8\+\_\+t}]{joint\+\_\+id}{, }\item[{float}]{motor\+\_\+pos}{, }\item[{float}]{motor\+\_\+vel}{, }\item[{float}]{motor\+\_\+temp}{, }\item[{float}]{joint\+\_\+pos}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Creates a Sensor\+Datastream Response message based on a request. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em request} & The original request message. \\
+\hline
+{\em joint\+\_\+id} & The sensor identifier (UINT8). \\
+\hline
+{\em motor\+\_\+pos} & The motor position (FLOAT). \\
+\hline
+{\em motor\+\_\+vel} & The motor velocity (FLOAT). \\
+\hline
+{\em motor\+\_\+temp} & The motor temperature (FLOAT). \\
+\hline
+{\em joint\+\_\+pos} & The joint position (FLOAT). \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A Sensor\+Datastream Response message. 
+\end{DoxyReturn}
+\Hypertarget{namespacemsgs_a7af54e86e954533f72b34a2762e3861d}\index{msgs@{msgs}!createStartSensorDatastreamMessageRequest@{createStartSensorDatastreamMessageRequest}}
+\index{createStartSensorDatastreamMessageRequest@{createStartSensorDatastreamMessageRequest}!msgs@{msgs}}
+\doxysubsubsection{\texorpdfstring{createStartSensorDatastreamMessageRequest()}{createStartSensorDatastreamMessageRequest()}}
+{\footnotesize\ttfamily \label{namespacemsgs_a7af54e86e954533f72b34a2762e3861d} 
+rdscom\+::\+Message msgs\+::create\+Start\+Sensor\+Datastream\+Message\+Request (\begin{DoxyParamCaption}\item[{std\+::uint8\+\_\+t}]{joint\+\_\+id}{, }\item[{std\+::uint8\+\_\+t}]{frequency}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Creates a Start\+Sensor\+Datastream Request message. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em joint\+\_\+id} & Sensor identifier (UINT8). \\
+\hline
+{\em frequency} & Frequency in Hz (UINT8). \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A Start\+Sensor\+Datastream Message object. 
+\end{DoxyReturn}
+\Hypertarget{namespacemsgs_adbf9966b6761aa4568465f14bd594d88}\index{msgs@{msgs}!createStartSensorDatastreamMessageResponse@{createStartSensorDatastreamMessageResponse}}
+\index{createStartSensorDatastreamMessageResponse@{createStartSensorDatastreamMessageResponse}!msgs@{msgs}}
+\doxysubsubsection{\texorpdfstring{createStartSensorDatastreamMessageResponse()}{createStartSensorDatastreamMessageResponse()}}
+{\footnotesize\ttfamily \label{namespacemsgs_adbf9966b6761aa4568465f14bd594d88} 
+rdscom\+::\+Message msgs\+::create\+Start\+Sensor\+Datastream\+Message\+Response (\begin{DoxyParamCaption}\item[{const rdscom\+::\+Message \&}]{request}{, }\item[{std\+::uint8\+\_\+t}]{joint\+\_\+id}{, }\item[{std\+::uint8\+\_\+t}]{frequency}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Creates a Start\+Sensor\+Datastream Response message based on a request. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em request} & The original request message. \\
+\hline
+{\em joint\+\_\+id} & The sensor identifier (UINT8). \\
+\hline
+{\em frequency} & The frequency (UINT8). \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A Start\+Sensor\+Datastream Response message. 
+\end{DoxyReturn}
+\Hypertarget{namespacemsgs_abc859d5c7d8da503fad86fa23d68b93d}\index{msgs@{msgs}!createStopMessageRequest@{createStopMessageRequest}}
+\index{createStopMessageRequest@{createStopMessageRequest}!msgs@{msgs}}
+\doxysubsubsection{\texorpdfstring{createStopMessageRequest()}{createStopMessageRequest()}}
+{\footnotesize\ttfamily \label{namespacemsgs_abc859d5c7d8da503fad86fa23d68b93d} 
+rdscom\+::\+Message msgs\+::create\+Stop\+Message\+Request (\begin{DoxyParamCaption}\item[{std\+::int8\+\_\+t}]{rand\+Val}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Creates a Stop Request message. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em rand\+Val} & The INT8 random value. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A Stop Message object. 
+\end{DoxyReturn}
+\Hypertarget{namespacemsgs_acf5f1c71344390a457f940f2d6af3da7}\index{msgs@{msgs}!createStopMessageResponse@{createStopMessageResponse}}
+\index{createStopMessageResponse@{createStopMessageResponse}!msgs@{msgs}}
+\doxysubsubsection{\texorpdfstring{createStopMessageResponse()}{createStopMessageResponse()}}
+{\footnotesize\ttfamily \label{namespacemsgs_acf5f1c71344390a457f940f2d6af3da7} 
+rdscom\+::\+Message msgs\+::create\+Stop\+Message\+Response (\begin{DoxyParamCaption}\item[{const rdscom\+::\+Message \&}]{request}{, }\item[{std\+::int8\+\_\+t}]{rand\+Val}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Creates a Stop Response message based on a request. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em request} & The original request message. \\
+\hline
+{\em rand\+Val} & The INT8 random value. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A Stop Response message. 
+\end{DoxyReturn}
+\Hypertarget{namespacemsgs_aff580c8c5ef00d9889a53caa05b9839b}\index{msgs@{msgs}!createStopSensorDatastreamMessageRequest@{createStopSensorDatastreamMessageRequest}}
+\index{createStopSensorDatastreamMessageRequest@{createStopSensorDatastreamMessageRequest}!msgs@{msgs}}
+\doxysubsubsection{\texorpdfstring{createStopSensorDatastreamMessageRequest()}{createStopSensorDatastreamMessageRequest()}}
+{\footnotesize\ttfamily \label{namespacemsgs_aff580c8c5ef00d9889a53caa05b9839b} 
+rdscom\+::\+Message msgs\+::create\+Stop\+Sensor\+Datastream\+Message\+Request (\begin{DoxyParamCaption}\item[{std\+::uint8\+\_\+t}]{joint\+\_\+id}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Creates a Stop\+Sensor\+Datastream Request message. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em joint\+\_\+id} & Sensor identifier (UINT8). \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A Stop\+Sensor\+Datastream Message object. 
+\end{DoxyReturn}
+\Hypertarget{namespacemsgs_a23b3d52ab432269dab07f6667903a10f}\index{msgs@{msgs}!createStopSensorDatastreamMessageResponse@{createStopSensorDatastreamMessageResponse}}
+\index{createStopSensorDatastreamMessageResponse@{createStopSensorDatastreamMessageResponse}!msgs@{msgs}}
+\doxysubsubsection{\texorpdfstring{createStopSensorDatastreamMessageResponse()}{createStopSensorDatastreamMessageResponse()}}
+{\footnotesize\ttfamily \label{namespacemsgs_a23b3d52ab432269dab07f6667903a10f} 
+rdscom\+::\+Message msgs\+::create\+Stop\+Sensor\+Datastream\+Message\+Response (\begin{DoxyParamCaption}\item[{const rdscom\+::\+Message \&}]{request}{, }\item[{std\+::uint8\+\_\+t}]{joint\+\_\+id}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Creates a Stop\+Sensor\+Datastream Response message based on a request. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em request} & The original request message. \\
+\hline
+{\em joint\+\_\+id} & The sensor identifier (UINT8). \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A Stop\+Sensor\+Datastream Response message. 
+\end{DoxyReturn}
+\Hypertarget{namespacemsgs_a9ed36b29a520e242c1d272f0ce7fc70d}\index{msgs@{msgs}!createZeroCommandRequest@{createZeroCommandRequest}}
+\index{createZeroCommandRequest@{createZeroCommandRequest}!msgs@{msgs}}
+\doxysubsubsection{\texorpdfstring{createZeroCommandRequest()}{createZeroCommandRequest()}}
+{\footnotesize\ttfamily \label{namespacemsgs_a9ed36b29a520e242c1d272f0ce7fc70d} 
+rdscom\+::\+Message msgs\+::create\+Zero\+Command\+Request (\begin{DoxyParamCaption}\item[{std\+::uint8\+\_\+t}]{rand\+Val}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\Hypertarget{namespacemsgs_aa06274bcad6cc11558a264560da2bf00}\index{msgs@{msgs}!createZeroCommandResponse@{createZeroCommandResponse}}
+\index{createZeroCommandResponse@{createZeroCommandResponse}!msgs@{msgs}}
+\doxysubsubsection{\texorpdfstring{createZeroCommandResponse()}{createZeroCommandResponse()}}
+{\footnotesize\ttfamily \label{namespacemsgs_aa06274bcad6cc11558a264560da2bf00} 
+rdscom\+::\+Message msgs\+::create\+Zero\+Command\+Response (\begin{DoxyParamCaption}\item[{const rdscom\+::\+Message \&}]{request}{, }\item[{std\+::uint8\+\_\+t}]{rand\+Val}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\Hypertarget{namespacemsgs_a39eb9d94fc25dbdc183e7eacb4e479ab}\index{msgs@{msgs}!createZeroDoneRequest@{createZeroDoneRequest}}
+\index{createZeroDoneRequest@{createZeroDoneRequest}!msgs@{msgs}}
+\doxysubsubsection{\texorpdfstring{createZeroDoneRequest()}{createZeroDoneRequest()}}
+{\footnotesize\ttfamily \label{namespacemsgs_a39eb9d94fc25dbdc183e7eacb4e479ab} 
+rdscom\+::\+Message msgs\+::create\+Zero\+Done\+Request (\begin{DoxyParamCaption}\item[{std\+::uint8\+\_\+t}]{success}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\Hypertarget{namespacemsgs_a2b509069d829c9b31c43febb2ac64647}\index{msgs@{msgs}!createZeroDoneResponse@{createZeroDoneResponse}}
+\index{createZeroDoneResponse@{createZeroDoneResponse}!msgs@{msgs}}
+\doxysubsubsection{\texorpdfstring{createZeroDoneResponse()}{createZeroDoneResponse()}}
+{\footnotesize\ttfamily \label{namespacemsgs_a2b509069d829c9b31c43febb2ac64647} 
+rdscom\+::\+Message msgs\+::create\+Zero\+Done\+Response (\begin{DoxyParamCaption}\item[{const rdscom\+::\+Message \&}]{request}{, }\item[{bool}]{success}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\Hypertarget{namespacemsgs_aaa0d98bb29703ac92f7ac03741fa9261}\index{msgs@{msgs}!errorId@{errorId}}
+\index{errorId@{errorId}!msgs@{msgs}}
+\doxysubsubsection{\texorpdfstring{errorId()}{errorId()}}
+{\footnotesize\ttfamily \label{namespacemsgs_aaa0d98bb29703ac92f7ac03741fa9261} 
+std\+::uint8\+\_\+t msgs\+::error\+Id (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\Hypertarget{namespacemsgs_ae8bf21f94acb5e9baa2b110b9f8af101}\index{msgs@{msgs}!errorProto@{errorProto}}
+\index{errorProto@{errorProto}!msgs@{msgs}}
+\doxysubsubsection{\texorpdfstring{errorProto()}{errorProto()}}
+{\footnotesize\ttfamily \label{namespacemsgs_ae8bf21f94acb5e9baa2b110b9f8af101} 
+rdscom\+::\+Data\+Prototype msgs\+::error\+Proto (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Returns the Error Data\+Prototype (ID\+: 9). 
+
+\Hypertarget{namespacemsgs_a61818fec89de602dc2ea60e69afc6de0}\index{msgs@{msgs}!heartbeatId@{heartbeatId}}
+\index{heartbeatId@{heartbeatId}!msgs@{msgs}}
+\doxysubsubsection{\texorpdfstring{heartbeatId()}{heartbeatId()}}
+{\footnotesize\ttfamily \label{namespacemsgs_a61818fec89de602dc2ea60e69afc6de0} 
+std\+::uint8\+\_\+t msgs\+::heartbeat\+Id (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\Hypertarget{namespacemsgs_a0fbf26b1dcb8fe5a03007808c3160078}\index{msgs@{msgs}!heartbeatProto@{heartbeatProto}}
+\index{heartbeatProto@{heartbeatProto}!msgs@{msgs}}
+\doxysubsubsection{\texorpdfstring{heartbeatProto()}{heartbeatProto()}}
+{\footnotesize\ttfamily \label{namespacemsgs_a0fbf26b1dcb8fe5a03007808c3160078} 
+rdscom\+::\+Data\+Prototype msgs\+::heartbeat\+Proto (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Returns the Heartbeat Data\+Prototype (ID\+: 0). 
+
+\Hypertarget{namespacemsgs_a347ae45034e36c1623b362268c29e158}\index{msgs@{msgs}!motorControlId@{motorControlId}}
+\index{motorControlId@{motorControlId}!msgs@{msgs}}
+\doxysubsubsection{\texorpdfstring{motorControlId()}{motorControlId()}}
+{\footnotesize\ttfamily \label{namespacemsgs_a347ae45034e36c1623b362268c29e158} 
+std\+::uint8\+\_\+t msgs\+::motor\+Control\+Id (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\Hypertarget{namespacemsgs_a8d7e09ea6dc9591a7435e0247328f5f2}\index{msgs@{msgs}!motorControlProto@{motorControlProto}}
+\index{motorControlProto@{motorControlProto}!msgs@{msgs}}
+\doxysubsubsection{\texorpdfstring{motorControlProto()}{motorControlProto()}}
+{\footnotesize\ttfamily \label{namespacemsgs_a8d7e09ea6dc9591a7435e0247328f5f2} 
+rdscom\+::\+Data\+Prototype msgs\+::motor\+Control\+Proto (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Returns the Motor\+Control Data\+Prototype (ID\+: 1). 
+
+\Hypertarget{namespacemsgs_a20b8426b84e84f0ab48e28f393fe1280}\index{msgs@{msgs}!motorEventId@{motorEventId}}
+\index{motorEventId@{motorEventId}!msgs@{msgs}}
+\doxysubsubsection{\texorpdfstring{motorEventId()}{motorEventId()}}
+{\footnotesize\ttfamily \label{namespacemsgs_a20b8426b84e84f0ab48e28f393fe1280} 
+std\+::uint8\+\_\+t msgs\+::motor\+Event\+Id (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\Hypertarget{namespacemsgs_ad89f36b09a5d2dc25666ac06e338bab4}\index{msgs@{msgs}!motorEventProto@{motorEventProto}}
+\index{motorEventProto@{motorEventProto}!msgs@{msgs}}
+\doxysubsubsection{\texorpdfstring{motorEventProto()}{motorEventProto()}}
+{\footnotesize\ttfamily \label{namespacemsgs_ad89f36b09a5d2dc25666ac06e338bab4} 
+rdscom\+::\+Data\+Prototype msgs\+::motor\+Event\+Proto (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Returns the Motor\+Event Data\+Prototype (ID\+: 2). 
+
+\Hypertarget{namespacemsgs_ab92c9efbbef936fd1619d89587a0640c}\index{msgs@{msgs}!sensorDatastreamId@{sensorDatastreamId}}
+\index{sensorDatastreamId@{sensorDatastreamId}!msgs@{msgs}}
+\doxysubsubsection{\texorpdfstring{sensorDatastreamId()}{sensorDatastreamId()}}
+{\footnotesize\ttfamily \label{namespacemsgs_ab92c9efbbef936fd1619d89587a0640c} 
+std\+::uint8\+\_\+t msgs\+::sensor\+Datastream\+Id (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\Hypertarget{namespacemsgs_af5d48732d0be12fd6e875a7fdfb0ba6f}\index{msgs@{msgs}!sensorDataStreamProto@{sensorDataStreamProto}}
+\index{sensorDataStreamProto@{sensorDataStreamProto}!msgs@{msgs}}
+\doxysubsubsection{\texorpdfstring{sensorDataStreamProto()}{sensorDataStreamProto()}}
+{\footnotesize\ttfamily \label{namespacemsgs_af5d48732d0be12fd6e875a7fdfb0ba6f} 
+rdscom\+::\+Data\+Prototype msgs\+::sensor\+Data\+Stream\+Proto (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Returns the Sensor\+Datastream Data\+Prototype (ID\+: 6). 
+
+\Hypertarget{namespacemsgs_a278ef3e5a87d832a99709034df3b9379}\index{msgs@{msgs}!startSensorDatastreamId@{startSensorDatastreamId}}
+\index{startSensorDatastreamId@{startSensorDatastreamId}!msgs@{msgs}}
+\doxysubsubsection{\texorpdfstring{startSensorDatastreamId()}{startSensorDatastreamId()}}
+{\footnotesize\ttfamily \label{namespacemsgs_a278ef3e5a87d832a99709034df3b9379} 
+std\+::uint8\+\_\+t msgs\+::start\+Sensor\+Datastream\+Id (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\Hypertarget{namespacemsgs_a7ed4d2fecbeaa997d7561a9af8e544ff}\index{msgs@{msgs}!startSensorDataStreamProto@{startSensorDataStreamProto}}
+\index{startSensorDataStreamProto@{startSensorDataStreamProto}!msgs@{msgs}}
+\doxysubsubsection{\texorpdfstring{startSensorDataStreamProto()}{startSensorDataStreamProto()}}
+{\footnotesize\ttfamily \label{namespacemsgs_a7ed4d2fecbeaa997d7561a9af8e544ff} 
+rdscom\+::\+Data\+Prototype msgs\+::start\+Sensor\+Data\+Stream\+Proto (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Returns the Start\+Sensor\+Datastream Data\+Prototype (ID\+: 5). 
+
+\Hypertarget{namespacemsgs_adae8800d3613a392850a3cc74a6707ed}\index{msgs@{msgs}!stopId@{stopId}}
+\index{stopId@{stopId}!msgs@{msgs}}
+\doxysubsubsection{\texorpdfstring{stopId()}{stopId()}}
+{\footnotesize\ttfamily \label{namespacemsgs_adae8800d3613a392850a3cc74a6707ed} 
+std\+::uint8\+\_\+t msgs\+::stop\+Id (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\Hypertarget{namespacemsgs_a2bed9e6b3819463047fba4023964f608}\index{msgs@{msgs}!stopProto@{stopProto}}
+\index{stopProto@{stopProto}!msgs@{msgs}}
+\doxysubsubsection{\texorpdfstring{stopProto()}{stopProto()}}
+{\footnotesize\ttfamily \label{namespacemsgs_a2bed9e6b3819463047fba4023964f608} 
+rdscom\+::\+Data\+Prototype msgs\+::stop\+Proto (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Returns the Stop Data\+Prototype (ID\+: 10). 
+
+\Hypertarget{namespacemsgs_ab96d9429fe52f9a2ef724ce999ccf86f}\index{msgs@{msgs}!stopSensorDatastreamId@{stopSensorDatastreamId}}
+\index{stopSensorDatastreamId@{stopSensorDatastreamId}!msgs@{msgs}}
+\doxysubsubsection{\texorpdfstring{stopSensorDatastreamId()}{stopSensorDatastreamId()}}
+{\footnotesize\ttfamily \label{namespacemsgs_ab96d9429fe52f9a2ef724ce999ccf86f} 
+std\+::uint8\+\_\+t msgs\+::stop\+Sensor\+Datastream\+Id (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\Hypertarget{namespacemsgs_a51eb40725ad6dac3e4225bfd17237337}\index{msgs@{msgs}!stopSensorDataStreamProto@{stopSensorDataStreamProto}}
+\index{stopSensorDataStreamProto@{stopSensorDataStreamProto}!msgs@{msgs}}
+\doxysubsubsection{\texorpdfstring{stopSensorDataStreamProto()}{stopSensorDataStreamProto()}}
+{\footnotesize\ttfamily \label{namespacemsgs_a51eb40725ad6dac3e4225bfd17237337} 
+rdscom\+::\+Data\+Prototype msgs\+::stop\+Sensor\+Data\+Stream\+Proto (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Returns the Stop\+Sensor\+Datastream Data\+Prototype (ID\+: 7). 
+
+\Hypertarget{namespacemsgs_a81e34d114234f7b6c3d988ea641a4b68}\index{msgs@{msgs}!zeroCommandID@{zeroCommandID}}
+\index{zeroCommandID@{zeroCommandID}!msgs@{msgs}}
+\doxysubsubsection{\texorpdfstring{zeroCommandID()}{zeroCommandID()}}
+{\footnotesize\ttfamily \label{namespacemsgs_a81e34d114234f7b6c3d988ea641a4b68} 
+std\+::uint8\+\_\+t msgs\+::zero\+Command\+ID (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\Hypertarget{namespacemsgs_abe2a4edabbe9968ff232095dbe8a8a8e}\index{msgs@{msgs}!zeroCommandProto@{zeroCommandProto}}
+\index{zeroCommandProto@{zeroCommandProto}!msgs@{msgs}}
+\doxysubsubsection{\texorpdfstring{zeroCommandProto()}{zeroCommandProto()}}
+{\footnotesize\ttfamily \label{namespacemsgs_abe2a4edabbe9968ff232095dbe8a8a8e} 
+rdscom\+::\+Data\+Prototype msgs\+::zero\+Command\+Proto (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\Hypertarget{namespacemsgs_aa8644d39b6b7d3d0f586f1095709cf70}\index{msgs@{msgs}!zeroDoneID@{zeroDoneID}}
+\index{zeroDoneID@{zeroDoneID}!msgs@{msgs}}
+\doxysubsubsection{\texorpdfstring{zeroDoneID()}{zeroDoneID()}}
+{\footnotesize\ttfamily \label{namespacemsgs_aa8644d39b6b7d3d0f586f1095709cf70} 
+std\+::uint8\+\_\+t msgs\+::zero\+Done\+ID (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\Hypertarget{namespacemsgs_af3ef51b87b51589514ffbd64467e0b41}\index{msgs@{msgs}!zeroDoneProto@{zeroDoneProto}}
+\index{zeroDoneProto@{zeroDoneProto}!msgs@{msgs}}
+\doxysubsubsection{\texorpdfstring{zeroDoneProto()}{zeroDoneProto()}}
+{\footnotesize\ttfamily \label{namespacemsgs_af3ef51b87b51589514ffbd64467e0b41} 
+rdscom\+::\+Data\+Prototype msgs\+::zero\+Done\+Proto (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+

@@ -1,0 +1,5 @@
+<map id="FingerControlCommand" name="FingerControlCommand">
+<area shape="rect" id="Node000001" title="Command to control a motor. This command is used to control motors and is created from rdscom message..." alt="" coords="5,79,165,105"/>
+<area shape="rect" id="Node000002" href="$class_user_command.html" title="Base class for user commands sent from the GUI to the Teensy. This abstract class defines the interfa..." alt="" coords="30,5,140,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="88,46,88,79,82,79,82,46"/>
+</map>

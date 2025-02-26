@@ -1,0 +1,81 @@
+\doxysection{message\+\_\+handlers.\+hpp}
+\hypertarget{message__handlers_8hpp_source}{}\label{message__handlers_8hpp_source}\index{testbench-\/mcu/include/message\_handlers.hpp@{testbench-\/mcu/include/message\_handlers.hpp}}
+\mbox{\hyperlink{message__handlers_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ \_\_MESSAGE\_HANDLERS\_H\_\_}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ \_\_MESSAGE\_HANDLERS\_H\_\_}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ <rdscom.hpp>}}
+\DoxyCodeLine{00005\ }
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{message__definitions_8hpp}{message\_definitions.hpp}}"{}}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{user__command_8hpp}{user\_command.hpp}}"{}}}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespacemsgs}{msgs}}\ \{}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00014\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classmsgs_1_1_message_handlers_a4d78462641dcaca3c5024ef747eb2b08}{MessageHandlers}}\ \{}
+\DoxyCodeLine{00015\ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00019\ \ \ \ \ \mbox{\hyperlink{classmsgs_1_1_message_handlers_a4d78462641dcaca3c5024ef747eb2b08}{MessageHandlers}}(rdscom::CommunicationInterface\ \&com,\ \mbox{\hyperlink{class_user_command_buffer}{UserCommandBuffer}}\ \&commandBuffer);}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00022\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmsgs_1_1_message_handlers_a56f0d6dc519220dd74ab970287b4c5dc}{registerPrototypes}}();}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00025\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmsgs_1_1_message_handlers_a237bd17c730486b60d554182d66ce873}{addHandlers}}();}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00028\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classmsgs_1_1_message_handlers_a2a59053d6513034158ef099229ee0aa3}{tickDatastreams}}();}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00031\ \ \ \ \ \textcolor{keyword}{class\ }SensorDatastream\ \{}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ SensorDatastream(std::uint8\_t\ sensorID,\ std::uint8\_t\ frequency)\ :\ \_sensorID(sensorID),\ \_frequency(frequency)\ \{\}}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ std::uint8\_t\ sensorID()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ \_sensorID;\ \}}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ std::uint8\_t\ frequency()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ \_frequency;\ \}}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ timeToSend()\ \{}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (millis()\ -\/\ \_lastSendTime\ >\ 1000\ /\ \_frequency)\ \{}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_lastSendTime\ =\ millis();}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ std::uint8\_t\ \_sensorID;}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ std::uint8\_t\ \_frequency;}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ std::uint32\_t\ \_lastSendTime\ =\ 0;}
+\DoxyCodeLine{00050\ \ \ \ \ \};}
+\DoxyCodeLine{00051\ }
+\DoxyCodeLine{00052\ \ \ \ \ rdscom::CommunicationInterface\ \&\_com;\ \ }
+\DoxyCodeLine{00053\ \ \ \ \ \mbox{\hyperlink{class_user_command_buffer}{UserCommandBuffer}}\ \&\_commandBuffer;\ \ \ \ \ }
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00055\ \ \ \ \ std::vector<SensorDatastream>\ \_sensorDatastreams;\ \ }
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00059\ \ \ \ \ \textcolor{keywordtype}{void}\ onHeartbeatMessage(\textcolor{keyword}{const}\ rdscom::Message\ \&msg);}
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00063\ \ \ \ \ \textcolor{keywordtype}{void}\ onMotorControlMessage(\textcolor{keyword}{const}\ rdscom::Message\ \&msg);}
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00067\ \ \ \ \ \textcolor{keywordtype}{void}\ onMotorEventMessage(\textcolor{keyword}{const}\ rdscom::Message\ \&msg);}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00071\ \ \ \ \ \textcolor{keywordtype}{void}\ onControlGoMessage(\textcolor{keyword}{const}\ rdscom::Message\ \&msg);}
+\DoxyCodeLine{00072\ }
+\DoxyCodeLine{00075\ \ \ \ \ \textcolor{keywordtype}{void}\ onControlDoneMessage(\textcolor{keyword}{const}\ rdscom::Message\ \&msg);}
+\DoxyCodeLine{00076\ }
+\DoxyCodeLine{00079\ \ \ \ \ \textcolor{keywordtype}{void}\ onStartSensorDatastreamMessage(\textcolor{keyword}{const}\ rdscom::Message\ \&msg);}
+\DoxyCodeLine{00080\ }
+\DoxyCodeLine{00083\ \ \ \ \ \textcolor{keywordtype}{void}\ onSensorDatastreamMessage(\textcolor{keyword}{const}\ rdscom::Message\ \&msg);}
+\DoxyCodeLine{00084\ }
+\DoxyCodeLine{00087\ \ \ \ \ \textcolor{keywordtype}{void}\ onStopSensorDatastreamMessage(\textcolor{keyword}{const}\ rdscom::Message\ \&msg);}
+\DoxyCodeLine{00088\ }
+\DoxyCodeLine{00091\ \ \ \ \ \textcolor{keywordtype}{void}\ onClearControlQueueMessage(\textcolor{keyword}{const}\ rdscom::Message\ \&msg);}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00095\ \ \ \ \ \textcolor{keywordtype}{void}\ onErrorMessage(\textcolor{keyword}{const}\ rdscom::Message\ \&msg);}
+\DoxyCodeLine{00096\ }
+\DoxyCodeLine{00099\ \textcolor{keywordtype}{void}\ onStopMessage(\textcolor{keyword}{const}\ rdscom::Message\ \&msg);}
+\DoxyCodeLine{00100\ }
+\DoxyCodeLine{00103\ \ \ \ \ \textcolor{keywordtype}{void}\ onZeroCommandMessage(\textcolor{keyword}{const}\ rdscom::Message\ \&msg);}
+\DoxyCodeLine{00104\ \};}
+\DoxyCodeLine{00105\ }
+\DoxyCodeLine{00106\ \}\ \ \textcolor{comment}{//\ namespace\ msgs}}
+\DoxyCodeLine{00107\ }
+\DoxyCodeLine{00108\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//\ \_\_MESSAGE\_HANDLERS\_H\_\_}}
+
+\end{DoxyCode}
